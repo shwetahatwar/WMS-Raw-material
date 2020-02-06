@@ -20,6 +20,7 @@ import com.briot.balmerlawrie.implementor.repository.remote.User
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.login_fragment.*
 import android.view.inputmethod.InputMethodManager
+import androidx.lifecycle.ViewModelProvider
 
 
 class LoginFragment : androidx.fragment.app.Fragment() {
@@ -38,7 +39,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
         // TODO: Use the ViewModel
 
         username.requestFocus()

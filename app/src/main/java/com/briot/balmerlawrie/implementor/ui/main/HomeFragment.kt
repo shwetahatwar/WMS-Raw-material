@@ -14,6 +14,7 @@ import com.briot.balmerlawrie.implementor.R
 //import com.briot.balmerlawrie.implementor.repository.remote.RoleAccessRelation
 import kotlinx.android.synthetic.main.home_fragment.*
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.briot.balmerlawrie.implementor.BuildConfig
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
@@ -34,7 +35,7 @@ class HomeFragment : androidx.fragment.app.Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         (this.activity as AppCompatActivity).setTitle("Home")
 

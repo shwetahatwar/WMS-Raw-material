@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.briot.balmerlawrie.implementor.MainActivity
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.repository.remote.MaterialDetails
@@ -46,7 +47,7 @@ class MaterialDetailsScanFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MaterialDetailsScanViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(MaterialDetailsScanViewModel::class.java)
 
         (this.activity as AppCompatActivity).setTitle("Material Details")
 

@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 import kotlinx.android.synthetic.main.user_profile_fragment.*
@@ -29,7 +30,7 @@ class UserProfileFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
-        viewModel = ViewModelProviders.of(this).get(UserProfileViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(UserProfileViewModel::class.java)
 
         (this.activity as AppCompatActivity).setTitle("User Profile")
 
