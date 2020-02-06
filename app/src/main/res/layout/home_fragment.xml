@@ -36,7 +36,7 @@
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/machineWiseMaterialDetails"
+                android:id="@+id/materialInward"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginBottom="3dp"
@@ -55,7 +55,7 @@
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/startPartProcess"
+                android:id="@+id/materialPicking"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginBottom="3dp"
@@ -74,7 +74,7 @@
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/stopPartProcess"
+                android:id="@+id/materialLoading"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginBottom="3dp"
@@ -93,7 +93,7 @@
                 android:textStyle="bold" />
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/pendingItemsDashboard"
+                android:id="@+id/auditProject"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginBottom="3dp"

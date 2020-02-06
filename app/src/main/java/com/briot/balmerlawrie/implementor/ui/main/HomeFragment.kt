@@ -48,11 +48,11 @@ class HomeFragment : androidx.fragment.app.Fragment() {
                     for (item in it) {
                         if (item.roleId?.id == roleId) {
                             if (item.accessId?.uri?.toLowerCase().equals("/JobProcessSequenceRelation/create".toLowerCase())) {
-                                startPartProcess.visibility = View.VISIBLE
+                                materialDetails.visibility = View.VISIBLE
                             } else if (item.accessId?.uri?.toLowerCase().equals("jobProcessSequenceRelation/update".toLowerCase())) {
-                                stopPartProcess.visibility =  View.VISIBLE
+                                materialInward.visibility =  View.VISIBLE
                             } else if (item.accessId?.uri?.toLowerCase().equals("joblocationrelation".toLowerCase())) {
-                                pendingItemsDashboard.visibility = View.VISIBLE
+                                materialPicking.visibility = View.VISIBLE
                                 receiveAtStore.visibility = View.VISIBLE
                             } else if (item.accessId?.uri?.toLowerCase().equals("MaintenanceTransaction".toLowerCase())) {
                                 machineMaintenance.visibility = View.VISIBLE
@@ -72,27 +72,27 @@ class HomeFragment : androidx.fragment.app.Fragment() {
         // hide all options initially,  enable it as per role only
         viewStatus(true)
 
-
         materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
-        startPartProcess.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_startpartprocessfragment) }
-        stopPartProcess.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_stoppartprocessfragment) }
-        pendingItemsDashboard.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_pendingItemDashboard) }
-        machineWiseMaterialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_machineWiseMaterialDetailsFragment) }
+        materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
+        materialInward.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialInwardFragment) }
+        materialPicking.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_dispatchPickingListsFragment) }
+        materialLoading.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_dispatchSlipsFragment) }
+        auditProject.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_auditProjectsFragment) }
     }
 
     fun viewStatus(show: Boolean) {
         if (show) {
 //            materialDetails.visibility = View.VISIBLE
-            machineWiseMaterialDetails.visibility = View.VISIBLE
-            startPartProcess.visibility = View.VISIBLE
-            stopPartProcess.visibility = View.VISIBLE
-            pendingItemsDashboard.visibility = View.VISIBLE
+            materialLoading.visibility = View.VISIBLE
+            materialDetails.visibility = View.VISIBLE
+            materialInward.visibility = View.VISIBLE
+            materialPicking.visibility = View.VISIBLE
         } else {
 //            materialDetails.visibility = View.GONE
-            machineWiseMaterialDetails.visibility = View.VISIBLE
-            startPartProcess.visibility = View.GONE
-            stopPartProcess.visibility = View.GONE
-            pendingItemsDashboard.visibility = View.GONE
+            materialLoading.visibility = View.VISIBLE
+            materialDetails.visibility = View.GONE
+            materialInward.visibility = View.GONE
+            materialPicking.visibility = View.GONE
         }
 
     }
