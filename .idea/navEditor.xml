@@ -41,6 +41,15 @@
                             <option name="y" value="12" />
                           </Point>
                         </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_dispatchPickingListsFragment_to_dispatchPickingListFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                       </LayoutPositions>
                     </value>
                   </entry>
@@ -73,6 +82,11 @@
                               </value>
                             </entry>
                             <entry key="action_homeFragment_to_dispatchPickingListsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_homeFragment_to_dispatchSlipsFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
