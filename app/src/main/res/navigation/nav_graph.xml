@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.MainFragment"
+        android:label="main_fragment"
+        tools:layout="@layout/main_fragment"
+        app:startDestination="@id/action_mainFragment_to_loginFragment">
+        <action
+            android:id="@+id/action_mainFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.LoginFragment"
+        android:label="login_fragment"
+        tools:layout="@layout/login_fragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.HomeFragment"
+        android:label="home_fragment"
+        tools:layout="@layout/home_fragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_materialDetailsScanFragment"
+            app:destination="@id/materialDetailsScanFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_machinemaintenancefragment"
+            app:destination="@id/machineMaintenance" />
+        <action
+            android:id="@+id/action_homeFragment_to_startpartprocessfragment"
+            app:destination="@id/startPartProcess" />
+        <action
+            android:id="@+id/action_homeFragment_to_stoppartprocessfragment"
+            app:destination="@id/stopPartProcess" />
+        <action
+            android:id="@+id/action_homeFragment_to_materialDetailsScanFragment2"
+            app:destination="@id/materialDetailsScanFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_startPartProcess"
+            app:destination="@id/startPartProcess" />
+        <action
+            android:id="@+id/action_homeFragment_to_stopPartProcess"
+            app:destination="@id/stopPartProcess" />
+        <action
+            android:id="@+id/action_homeFragment_to_machineMaintenance"
+            app:destination="@id/machineMaintenance" />
+        <action
+            android:id="@+id/action_homeFragment_to_pendingItemDashboard"
+            app:destination="@id/pendingItemDashboard" />
+        <action
+            android:id="@+id/action_homeFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_machineWiseMaterialDetailsFragment"
+            app:destination="@id/machineWisematerialDetails" />
+        <action
+            android:id="@+id/action_homeFragment_to_receiveAtStoreFragment"
+            app:destination="@id/receiveAtStore" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/machineWisematerialDetails"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.MachinewiseMaterialsFragment"
+        android:label="Pending Item Dashboard"
+        tools:layout="@layout/machinewise_materials_fragment" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/receiveAtStore"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.ReceiveAtStoreFragment"
+        android:label="Pending Item Dashboard"
+        tools:layout="@layout/receive_at_store_fragment" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/materialDetailsScanFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.MaterialDetailsScanFragment"
+        android:label="asset_details_scan_fragment"
+        tools:layout="@layout/material_details_scan_fragment" >
+        <action
+            android:id="@+id/action_assetDetailsScanFragment_to_produceDetailsFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+
+
+
+
+    <fragment
+        android:id="@+id/machineMaintenance"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.MachineMaintenanceFragment"
+        android:label="machine_maintenance_fragment"
+        tools:layout="@layout/machine_maintenance_fragment" >
+        <action
+            android:id="@+id/action_machinemaintenancefragment_to_produceDetailsFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+    android:id="@+id/startPartProcess"
+    android:name="com.briot.balmerlawrie.implementor.ui.main.StartPartProcess"
+    android:label="start_part_process_fragment"
+    tools:layout="@layout/start_part_process_fragment" >
+    <action
+        android:id="@+id/action_start_part_process_fragment_to_produceDetailsFragment"
+        app:destination="@id/homeFragment" />
+</fragment>
+
+    <fragment
+        android:id="@+id/stopPartProcess"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.StopPartProcess"
+        android:label="@string/stop_part_process"
+        tools:layout="@layout/stop_part_process_fragment" >
+        <action
+            android:id="@+id/action_stop_part_process_fragment_to_produceDetailsFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pendingItemDashboard"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.PendingItemDashboard"
+        android:label="Pending Item Dashboard"
+        tools:layout="@layout/pending_item_dashboard_fragment" >
+        <action
+            android:id="@+id/action_pending_item_dashboard_fragment_to_dropatlocationfragment"
+            app:destination="@id/dropAtLocation" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dropAtLocation"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.DropAtLocation"
+        android:label="Drop At Location"
+        tools:layout="@layout/drop_at_location_fragment">
+
+    </fragment>
+    <fragment
+        android:id="@+id/userProfileFragment"
+        android:name="com.briot.balmerlawrie.implementor.UserProfileFragment"
+        android:label="user_profile_fragment"
+        tools:layout="@layout/user_profile_fragment" />
+</navigation>
