@@ -44,11 +44,9 @@ class MainFragment : androidx.fragment.app.Fragment() {
         var navCtrl = Navigation.findNavController(img)
         Log.d("MainFragment - ", "navCtrl: " + navCtrl.toString())
         if (userToken.isNotEmpty()) {
-            if (navCtrl != null) {
-                Observable.timer(2000, TimeUnit.MILLISECONDS)
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe({ navCtrl.navigate(R.id.homeFragment) });
-            }
+            Observable.timer(2000, TimeUnit.MILLISECONDS)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ navCtrl.navigate(R.id.homeFragment) });
         } else {
             Observable.timer(2000, TimeUnit.MILLISECONDS)
                     .observeOn(AndroidSchedulers.mainThread())

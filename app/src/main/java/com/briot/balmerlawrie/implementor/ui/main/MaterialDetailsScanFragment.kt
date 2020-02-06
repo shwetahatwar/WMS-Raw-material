@@ -1,7 +1,6 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle

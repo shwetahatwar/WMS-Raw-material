@@ -2,7 +2,6 @@ package com.briot.balmerlawrie.implementor.ui.main
 
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity

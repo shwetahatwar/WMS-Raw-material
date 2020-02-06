@@ -19,7 +19,7 @@ class PrefRepository {
     }
 
     fun serializePrefs(context: Context) {
-        val sharedPref = context?.getSharedPreferences("default", Context.MODE_PRIVATE) ?: return
+        val sharedPref = context.getSharedPreferences("default", Context.MODE_PRIVATE) ?: return
         val editor = sharedPref.edit();
 
         prefs.keys.asIterable().forEach {
@@ -30,9 +30,9 @@ class PrefRepository {
     }
 
     fun deserializePrefs(context: Context) {
-        val sharedPref = context?.getSharedPreferences("default", Context.MODE_PRIVATE) ?: return
+        val sharedPref = context.getSharedPreferences("default", Context.MODE_PRIVATE) ?: return
         sharedPref.all.keys.forEach {
-            prefs[it] = sharedPref.getString(it, "")
+            prefs[it] = sharedPref.getString(it, "").orEmpty()
         }
     }
 }

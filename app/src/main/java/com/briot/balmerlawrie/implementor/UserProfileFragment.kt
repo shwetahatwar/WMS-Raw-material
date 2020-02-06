@@ -1,6 +1,5 @@
 package com.briot.balmerlawrie.implementor
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -59,9 +58,9 @@ class UserProfileFragment : Fragment() {
 //        val userProfileLayout = R.id.userProfileLinearLayoutId
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu?) {
+    override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu?.clear()
+        menu.clear()
     }
 
 }

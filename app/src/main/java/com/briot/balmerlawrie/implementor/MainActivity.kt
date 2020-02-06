@@ -33,7 +33,7 @@ class ResponseHeaderAuthTokenInterceptor : Interceptor {
 
         val localheaders = originalResponse.headers("x-jwt-token")
 
-        val jwtTokenExists = localheaders?.isNotEmpty() ?: false
+        val jwtTokenExists = localheaders.isNotEmpty()
 
         if (jwtTokenExists) {
             val jwtToken = localheaders.get(0)
@@ -153,8 +153,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showUserProfile() {
-        var navController = findNavController(findViewById(R.id.nav_host_fragment))
-        Navigation.findNavController(findViewById(R.id.nav_host_fragment)).navigate(R.id.action_homeFragment_to_userProfileFragment)
+        findNavController(findViewById(R.id.nav_host_fragment)).navigate(R.id.action_homeFragment_to_userProfileFragment)
     }
 
     private fun logout() {
@@ -176,9 +175,9 @@ class MainActivity : AppCompatActivity() {
 
         this.applicationContext.let { PrefRepository.singleInstance.serializePrefs(it) }
 
-        var userToken: String = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_TOKEN, "")
-        var navController = findNavController(findViewById(R.id.nav_host_fragment))
-        if (userToken.isEmpty() && navController != null) {
+        val userToken: String = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_TOKEN, "")
+        val navController = findNavController(findViewById(R.id.nav_host_fragment))
+        if (userToken.isEmpty()) {
             navController.popBackStack(R.id.mainFragment, false)
         }
 

@@ -1,7 +1,6 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
@@ -51,7 +50,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
                 this.progress = null
 
                 var message: String = "Server is not reachable, please check if your network connection is working"
-                if (viewModel.errorMessage != null && viewModel.errorMessage.isNotEmpty()) {
+                if (viewModel.errorMessage.isNotEmpty()) {
                     message = viewModel.errorMessage
                 }
 

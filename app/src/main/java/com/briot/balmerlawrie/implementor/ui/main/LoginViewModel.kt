@@ -38,9 +38,9 @@ class LoginViewModel : ViewModel() {
 
         if (error is HttpException) {
             if (error.code() >= 401) {
-                var msg = (error as HttpException).response().errorBody()?.string()
+                var msg = error.response()?.errorBody()?.string()
                 if (msg != null && msg.isNotEmpty()) {
-                    errorMessage = msg;
+                    errorMessage = msg
                 } else {
                     errorMessage = error.message()
                 }
