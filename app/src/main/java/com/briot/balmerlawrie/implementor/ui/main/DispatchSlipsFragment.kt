@@ -29,7 +29,7 @@ class DispatchSlipsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(DispatchSlipsViewModel::class.java)
 
-        (this.activity as AppCompatActivity).setTitle("Material Loading Lists")
+        (this.activity as AppCompatActivity).setTitle("Loading Dispatch Slips")
 
     }
 

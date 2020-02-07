@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
 import android.util.Log
-import com.briot.balmerlawrie.implementor.repository.remote.MaterialDetails
+import com.briot.balmerlawrie.implementor.repository.remote.Material
 import com.briot.balmerlawrie.implementor.repository.remote.RemoteRepository
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -12,22 +12,22 @@ import java.net.SocketTimeoutException
 class MaterialDetailsScanViewModel : ViewModel() {
     val TAG = "MaterialScanViewModel"
 
-    val materialDetails: LiveData<MaterialDetails> = MutableLiveData<MaterialDetails>()
+    val materials: LiveData<Material> = MutableLiveData<Material>()
 
     val networkError: LiveData<Boolean> = MutableLiveData<Boolean>()
-    val invalidMaterialDetail: MaterialDetails = MaterialDetails()
+    val invalidMaterialItem: Material = Material()
 
-    fun loadMaterialDetails(barcodeSerial: String) {
+    fun loadMaterialItems(barcodeSerial: String) {
         (networkError as MutableLiveData<Boolean>).value = false
         RemoteRepository.singleInstance.getMaterialDetails(barcodeSerial, this::handleMaterialResponse, this::handleMaterialError)
     }
 
-    private fun handleMaterialResponse(materialDetails: Array<MaterialDetails>) {
-        Log.d(TAG, "successful material" + materialDetails.toString())
-        if (materialDetails.size > 0) {
-            (this.materialDetails as MutableLiveData<MaterialDetails>).value = materialDetails.first()
+    private fun handleMaterialResponse(materials: Array<Material>) {
+        Log.d(TAG, "successful material" + materials.toString())
+        if (materials.size > 0) {
+            (this.materials as MutableLiveData<Material>).value = materials.first()
         }else {
-            (this.materialDetails as MutableLiveData<MaterialDetails>).value = null
+            (this.materials as MutableLiveData<Material>).value = null
 
         }
     }
@@ -38,7 +38,7 @@ class MaterialDetailsScanViewModel : ViewModel() {
         if (error is SocketException || error is SocketTimeoutException) {
             (networkError as MutableLiveData<Boolean>).value = true
         } else {
-            (this.materialDetails as MutableLiveData<MaterialDetails>).value = null
+            (this.materials as MutableLiveData<Material>).value = null
         }
     }
 }

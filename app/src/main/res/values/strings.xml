@@ -4,11 +4,11 @@
     <string name="Scan">Scan</string>
     <string name="todo">TODO</string>
     <string name="view_material_details">Material Details</string>
-    <string name="asset_barcode">Asset Barcode</string>
+    <string name="material_barcode">Material Barcode</string>
     <string name="scanTextView">TextView</string>
     <string name="locationTextView">Asset(s) at Location</string>
     <string name="button">Scan</string>
-    <string name="scan_location">Scan Location</string>
+    <string name="scan_location">Scan Location</string>s
     <string name="submit_audit">Submit Audit</string>
     <string name="scane_location">Scan Location</string>
     <string name="scane_asset_barcode">Scan asset barcode</string>
@@ -37,4 +37,5 @@
     <string name="machine_maintenance">Machine Maintenance</string>
     <string name="receive_at_store">Receive at Store</string>
     <string name="drop_at_location">Drop At Location</string>
+    <string name="material_inward_button">Material Details</string>
 </resources>

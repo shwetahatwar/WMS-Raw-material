@@ -29,7 +29,7 @@ class DispatchPickingListsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(DispatchPickingListsViewModel::class.java)
 
-        (this.activity as AppCompatActivity).setTitle("Material Picking Lists")
+        (this.activity as AppCompatActivity).setTitle("Picking Dispatch Slips")
 
         // TODO: Use the ViewModel
     }

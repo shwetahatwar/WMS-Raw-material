@@ -26,26 +26,85 @@ class User {
     var token: String? = null
 }
 
-class MaterialDetails {
-    var id: Number? = null
-    var createdAt: Number? = null
-    var updatedAt: Number? = null
-    var requestedQuantity: Number? = null
-    var actualQuantity: Number? = null
-    var materialStatus: String? = null
-    var status: Number? = null
-    var estimatedDate: String? = null
-    var barcodeSerial: String? = null
+class Material {
+    var materialType: String? = null
+    var materialCode: String? = null
+    var materialDescription: String? = null
+    var genericName: String? = null
+    var packingType: String? = null
+    var packSize: String? = null
+    var netWeight: String? = null
+    var grossWeight: String? = null
+    var tareWeight: String? = null
+    var uom: String? = null
+    var batchCode: String?  = null
+    var status: String? = null
     var createdBy: User? = null
     var updatedBy: User? = null
 }
 
+class  MaterialInward {
+    var materialId: Material? = null
+//    var materialCode: Number = 0
+    var batchNumber: String? = null
+    var serialNumber: String? = null
+    var isScrapped: Boolean = false
+    var dispatchSlipId: Number? = null
+    var status: Boolean = false
+//    var createdBy: User? = null
+//    var updatedBy: User? = null
+}
+
+class Ttat {
+    var truckNumber: String = ""
+    var capacity: String = ""
+    var inTime: String = ""
+    var outTime: String = ""
+    var driver: String = ""
+    var loadStartTime: String = ""
+    var loadEndTime: String = ""
+    var loadingTime: String = ""
+    var inOutTime: String = ""
+    var idleTime: String = ""
+//    var createdBy: User? = null
+//    var updatedBy: User? = null
+}
+
+class Depo {
+    var name: String  = ""
+    var location: String = ""
+    var status: String  = ""
+//    var createdBy: User? = null
+//    var updatedBy: User? = null
+}
+
+
+class DispatchSlip {
+    var dispatchSlipNumber: String = ""
+    var truckId: Ttat? = null
+    var depoId: Depo? = null
+    var status: String = ""
+//    var createdBy: User? = null
+//    var updatedBy: User? = null
+}
+
+class DispatchSlipItem {
+
+}
+
+class Project {
+
+}
+
+class ProjectAuditItem {
+
+}
 
 interface ApiInterface {
     @POST("users/sign_in")
     fun login(@Body signInRequest: SignInRequest): Observable<SignInResponse>
 
     @GET("material")
-    fun getMaterialDetail(@Query("material") barcodeSerial: String): Observable<Array<MaterialDetails>>
+    fun getMaterialDetails(@Query("barcode") barcodeSerial: String): Observable<Array<Material>>
 
 }
