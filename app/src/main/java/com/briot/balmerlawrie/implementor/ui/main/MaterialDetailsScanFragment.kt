@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.briot.balmerlawrie.implementor.MainActivity
 import com.briot.balmerlawrie.implementor.R
+import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.remote.Material
 import com.pascalwelsch.arrayadapter.ArrayAdapter
 import io.github.pierry.progress.Progress
@@ -51,7 +52,7 @@ class MaterialDetailsScanFragment : Fragment() {
         materialResultId.visibility = View.GONE
 
         viewModel.materials.observe(this, Observer<Material> {
-            MainActivity.hideProgress(this.progress)
+            UiHelper.hideProgress(this.progress)
             this.progress = null
 
             materialResultId.visibility = View.GONE
@@ -76,7 +77,7 @@ class MaterialDetailsScanFragment : Fragment() {
             oldMaterial = it
 
             if (it == null) {
-                MainActivity.showToast(this.activity as AppCompatActivity, "Material not found for scanned Barcode")
+                UiHelper.showToast(this.activity as AppCompatActivity, "Material not found for scanned Barcode")
                 materialScanText.text?.clear()
                 materialScanText.requestFocus()
             }
@@ -84,10 +85,10 @@ class MaterialDetailsScanFragment : Fragment() {
 
         viewModel.networkError.observe(this, Observer<Boolean> {
             if (it == true) {
-                MainActivity.hideProgress(this.progress)
+                UiHelper.hideProgress(this.progress)
                 this.progress = null
 
-                MainActivity.showAlert(this.activity as AppCompatActivity, "Server is not reachable, please check if your network connection is working");
+                UiHelper.showAlert(this.activity as AppCompatActivity, "Server is not reachable, please check if your network connection is working");
             }
         })
 
@@ -96,7 +97,7 @@ class MaterialDetailsScanFragment : Fragment() {
             if (keyEvent == null) {
                 Log.d("materialDetailsScan: ", "event is null")
             } else if ((materialScanText.text != null && materialScanText.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE || ((keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
-                this.progress = MainActivity.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+                this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
                 materialResultId.removeAllViews()
                 (materialItemsList.adapter as MaterialItemsAdapter).clear()
                 viewModel.loadMaterialItems(materialScanText.text.toString())
@@ -108,7 +109,7 @@ class MaterialDetailsScanFragment : Fragment() {
 
         viewMaterialDetails.setOnClickListener {
             if (materialScanText.text != null && materialScanText.text!!.isNotEmpty()) {
-                this.progress = MainActivity.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+                this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
                 materialResultId.removeAllViews()
                 (materialItemsList.adapter as MaterialItemsAdapter).clear()
                 viewModel.loadMaterialItems(materialScanText.text.toString())

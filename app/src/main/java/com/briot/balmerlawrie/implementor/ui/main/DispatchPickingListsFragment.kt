@@ -38,6 +38,7 @@ class DispatchPickingListsFragment : Fragment() {
     private var progress: Progress? = null
     private var oldDispatchSlipList: Array<DispatchSlip?>? = null
     lateinit var recyclerView: RecyclerView
+    private var userId = 1;
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,6 +84,8 @@ class DispatchPickingListsFragment : Fragment() {
             }
         })
 
+        viewModel.loadDispatchPickingLists(userId)
+
         // TODO: Use the ViewModel
     }
 
@@ -94,7 +97,7 @@ open class SimpleAdapter(private val recyclerView: androidx.recyclerview.widget.
         val itemView = LayoutInflater.from(parent.context)
                 .inflate(R.layout.dispatch_picking_lists_fragment, parent, false)
 
-        return ViewHolder(itemView, parent.context)
+        return ViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -105,7 +108,7 @@ open class SimpleAdapter(private val recyclerView: androidx.recyclerview.widget.
         return dispatchSlips.value?.size ?: 0
     }
 
-    open inner class ViewHolder(itemView: View, context: Context) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+    open inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         protected val dispatchSlipId: TextView
 
         init {

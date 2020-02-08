@@ -20,6 +20,7 @@ import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.login_fragment.*
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.ViewModelProvider
+import com.briot.balmerlawrie.implementor.UiHelper
 
 
 class LoginFragment : androidx.fragment.app.Fragment() {
@@ -46,7 +47,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
         viewModel.networkError.observe(this, Observer<Boolean> {
 
             if (it == true) {
-                MainActivity.hideProgress(this.progress)
+                UiHelper.hideProgress(this.progress)
                 this.progress = null
 
                 var message: String = "Server is not reachable, please check if your network connection is working"
@@ -54,7 +55,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
                     message = viewModel.errorMessage
                 }
 
-                MainActivity.showToast(this.activity as AppCompatActivity, message);
+                UiHelper.showToast(this.activity as AppCompatActivity, message);
             }
         })
 

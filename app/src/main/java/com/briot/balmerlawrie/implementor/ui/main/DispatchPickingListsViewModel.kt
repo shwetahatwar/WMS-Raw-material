@@ -16,7 +16,7 @@ class DispatchPickingListsViewModel : ViewModel() {
     val invalidDispatchPickerList: Array<DispatchSlip?> = arrayOf(null)
     var userId: Int = 0
 
-    fun loadDispatchPickingLists(employerId: String) {
+    fun loadDispatchPickingLists(userId: Int) {
         (networkError as MutableLiveData<Boolean>).value = false
         (this.dispatchPickerList as MutableLiveData<Array<DispatchSlip?>>).value = emptyArray()
 
