@@ -84,8 +84,6 @@ class DispatchSlip {
     var truckId: Ttat? = null
     var depoId: Depo? = null
     var status: String = ""
-//    var createdBy: User? = null
-//    var updatedBy: User? = null
 }
 
 class DispatchSlipItem {
@@ -100,11 +98,15 @@ class ProjectAuditItem {
 
 }
 
+
 interface ApiInterface {
     @POST("users/sign_in")
     fun login(@Body signInRequest: SignInRequest): Observable<SignInResponse>
 
     @GET("material")
     fun getMaterialDetails(@Query("barcode") barcodeSerial: String): Observable<Array<Material>>
+
+    @GET("/dispatchpickerrelation/users/{userid}/dispatchslips/")
+    fun getAssignedPickerDispatchSlips(@Path("userid") userId: Int): Observable<Array<DispatchSlip?>>
 
 }

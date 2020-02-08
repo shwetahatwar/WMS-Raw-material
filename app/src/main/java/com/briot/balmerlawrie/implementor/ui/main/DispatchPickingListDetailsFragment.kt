@@ -10,13 +10,13 @@ import androidx.lifecycle.ViewModelProvider
 
 import com.briot.balmerlawrie.implementor.R
 
-class DispatchPickingListFragment : Fragment() {
+class DispatchPickingListDetailsFragment : Fragment() {
 
     companion object {
-        fun newInstance() = DispatchPickingListFragment()
+        fun newInstance() = DispatchPickingListDetailsFragment()
     }
 
-    private lateinit var viewModel: DispatchPickingListViewModel
+    private lateinit var viewModel: DispatchPickingListDetailsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,7 +27,7 @@ class DispatchPickingListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(DispatchPickingListViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(DispatchPickingListDetailsViewModel::class.java)
 
         (this.activity as AppCompatActivity).setTitle("Picking")
 

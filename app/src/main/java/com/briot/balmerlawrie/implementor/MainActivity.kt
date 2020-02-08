@@ -1,17 +1,25 @@
 package com.briot.balmerlawrie.implementor
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
+import com.google.android.material.snackbar.Snackbar
 import io.github.pierry.progress.Progress
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -22,9 +30,13 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import com.google.gson.GsonBuilder
 import com.google.gson.Gson
+import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.main_fragment.*
+import java.net.SocketException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class ResponseHeaderAuthTokenInterceptor : Interceptor {
@@ -85,36 +97,7 @@ class RetrofitHelper {
 }
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        fun showAlert(activity: AppCompatActivity, message: String) {
-            AlertDialog.Builder(activity).create().apply {
-                setTitle("Alert")
-                setMessage(message)
-                setButton(AlertDialog.BUTTON_NEUTRAL, "OK", { dialog, _ -> dialog.dismiss() })
-                show()
-            }
-        }
 
-        fun showToast(activity: AppCompatActivity, message: String) {
-            Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
-        }
-
-        fun showProgressIndicator(context: Context, message: String): Progress {
-            val progress = Progress(context)
-
-            progress.setBackgroundColor(context.resources.getColor(android.R.color.holo_blue_dark))
-                    .setMessage(message)
-                    .setMessageColor(context.resources.getColor(android.R.color.white))
-                    .setProgressColor(context.resources.getColor(android.R.color.white))
-                    .show();
-
-            return progress
-        }
-
-        fun hideProgress(progress: Progress?) {
-            progress?.dismiss()
-        }
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
@@ -182,4 +165,90 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+}
+
+class UiHelper {
+    companion object {
+        val SNACKBAR_COLOR = Color.parseColor("#E9E67E22")
+
+        fun showAlert(activity: AppCompatActivity, message: String, cancellable: Boolean = false) {
+            AlertDialog.Builder(activity).create().apply {
+                setTitle("Alert")
+                setMessage(message)
+                setCancelable(cancellable)
+                setButton(AlertDialog.BUTTON_NEUTRAL, "OK", { dialog, _ -> dialog.dismiss() })
+                show()
+            }
+        }
+
+        fun showSnackbarMessage(activity: AppCompatActivity, message: String, duration: Int = Snackbar.LENGTH_INDEFINITE) {
+            val coordinatorLayout = activity.findViewById<androidx.coordinatorlayout.widget.CoordinatorLayout>(R.id.container)
+
+            val snackbar = Snackbar.make(coordinatorLayout!!, message, duration)
+                    .setAction("OK", View.OnClickListener {
+
+                    })
+
+            snackbar.setActionTextColor(Color.WHITE)
+            val actionButton = snackbar.view.findViewById<Button>(com.google.android.material.R.id.snackbar_action)
+            actionButton.typeface = ResourcesCompat.getFont(activity, R.font.lato_bold)
+            actionButton.textSize = 18f
+
+            val snackbarTextView = snackbar.view
+                    .findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+            snackbarTextView.setTextColor(Color.WHITE)
+            snackbarTextView.typeface = ResourcesCompat.getFont(activity, R.font.lato)
+            snackbarTextView.textSize = 16f
+
+            snackbar.view.setBackgroundColor(SNACKBAR_COLOR)
+            snackbar.show()
+        }
+
+        fun showNoInternetSnackbarMessage(activity: AppCompatActivity) {
+            showSnackbarMessage(activity, activity.getString(R.string.no_internet_connection_message), Snackbar.LENGTH_INDEFINITE)
+        }
+
+        fun showSomethingWentWrongSnackbarMessage(activity: AppCompatActivity) {
+            showSnackbarMessage(activity, activity.getString(R.string.oops_something_went_wrong))
+        }
+
+        fun showTryAgainLaterSnackbarMessage(activity: AppCompatActivity) {
+            showSnackbarMessage(activity, activity.getString(R.string.try_again_later), Snackbar.LENGTH_LONG)
+        }
+
+        fun showProgressIndicator(context: Context, message: String): Progress {
+            val progress = Progress(context)
+
+            progress.setBackgroundColor(Color.parseColor("#EEEEEE"))
+                    .setMessage(message)
+                    .setMessageColor(Color.parseColor("#444444"))
+                    .setProgressColor(Color.parseColor("#444444"))
+                    .show()
+
+            return progress
+        }
+
+        fun hideProgress(progress: Progress?) {
+            progress?.dismiss()
+        }
+
+        fun isNetworkError(error: Throwable) =
+                error is SocketException || error is SocketTimeoutException || error is UnknownHostException
+
+        fun showAlert(activity: AppCompatActivity, message: String) {
+            AlertDialog.Builder(activity).create().apply {
+                setTitle("Alert")
+                setMessage(message)
+                setButton(AlertDialog.BUTTON_NEUTRAL, "OK", { dialog, _ -> dialog.dismiss() })
+                show()
+            }
+        }
+
+        fun showToast(activity: AppCompatActivity, message: String) {
+            Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+        }
+
+    }
+
+
 }
