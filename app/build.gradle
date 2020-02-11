@@ -22,20 +22,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            //buildConfigField "String", "HOSTNAME", "\"https://briot-asset-server.herokuapp.com/api/\""
-//            buildConfigField "String", "HOSTNAME", "\"https://tata-marcopolo-iiot-server.herokuapp.com/\""
-//            buildConfigField "String", "HOSTNAME", "\"http://10.0.2.2:1337\""
             buildConfigField "String", "HOSTNAME", "\"http://172.25.121.49:1337\""
         }
 
         debug {
-            //buildConfigField "String", "HOSTNAME", "\"https://briot-asset-server.herokuapp.com/api/\""
-//            buildConfigField "String", "HOSTNAME", "\"https://tata-marcopolo-iiot-server.herokuapp.com\""
-            buildConfigField "String", "HOSTNAME", "\"http://172.25.121.49:1337\""
+//            buildConfigField "String", "HOSTNAME", "\"http://172.25.121.49:1337\""
 //            buildConfigField "String", "HOSTNAME", "\"http://192.168.0.11:1337\""
 
 //            buildConfigField "String", "HOSTNAME", "\"http://192.168.43.7:1337\""
-//            buildConfigField "String", "HOSTNAME", "\"http://10.0.2.2:1337\""
+            buildConfigField "String", "HOSTNAME", "\"http://10.0.2.2:3000\""
         }
         lintOptions {
 //            checkReleaseBuilds false
