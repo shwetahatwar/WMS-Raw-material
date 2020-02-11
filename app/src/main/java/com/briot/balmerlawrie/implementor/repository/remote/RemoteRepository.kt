@@ -37,5 +37,13 @@ class RemoteRepository {
                 .subscribe(handleResponse, handleError)
     }
 
+    fun getAssignedLoaderDispatchSlips(userId: Int, handleResponse: (Array<DispatchSlip?>) -> Unit, handleError: (Throwable) -> Unit) {
+        RetrofitHelper.retrofit.create(ApiInterface::class.java)
+                .getAssignedLoaderDispatchSlips(userId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(handleResponse, handleError)
+    }
+
 
 }

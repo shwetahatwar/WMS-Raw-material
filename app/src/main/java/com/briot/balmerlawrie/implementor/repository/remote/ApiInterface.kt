@@ -109,4 +109,6 @@ interface ApiInterface {
     @GET("/dispatchpickerrelation/users/{userid}/dispatchslips/")
     fun getAssignedPickerDispatchSlips(@Path("userid") userId: Int): Observable<Array<DispatchSlip?>>
 
+    @GET("/dispatchloaderrelation/users/{userid}/dispatchslips/")
+    fun getAssignedLoaderDispatchSlips(@Path("userid") userId: Int): Observable<Array<DispatchSlip?>>
 }
