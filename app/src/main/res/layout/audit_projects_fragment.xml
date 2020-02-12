@@ -6,6 +6,7 @@
     tools:context=".ui.main.AuditProjectsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/auditprojects_projectlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </FrameLayout>

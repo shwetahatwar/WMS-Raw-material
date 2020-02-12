@@ -53,5 +53,13 @@ class RemoteRepository {
                 .subscribe(handleResponse, handleError)
     }
 
+    fun getProjects(status: String, handleResponse: (Array<Project?>) -> Unit, handleError: (Throwable) -> Unit) {
+        RetrofitHelper.retrofit.create(ApiInterface::class.java)
+                .getAuditProjects(status)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(handleResponse, handleError)
+    }
+
 
 }

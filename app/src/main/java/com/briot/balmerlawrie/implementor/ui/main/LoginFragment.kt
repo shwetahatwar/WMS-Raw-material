@@ -55,6 +55,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
                 PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_TOKEN, it.token!!)
 //                PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_ID, it.id!!.toString())
                 PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_NAME, it.username!!)
+                this.context?.let { it1 -> PrefRepository.singleInstance.serializePrefs(it1) }
 
                 Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)
             } else {

@@ -93,7 +93,13 @@ class DispatchSlipItem {
 }
 
 class Project {
-
+    var name: String = ""
+    var auditors: String = ""
+    var start: String = ""
+    var end: String = ""
+    var status: Boolean = false
+//    var createdBy: User? = null
+//    var updatedBy: User? = null
 }
 
 class ProjectAuditItem {
@@ -116,4 +122,7 @@ interface ApiInterface {
 
     @GET("/dispatchloaderrelation/users/{userid}/dispatchslips/")
     fun getAssignedLoaderDispatchSlips(@Path("userid") userId: Int): Observable<Array<DispatchSlip?>>
+
+    @GET("/projects/{status}")
+    fun getAuditProjects(@Path("status") status: String): Observable<Array<Project?>>
 }
