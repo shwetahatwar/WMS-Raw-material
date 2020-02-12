@@ -191,13 +191,13 @@ class UiHelper {
 
             snackbar.setActionTextColor(Color.WHITE)
             val actionButton = snackbar.view.findViewById<Button>(com.google.android.material.R.id.snackbar_action)
-            actionButton.typeface = ResourcesCompat.getFont(activity, R.font.lato_bold)
+//            actionButton.typeface = ResourcesCompat.getFont(activity, R.font.lato_bold)
             actionButton.textSize = 18f
 
             val snackbarTextView = snackbar.view
                     .findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
             snackbarTextView.setTextColor(Color.WHITE)
-            snackbarTextView.typeface = ResourcesCompat.getFont(activity, R.font.lato)
+//            snackbarTextView.typeface = ResourcesCompat.getFont(activity, R.font.lato)
             snackbarTextView.textSize = 16f
 
             snackbar.view.setBackgroundColor(SNACKBAR_COLOR)

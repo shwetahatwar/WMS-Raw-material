@@ -65,12 +65,12 @@ class LoginFragment : androidx.fragment.app.Fragment() {
             keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
 
             // @dineshgajjar - remove following statement later on
-            Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)
+//            Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)
 
 
             // @dineshgajjar - remove following coments later on
-//            this.progress = MainActivity.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
-//            viewModel.loginUser(username.text.toString(), password.text.toString())
+            this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+            viewModel.loginUser(username.text.toString(), password.text.toString())
         }
 
 //        username.setOnEditorActionListener { _, i, keyEvent ->

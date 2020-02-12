@@ -18,6 +18,7 @@ import com.briot.balmerlawrie.implementor.MainActivity
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.remote.Material
+import com.briot.balmerlawrie.implementor.repository.remote.MaterialInward
 import com.pascalwelsch.arrayadapter.ArrayAdapter
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.material_details_row.view.*
@@ -32,7 +33,7 @@ class MaterialDetailsScanFragment : Fragment() {
 
     private lateinit var viewModel: MaterialDetailsScanViewModel
     private var progress: Progress? = null
-    private var oldMaterial: Material? = null
+    private var oldMaterialInward: MaterialInward? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -51,30 +52,27 @@ class MaterialDetailsScanFragment : Fragment() {
         materialItemsList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
         materialResultId.visibility = View.GONE
 
-        viewModel.materials.observe(this, Observer<Material> {
+        viewModel.materialInwards.observe(this, Observer<MaterialInward> {
             UiHelper.hideProgress(this.progress)
             this.progress = null
 
             materialResultId.visibility = View.GONE
             (materialItemsList.adapter as MaterialItemsAdapter).clear()
-            if (it != null && it != oldMaterial) {
+            if (it != null && it != oldMaterialInward) {
                 materialScanText.text?.clear()
                 materialScanText.requestFocus()
 
                 (materialItemsList.adapter as MaterialItemsAdapter).add(it)
-//                (materialItemsList.adapter as MaterialDetailsItemsAdapter).notifyDataSetChanged()
+                (materialItemsList.adapter as MaterialItemsAdapter).notifyDataSetChanged()
 
                 // dismiss keyboard now
                 if (activity != null) {
                     val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
-
                 }
-
-
             }
 
-            oldMaterial = it
+            oldMaterialInward = it
 
             if (it == null) {
                 UiHelper.showToast(this.activity as AppCompatActivity, "Material not found for scanned Barcode")
@@ -119,7 +117,7 @@ class MaterialDetailsScanFragment : Fragment() {
 
 }
 
-class MaterialItemsAdapter(val context: Context) : ArrayAdapter<Material, MaterialItemsAdapter.ViewHolder>() {
+class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, MaterialItemsAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
@@ -154,13 +152,30 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<Material, Materi
         }
     }
 
-    override fun getItemId(item: Material): Any {
+    override fun getItemId(item: MaterialInward): Any {
         return item
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val item = getItem(position) as Material
+        val item = getItem(position) as MaterialInward
+        holder.materialType.text = item.materialId!!.materialType
+        holder.materialProductCode.text = item.materialId!!.materialCode
+        holder.materialProductName.text = item.materialId!!.materialDescription
+        holder.materialGrossWeight.text = item.materialId!!.grossWeight
+        holder.materialTareWeight.text = item.materialId!!.tareWeight
+        holder.materialNetWeight.text = item.materialId!!.netWeight
+        holder.materialBatchCode.text = item.materialId!!.batchCode
+//        holder.materialInwardDate.text = item.
+//        holder.materialDispatchSlipNumber.text = item.dispatchSlipId.toString()
+//        holder.materialPicker.text = item.dispatchSlipId.
+        holder.materialPicker.text = item.dispatchSlipId!!.toString()
+        holder.materialLoader.text = item.dispatchSlipId!!.toString()
+        holder.materialDispatchTruckNumber.text = item.dispatchSlipId!!.toString()
+        holder.depot.text = item.dispatchSlipId!!.toString()
+
+
+
 
     }
 
