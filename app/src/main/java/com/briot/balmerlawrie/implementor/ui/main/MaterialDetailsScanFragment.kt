@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.briot.balmerlawrie.implementor.MainActivity
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
+import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlip
 import com.briot.balmerlawrie.implementor.repository.remote.Material
 import com.briot.balmerlawrie.implementor.repository.remote.MaterialInward
 import com.pascalwelsch.arrayadapter.ArrayAdapter
@@ -63,7 +64,7 @@ class MaterialDetailsScanFragment : Fragment() {
                 materialScanText.requestFocus()
 
                 (materialItemsList.adapter as MaterialItemsAdapter).add(it)
-                (materialItemsList.adapter as MaterialItemsAdapter).notifyDataSetChanged()
+//                (materialItemsList.adapter as MaterialItemsAdapter).notifyDataSetChanged()
 
                 // dismiss keyboard now
                 if (activity != null) {
@@ -88,6 +89,14 @@ class MaterialDetailsScanFragment : Fragment() {
 
                 UiHelper.showAlert(this.activity as AppCompatActivity, "Server is not reachable, please check if your network connection is working");
             }
+        })
+
+        viewModel.dispatchSlip.observe(this, Observer<DispatchSlip> {
+            if (it != null) {
+                (this.materialItemsList.adapter as MaterialItemsAdapter).getItem(0)?.dispatchSlip = it
+            }
+
+            (materialItemsList.adapter as MaterialItemsAdapter).notifyDataSetChanged()
         })
 
         materialScanText.setOnEditorActionListener { _, i, keyEvent ->
@@ -134,6 +143,7 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
         val materialLoader: TextView
         val materialDispatchTruckNumber: TextView
         val depot: TextView
+        var materialScrapped: TextView
 
         init {
             materialType = itemView.material_type_value as TextView
@@ -149,6 +159,7 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
             materialLoader = itemView.material_loader_value as TextView
             materialDispatchTruckNumber = itemView.material_trucknumber_value as TextView
             depot = itemView.material_depot_value as TextView
+            materialScrapped = itemView.material_scrap_value as TextView
         }
     }
 
@@ -159,24 +170,32 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val item = getItem(position) as MaterialInward
-        holder.materialType.text = item.materialId!!.materialType
-        holder.materialProductCode.text = item.materialId!!.materialCode
-        holder.materialProductName.text = item.materialId!!.materialDescription
-        holder.materialGrossWeight.text = item.materialId!!.grossWeight
-        holder.materialTareWeight.text = item.materialId!!.tareWeight
-        holder.materialNetWeight.text = item.materialId!!.netWeight
-        holder.materialBatchCode.text = item.materialId!!.batchCode
+        if (item.materialId != null) {
+            holder.materialType.text = item.materialId!!.materialType
+            holder.materialProductCode.text = item.materialId!!.materialCode
+            holder.materialProductName.text = item.materialId!!.materialDescription
+            holder.materialGrossWeight.text = item.materialId!!.grossWeight
+            holder.materialTareWeight.text = item.materialId!!.tareWeight
+            holder.materialNetWeight.text = item.materialId!!.netWeight
+            holder.materialBatchCode.text = item.materialId!!.batchCode
+            holder.materialScrapped.text = item.isScrapped.toString()
+        }
+
 //        holder.materialInwardDate.text = item.
-//        holder.materialDispatchSlipNumber.text = item.dispatchSlipId.toString()
-//        holder.materialPicker.text = item.dispatchSlipId.
-        holder.materialPicker.text = item.dispatchSlipId!!.toString()
+        holder.materialPicker.text = item.dispatchSlip!!.toString()
         holder.materialLoader.text = item.dispatchSlipId!!.toString()
-        holder.materialDispatchTruckNumber.text = item.dispatchSlipId!!.toString()
-        holder.depot.text = item.dispatchSlipId!!.toString()
 
+        if (item.dispatchSlip != null) {
+            holder.materialDispatchSlipNumber.text = item.dispatchSlip!!.dispatchSlipNumber
 
+            if  (item.dispatchSlip!!.truckId != null) {
+                holder.materialDispatchTruckNumber.text = item.dispatchSlip!!.truckId!!.truckNumber
+            }
 
-
+            if (item.dispatchSlip!!.depoId != null) {
+                holder.depot.text = item.dispatchSlip!!.depoId!!.name
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

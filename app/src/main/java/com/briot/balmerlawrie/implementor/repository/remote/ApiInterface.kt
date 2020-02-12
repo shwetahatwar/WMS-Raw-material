@@ -52,6 +52,7 @@ class  MaterialInward {
     var isInward: Boolean = false
     var dispatchSlipId: Number? = null
     var status: Boolean = false
+    var dispatchSlip: DispatchSlip? = null
 //    var createdBy: User? = null
 //    var updatedBy: User? = null
     }

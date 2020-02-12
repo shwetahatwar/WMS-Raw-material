@@ -21,7 +21,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -41,7 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -61,7 +63,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -81,7 +84,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -101,7 +105,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -121,7 +126,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -141,7 +147,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -161,7 +168,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -181,7 +189,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -201,7 +210,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -221,7 +231,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -241,7 +252,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 
     <LinearLayout
@@ -261,6 +273,29 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="NA" />
+            android:text="NA"
+            android:textAlignment="textEnd" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Is Scrapped?"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/material_scrap_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="NA"
+            android:textAlignment="textEnd" />
     </LinearLayout>
 </LinearLayout>
