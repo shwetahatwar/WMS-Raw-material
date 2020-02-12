@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.login_fragment.*
 import android.view.inputmethod.InputMethodManager
 import androidx.lifecycle.ViewModelProvider
 import com.briot.balmerlawrie.implementor.UiHelper
+import com.briot.balmerlawrie.implementor.repository.remote.SignInResponse
 
 
 class LoginFragment : androidx.fragment.app.Fragment() {
@@ -44,6 +45,24 @@ class LoginFragment : androidx.fragment.app.Fragment() {
 
         username.requestFocus()
 
+        viewModel.signInResponse.observe(this, Observer<SignInResponse> {
+            UiHelper.hideProgress(this.progress)
+            this.progress = null
+
+            if (it != null) {
+                this.activity?.invalidateOptionsMenu()
+//                PrefRepository.singleInstance.setKeyValue(PrefConstants().USERLOGGEDIN, username.text.toString())
+                PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_TOKEN, it.token!!)
+//                PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_ID, it.id!!.toString())
+                PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_NAME, it.username!!)
+
+                Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)
+            } else {
+                UiHelper.showToast(this.activity as AppCompatActivity, "An error has occurred, please try again.");
+            }
+
+        })
+
         viewModel.networkError.observe(this, Observer<Boolean> {
 
             if (it == true) {
@@ -64,36 +83,11 @@ class LoginFragment : androidx.fragment.app.Fragment() {
             val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
 
-            // @dineshgajjar - remove following statement later on
-//            Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)
-
 
             // @dineshgajjar - remove following coments later on
             this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
             viewModel.loginUser(username.text.toString(), password.text.toString())
         }
-
-//        username.setOnEditorActionListener { _, i, keyEvent ->
-//            var handled = false
-//
-//            if (i == EditorInfo.IME_ACTION_DONE || (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_DOWN)) {
-////                password.requestFocus()
-//            }
-//            handled
-//
-//        }
-//
-//        password.setOnEditorActionListener { _, i, keyEvent ->
-//            var handled = false
-//
-//            if (i == EditorInfo.IME_ACTION_DONE || (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_DOWN)) {
-////                this.progress = MainActivity.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
-////                viewModel.loginUser(username.text.toString(), password.text.toString())
-//            }
-//            handled
-//
-//        }
-
     }
 
 }

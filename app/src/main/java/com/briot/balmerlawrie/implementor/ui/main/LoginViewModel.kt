@@ -17,7 +17,7 @@ class LoginViewModel : ViewModel() {
 
     val TAG = "LoginViewModel"
 
-//    val user: LiveData<PopulatedUser> = MutableLiveData<PopulatedUser>()
+    val signInResponse: LiveData<SignInResponse> = MutableLiveData<SignInResponse>()
     var errorMessage: String = ""
 
     val networkError: LiveData<Boolean> = MutableLiveData<Boolean>()
@@ -30,7 +30,7 @@ class LoginViewModel : ViewModel() {
 
     private fun handleLoginResponse(signInResponse: SignInResponse) {
         Log.d(TAG, "successful user" + signInResponse.toString())
-//        (this.user as MutableLiveData<PopulatedUser>).value = signInResponse.user
+        (this.signInResponse as MutableLiveData<SignInResponse>).value = signInResponse
     }
 
     private fun handleLoginError(error: Throwable) {

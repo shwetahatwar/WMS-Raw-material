@@ -26,7 +26,8 @@ android {
         }
 
         debug {
-            buildConfigField "String", "HOSTNAME", "\"http://10.0.2.2:3000\""
+//            buildConfigField "String", "HOSTNAME", "\"http://10.0.2.2:3000\""
+            buildConfigField "String", "HOSTNAME", "\"https://briot-balmer-lawrie.herokuapp.com/\""
         }
         lintOptions {
 //            checkReleaseBuilds false
