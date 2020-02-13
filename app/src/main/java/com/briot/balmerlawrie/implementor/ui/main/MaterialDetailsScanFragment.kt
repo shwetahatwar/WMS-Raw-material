@@ -51,25 +51,32 @@ class MaterialDetailsScanFragment : Fragment() {
 
         materialItemsList.adapter = MaterialItemsAdapter(this.context!!)
         materialItemsList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this.context)
-        materialResultId.visibility = View.GONE
+//        materialResultId.visibility = View.GONE
 
         viewModel.materialInwards.observe(this, Observer<MaterialInward> {
             UiHelper.hideProgress(this.progress)
             this.progress = null
 
-            materialResultId.visibility = View.GONE
+//            materialResultId.visibility = View.GONE
             (materialItemsList.adapter as MaterialItemsAdapter).clear()
             if (it != null && it != oldMaterialInward) {
                 materialScanText.text?.clear()
                 materialScanText.requestFocus()
 
                 (materialItemsList.adapter as MaterialItemsAdapter).add(it)
-//                (materialItemsList.adapter as MaterialItemsAdapter).notifyDataSetChanged()
 
                 // dismiss keyboard now
                 if (activity != null) {
                     val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
+                }
+
+                if (it.dispatchSlip == null)  {
+                    UiHelper.hideProgress(this.progress)
+                    this.progress = null
+                    (materialItemsList.adapter as MaterialItemsAdapter).notifyDataSetChanged()
+                }  else  {
+                    viewModel.getMaterialDispatchSlip(it.dispatchSlip!!.dispatchSlipNumber)
                 }
             }
 
@@ -105,7 +112,7 @@ class MaterialDetailsScanFragment : Fragment() {
                 Log.d("materialDetailsScan: ", "event is null")
             } else if ((materialScanText.text != null && materialScanText.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE || ((keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
                 this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
-                materialResultId.removeAllViews()
+//                materialResultId.removeAllViews()
                 (materialItemsList.adapter as MaterialItemsAdapter).clear()
                 viewModel.loadMaterialItems(materialScanText.text.toString())
 
@@ -117,7 +124,7 @@ class MaterialDetailsScanFragment : Fragment() {
         viewMaterialDetails.setOnClickListener {
             if (materialScanText.text != null && materialScanText.text!!.isNotEmpty()) {
                 this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
-                materialResultId.removeAllViews()
+//                materialResultId.removeAllViews()
                 (materialItemsList.adapter as MaterialItemsAdapter).clear()
                 viewModel.loadMaterialItems(materialScanText.text.toString())
             }
@@ -130,9 +137,12 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
 
     class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
+        val materialBarcode: TextView
         val materialType: TextView
         val materialProductCode: TextView
         val materialProductName: TextView
+        val materialGenericName: TextView
+        var materialUOM: TextView
         val materialGrossWeight: TextView
         val materialTareWeight: TextView
         val materialNetWeight: TextView
@@ -146,9 +156,12 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
         var materialScrapped: TextView
 
         init {
+            materialBarcode = itemView.material_serialnumber_value as TextView
             materialType = itemView.material_type_value as TextView
             materialProductCode = itemView.material_productcode_value as TextView
             materialProductName = itemView.material_productname_value as TextView
+            materialGenericName = itemView.material_genericname_value as TextView
+            materialUOM = itemView.material_uom_value as TextView
             materialGrossWeight = itemView.material_grossweight_value as TextView
             materialTareWeight = itemView.material_tareweight_value as TextView
             materialNetWeight = itemView.material_netweight_value as TextView
@@ -170,22 +183,28 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         val item = getItem(position) as MaterialInward
+
+        holder.materialBarcode.text = item.serialNumber
+        holder.materialBatchCode.text = item.batchNumber
+        holder.materialScrapped.text = item.isScrapped.toString()
+
         if (item.materialId != null) {
-            holder.materialType.text = item.materialId!!.materialType
-            holder.materialProductCode.text = item.materialId!!.materialCode
-            holder.materialProductName.text = item.materialId!!.materialDescription
-            holder.materialGrossWeight.text = item.materialId!!.grossWeight
-            holder.materialTareWeight.text = item.materialId!!.tareWeight
-            holder.materialNetWeight.text = item.materialId!!.netWeight
-            holder.materialBatchCode.text = item.materialId!!.batchCode
-            holder.materialScrapped.text = item.isScrapped.toString()
+            holder.materialType.text = item.material!!.materialType
+            holder.materialProductCode.text = item.material!!.materialCode
+            holder.materialProductName.text = item.material!!.materialDescription
+            holder.materialGenericName.text = item.material!!.genericName
+            holder.materialUOM.text = item.material!!.UOM
+            holder.materialGrossWeight.text = item.material!!.grossWeight
+            holder.materialTareWeight.text = item.material!!.tareWeight
+            holder.materialNetWeight.text = item.material!!.netWeight
         }
 
 //        holder.materialInwardDate.text = item.
-        holder.materialPicker.text = item.dispatchSlip!!.toString()
-        holder.materialLoader.text = item.dispatchSlipId!!.toString()
 
         if (item.dispatchSlip != null) {
+            holder.materialPicker.text = item.dispatchSlip!!.toString()
+            holder.materialLoader.text = item.dispatchSlipId!!.toString()
+
             holder.materialDispatchSlipNumber.text = item.dispatchSlip!!.dispatchSlipNumber
 
             if  (item.dispatchSlip!!.truckId != null) {

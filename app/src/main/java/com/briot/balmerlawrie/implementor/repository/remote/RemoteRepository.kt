@@ -29,7 +29,7 @@ class RemoteRepository {
                 .subscribe(handleResponse, handleError)
     }
 
-    fun getDispatchSlip(dispatchSlipId: Int, handleResponse: (Array<DispatchSlip>) -> Unit, handleError: (Throwable) -> Unit) {
+    fun getDispatchSlip(dispatchSlipId: String, handleResponse: (Array<DispatchSlip>) -> Unit, handleError: (Throwable) -> Unit) {
         RetrofitHelper.retrofit.create(ApiInterface::class.java)
                 .getDispatchSlip(dispatchSlipId)
                 .subscribeOn(Schedulers.io())

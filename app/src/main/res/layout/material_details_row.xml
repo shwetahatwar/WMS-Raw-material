@@ -1,12 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#28009688"
+        android:orientation="horizontal"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
+
+        <TextView
+            android:id="@+id/material_serialnumber_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Barcode" />
+
+        <TextView
+            android:id="@+id/material_serialnumber_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="NA"
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_type_id"
@@ -22,12 +50,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#28009688"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_productcode_id"
@@ -43,12 +75,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_productname_id"
@@ -64,12 +99,65 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#28009688"
+        android:orientation="horizontal"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
+
+        <TextView
+            android:id="@+id/material_genericname_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Generic Name" />
+
+        <TextView
+            android:id="@+id/material_genericname_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="NA"
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
+
+        <TextView
+            android:id="@+id/material_uom_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="UOM" />
+
+        <TextView
+            android:id="@+id/material_uom_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="NA"
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#28009688"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_grossweight_id"
@@ -85,12 +173,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_tareweight_id"
@@ -106,12 +197,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#28009688"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_netweight_id"
@@ -127,12 +222,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_batchcode_id"
@@ -148,12 +246,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#28009688"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_inwardon_id"
@@ -169,12 +271,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_dispatchslipnumber_id"
@@ -190,12 +295,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#28009688"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_picker_id"
@@ -211,12 +320,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_loader_id"
@@ -232,12 +344,16 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#28009688"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_trucknumber_id"
@@ -253,12 +369,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/material_depot_id"
@@ -274,13 +393,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="#28009688"
+        android:orientation="horizontal"
+        android:paddingTop="2pt"
+        android:paddingBottom="2pt">
 
         <TextView
             android:id="@+id/textView2"
@@ -296,6 +419,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="NA"
-            android:textAlignment="textEnd" />
+            android:textAlignment="textEnd"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

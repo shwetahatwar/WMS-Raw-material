@@ -44,7 +44,7 @@ class MaterialDetailsScanViewModel : ViewModel() {
         }
     }
 
-    fun getMaterialDispatchSlip(dispatchSlipId: Int) {
+    fun getMaterialDispatchSlip(dispatchSlipId:  String) {
         (networkError as MutableLiveData<Boolean>).value = false
         RemoteRepository.singleInstance.getDispatchSlip(dispatchSlipId, this::handleDispatchSlipResponse, this::handleDispatchSlipError)
     }

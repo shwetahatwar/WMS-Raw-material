@@ -36,15 +36,15 @@ class Material {
     var netWeight: String? = null
     var grossWeight: String? = null
     var tareWeight: String? = null
-    var uom: String? = null
+    var UOM: String? = null
     var batchCode: String?  = null
     var status: String? = null
-    var createdBy: User? = null
-    var updatedBy: User? = null
+//    var createdBy: User? = null
+//    var updatedBy: User? = null
 }
 
 class  MaterialInward {
-    var materialId: Material? = null
+    var materialId: Number? = null
     var materialCode: Number = 0
     var batchNumber: String? = null
     var serialNumber: String? = null
@@ -53,6 +53,7 @@ class  MaterialInward {
     var dispatchSlipId: Number? = null
     var status: Boolean = false
     var dispatchSlip: DispatchSlip? = null
+    var material: Material? = null
 //    var createdBy: User? = null
 //    var updatedBy: User? = null
     }
@@ -112,10 +113,10 @@ interface ApiInterface {
     fun login(@Body signInRequest: SignInRequest): Observable<SignInResponse>
 
     @GET("materialinwards")
-    fun getMaterialDetails(@Query("barcode") barcodeSerial: String): Observable<Array<MaterialInward>>
+    fun getMaterialDetails(@Query("serialNumber")  serialNumber: String): Observable<Array<MaterialInward>>
 
     @GET("dispatchslip")
-    fun getDispatchSlip(@Path("id") dispatchSlipId: Int): Observable<Array<DispatchSlip>>
+    fun getDispatchSlip(@Path("id") dispatchSlipId: String): Observable<Array<DispatchSlip>>
 
     @GET("/dispatchpickerrelation/users/{userid}/dispatchslips/")
     fun getAssignedPickerDispatchSlips(@Path("userid") userId: Int): Observable<Array<DispatchSlip?>>
