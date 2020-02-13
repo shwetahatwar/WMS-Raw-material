@@ -186,7 +186,11 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
 
         holder.materialBarcode.text = item.serialNumber
         holder.materialBatchCode.text = item.batchNumber
-        holder.materialScrapped.text = item.isScrapped.toString()
+        if(item.isScrapped == true) {
+            holder.materialScrapped.text = "Scrapped"
+        } else {
+            holder.materialScrapped.text = "Active"
+        }
 
         if (item.materialId != null) {
             holder.materialType.text = item.material!!.materialType
