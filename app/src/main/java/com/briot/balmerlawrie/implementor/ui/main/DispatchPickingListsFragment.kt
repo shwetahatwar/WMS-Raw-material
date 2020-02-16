@@ -1,21 +1,13 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
-import android.content.Context
-import android.net.Uri
+
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.DecelerateInterpolator
-import android.view.animation.RotateAnimation
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -93,11 +85,11 @@ class DispatchPickingListsFragment : Fragment() {
 
 }
 
-open class SimpleAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlips: LiveData<Array<DispatchSlip?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleAdapter.ViewHolder>() {
+open class SimpleAdapter(private val recyclerView: RecyclerView, private val dispatchSlips: LiveData<Array<DispatchSlip?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.dispatch_picking_lists_fragment, parent, false)
+                .inflate(R.layout.dispatch_list_picking_row_item, parent, false)
 
         return ViewHolder(itemView)
     }
@@ -110,7 +102,7 @@ open class SimpleAdapter(private val recyclerView: androidx.recyclerview.widget.
         return dispatchSlips.value?.size ?: 0
     }
 
-    open inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+    open inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         protected val dispatchSlipId: TextView
 
         init {

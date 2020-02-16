@@ -1,12 +1,7 @@
 package com.briot.balmerlawrie.implementor
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
-import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
@@ -15,7 +10,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
-import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
@@ -28,12 +22,7 @@ import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 import okhttp3.Interceptor
 import okhttp3.Response
-import com.google.gson.GsonBuilder
-import com.google.gson.Gson
-import de.hdodenhof.circleimageview.CircleImageView
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.main_fragment.*
+import okhttp3.logging.HttpLoggingInterceptor
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -87,6 +76,15 @@ class RetrofitHelper {
 
             okHttpClient.interceptors().add(RequestHeaderAuthTokenInterceptor())
             okHttpClient.interceptors().add(ResponseHeaderAuthTokenInterceptor())
+
+            if (BuildConfig.DEBUG) {
+                val logging = HttpLoggingInterceptor();
+                // set your desired log level
+                logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+                okHttpClient.interceptors().add(logging);
+            }
+
 
             return okHttpClient.build()
         }
