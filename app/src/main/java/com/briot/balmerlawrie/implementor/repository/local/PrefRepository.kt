@@ -1,7 +1,6 @@
 package com.briot.balmerlawrie.implementor.repository.local
 
 import android.content.Context
-import com.mysql.cj.x.protobuf.MysqlxExpr
 
 class PrefRepository {
     companion object {

@@ -65,7 +65,7 @@ class DispatchPickingListsFragment : Fragment() {
                 UiHelper.hideProgress(this.progress)
                 this.progress = null
 
-                if (viewModel.invalidDispatchPickerList.first() == null) {
+                if (viewModel.dispatchPickerList.value.orEmpty().isNotEmpty() && viewModel.dispatchPickerList.value?.first() == null) {
                     UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
                 } else if (it != oldDispatchSlipList) {
                     picking_dispatchSlipsView.adapter?.notifyDataSetChanged()
@@ -83,6 +83,8 @@ class DispatchPickingListsFragment : Fragment() {
                 UiHelper.showNoInternetSnackbarMessage(this.activity as AppCompatActivity)
             }
         })
+
+        this.progress = UiHelper.showProgressIndicator(activity!!, "Loading picker list")
 
         viewModel.loadDispatchPickingLists(userId)
 
