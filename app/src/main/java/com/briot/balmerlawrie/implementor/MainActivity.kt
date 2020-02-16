@@ -62,7 +62,7 @@ class RequestHeaderAuthTokenInterceptor : Interceptor {
         val builder = chain.request().newBuilder()
 
         val tokenStr = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_TOKEN, "")
-        if (tokenStr != null && tokenStr.length > 1) {
+        if (tokenStr.length > 1) {
             val token: String = "JWT " + tokenStr
             builder.addHeader("Authorization", token)
         }
