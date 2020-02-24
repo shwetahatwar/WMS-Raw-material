@@ -69,24 +69,35 @@ class Ttat {
     var loadingTime: String = ""
     var inOutTime: String = ""
     var idleTime: String = ""
-//    var createdBy: User? = null
-//    var updatedBy: User? = null
+    var createdBy: String? = null
+    var updatedBy: String? = null
+    var createdAt: String? = null
+    var updatdAt: String? = null
 }
 
 class Depo {
     var name: String  = ""
     var location: String = ""
     var status: String  = ""
-//    var createdBy: User? = null
-//    var updatedBy: User? = null
+    var createdBy: String? = null
+    var updatedBy: String? = null
+    var createdAt: String? = null
+    var updatdAt: String? = null
 }
 
 
 class DispatchSlip {
     var dispatchSlipNumber: String = ""
-    var truckId: Ttat? = null
-    var depoId: Depo? = null
+    var truckId: Number? = null
+    var depoId: Number? = null
     var status: String = ""
+    var ttat: Ttat? = null
+    var dispatchSlipStatus: String? = null
+    var depot: Depo? = null
+    var createdBy: String? = null
+    var updatedBy: String? = null
+    var createdAt: String? = null
+    var updatdAt: String? = null
 }
 
 class DispatchSlipItem {

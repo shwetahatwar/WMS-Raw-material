@@ -1,31 +1,62 @@
 package com.briot.balmerlawrie.implementor
 
+import android.app.Application
 import android.content.Context
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation.findNavController
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 import com.google.android.material.snackbar.Snackbar
 import io.github.pierry.progress.Progress
+import okhttp3.Cache
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
-import okhttp3.Interceptor
-import okhttp3.Response
-import okhttp3.logging.HttpLoggingInterceptor
+import java.io.File
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.concurrent.TimeUnit
+
+// Not object class. AndroidManifest.xml error happen.
+class MainApplication : Application() {
+
+    init {
+        instance = this
+    }
+
+    companion object {
+        private var instance: MainApplication? = null
+
+        fun applicationContext() : Context {
+            return instance!!.applicationContext
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        // initialize for any
+
+        // Use ApplicationContext.
+        // example: SharedPreferences etc...
+        val context: Context = MainApplication.applicationContext()
+    }
+}
 
 
 class ResponseHeaderAuthTokenInterceptor : Interceptor {

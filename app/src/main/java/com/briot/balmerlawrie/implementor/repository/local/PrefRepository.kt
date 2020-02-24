@@ -46,4 +46,8 @@ class PrefConstants {
     public val EMPLOYEE_EMAIL = "EMPLOYEE_EMAIL"
     public val EMPLOYEE_PHONE = "EMPLOYEE_PHONE"
     public val EMPLOYEE_STATUS = "EMPLOYEE_STATUS"
+
+    public val MAX_STALE = 60 * 60 * 24 * 1 // one day
+    public val MAX_AGE = 5000
+
 }

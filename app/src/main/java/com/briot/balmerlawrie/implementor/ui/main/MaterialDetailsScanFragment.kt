@@ -212,11 +212,11 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
             holder.materialDispatchSlipNumber.text = item.dispatchSlip!!.dispatchSlipNumber
 
             if  (item.dispatchSlip!!.truckId != null) {
-                holder.materialDispatchTruckNumber.text = item.dispatchSlip!!.truckId!!.truckNumber
+                holder.materialDispatchTruckNumber.text = item.dispatchSlip!!.ttat!!.truckNumber
             }
 
             if (item.dispatchSlip!!.depoId != null) {
-                holder.depot.text = item.dispatchSlip!!.depoId!!.name
+                holder.depot.text = item.dispatchSlip!!.depot!!.name
             }
         }
     }

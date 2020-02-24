@@ -22,8 +22,8 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "HOSTNAME", "\"http://172.25.121.49:1337\""
-        }
+            buildConfigField "String", "HOSTNAME", "\"https://briot-balmer-lawrie.herokuapp.com/\""
+         }
 
         debug {
 //            buildConfigField "String", "HOSTNAME", "\"http://10.0.2.2:3000\""

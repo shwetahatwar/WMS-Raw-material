@@ -76,11 +76,8 @@ class DispatchPickingListsFragment : Fragment() {
             }
         })
 
-        this.progress = UiHelper.showProgressIndicator(activity!!, "Loading picker list")
-
+        this.progress = UiHelper.showProgressIndicator(activity!!, "Loading picking list")
         viewModel.loadDispatchPickingLists(userId)
-
-        // TODO: Use the ViewModel
     }
 
 }
