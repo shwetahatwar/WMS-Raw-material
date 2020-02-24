@@ -19,6 +19,8 @@ import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlip
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_picking_lists_fragment.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DispatchPickingListsFragment : Fragment() {
 
@@ -100,16 +102,44 @@ open class SimpleAdapter(private val recyclerView: RecyclerView, private val dis
     }
 
     open inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         protected val dispatchSlipId: TextView
+        protected val dispatchSlipTruckNumber: TextView
+        protected val dispatchSlipDriverName: TextView
+        protected val dispatchSlipDepotName: TextView
+        protected val dispatchSlipDepotLocation: TextView
+        protected val dispatchSlipDepotCreatedOn: TextView
 
         init {
             dispatchSlipId = itemView.findViewById(R.id.dispatch_list_row_title)
+            dispatchSlipTruckNumber = itemView.findViewById(R.id.dispatch_list_row_vehicle_number)
+            dispatchSlipDriverName = itemView.findViewById(R.id.dispatch_list_row_driver_name)
+            dispatchSlipDepotName = itemView.findViewById(R.id.dispatch_list_row_depot_name)
+            dispatchSlipDepotLocation = itemView.findViewById(R.id.dispatch_list_row_depot_location)
+            dispatchSlipDepotCreatedOn = itemView.findViewById(R.id.dispatch_list_row_creation_date)
         }
 
         fun bind() {
             val dispatchSlip = dispatchSlips.value!![adapterPosition]!!
 
             dispatchSlipId.text = dispatchSlip.dispatchSlipNumber
+
+            if (dispatchSlip.ttat != null)  {
+                dispatchSlipTruckNumber.text  = dispatchSlip.ttat!!.truckNumber
+                dispatchSlipDriverName.text = dispatchSlip.ttat!!.driver
+            }
+            if (dispatchSlip.depot != null) {
+                dispatchSlipDepotName.text = dispatchSlip.depot!!.name
+                dispatchSlipDepotLocation.text = dispatchSlip.depot!!.location
+            }
+            if (dispatchSlip.createdAt !=  null) {
+                val value = dispatchSlip.createdAt!!
+                val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                val output = SimpleDateFormat("yyyy-MM-dd hh:mm a")
+                parser.setTimeZone(TimeZone.getTimeZone("IST"))
+                val result =  parser.parse(value)
+                dispatchSlipDepotCreatedOn.text = output.format(result)
+            }
         }
     }
 }
