@@ -60,8 +60,20 @@ class MainApplication : Application() {
 
 
 class ResponseHeaderAuthTokenInterceptor : Interceptor {
+
+    fun hasNetwork(context: Context): Boolean {
+        var isConnected = false // Initial Value
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+        if (activeNetwork != null && activeNetwork.isConnected)
+            isConnected = true
+        return isConnected
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
-        val originalResponse = chain.proceed(chain.request())
+        var request = chain.request()
+        val originalResponse = chain.proceed(request)
+        val cacheControl = originalResponse.header("Cache-Control")
 
         val localheaders = originalResponse.headers("token")
 
@@ -72,14 +84,46 @@ class ResponseHeaderAuthTokenInterceptor : Interceptor {
             PrefRepository.singleInstance.setKeyValue("token", jwtToken ?: "")
         }
 
+        var cacheHeaderValue = if (!hasNetwork(MainApplication.applicationContext())!!){
+            "public, only-if-cached, max-stale=" + PrefConstants().MAX_STALE
+        } else {
+            "public, max-age=" + PrefConstants().MAX_AGE
+        }
+
+        originalResponse.newBuilder()
+                .removeHeader("Pragma")
+                .removeHeader("Cache-Control")
+                .header("Cache-Control", cacheHeaderValue)
+                .build()
+
         return originalResponse
     }
 
 }
 
 class RequestHeaderAuthTokenInterceptor : Interceptor {
+
+    fun hasNetwork(context: Context): Boolean {
+        var isConnected = false // Initial Value
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+        if (activeNetwork != null && activeNetwork.isConnected)
+            isConnected = true
+        return isConnected
+    }
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder = chain.request().newBuilder()
+
+        var request = chain.request()
+
+        if (hasNetwork(MainApplication.applicationContext())!!) {
+            builder.removeHeader("Pragma")
+            builder.header("Cache-Control", "public, max-age=" + PrefConstants().MAX_AGE).build()
+        } else {
+            builder.removeHeader("Pragma")
+            builder.header("Cache-Control", "public, only-if-cached, max-stale=" + PrefConstants().MAX_STALE).build()
+        }
 
         val tokenStr = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_TOKEN, "")
         if (tokenStr.length > 1) {
@@ -93,20 +137,31 @@ class RequestHeaderAuthTokenInterceptor : Interceptor {
 
 }
 
-
 class RetrofitHelper {
+
     companion object {
         val BASE_URL = BuildConfig.HOSTNAME;
 
-
         private fun getOkHttpClient(): OkHttpClient {
+
+            val httpLoggingInterceptor = HttpLoggingInterceptor()
+            httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+
+            val cacheSize = (5 * 1024 * 1024).toLong()
+            //            val  cacheFile = File(MainApplication.applicationContext(), "AppCacheFile")
+            var cacheFile = File( MainApplication.applicationContext().cacheDir.path + "/AppCacheFile")
+            val cache = Cache(cacheFile, cacheSize)
+
             val okHttpClient: OkHttpClient.Builder = OkHttpClient().newBuilder()
-//                    .connectTimeout((30).toLong(), TimeUnit.SECONDS)
+                    .connectTimeout((30).toLong(), TimeUnit.SECONDS)
+                    .cache(cache)
                     .readTimeout((90).toLong(), TimeUnit.SECONDS)
                     .writeTimeout((60).toLong(), TimeUnit.SECONDS)
 
+
+            okHttpClient.interceptors().add(httpLoggingInterceptor)
             okHttpClient.interceptors().add(RequestHeaderAuthTokenInterceptor())
-            okHttpClient.interceptors().add(ResponseHeaderAuthTokenInterceptor())
+            okHttpClient.addNetworkInterceptor(ResponseHeaderAuthTokenInterceptor())
 
             if (BuildConfig.DEBUG) {
                 val logging = HttpLoggingInterceptor();
