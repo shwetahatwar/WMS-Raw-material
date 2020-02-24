@@ -48,14 +48,14 @@ class DispatchSlipsFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(DispatchSlipsViewModel::class.java)
         (this.activity as AppCompatActivity).setTitle("Loading Dispatch Slips")
 
-        recyclerView.adapter = SimpleDisplachListAdapter(recyclerView, viewModel.dispatchLoadingList)
+        recyclerView.adapter = SimpleDispatchListAdapter(recyclerView, viewModel.dispatchLoadingList)
 
         viewModel.dispatchLoadingList.observe(viewLifecycleOwner, Observer<Array<DispatchSlip?>> {
             if (it != null) {
                 UiHelper.hideProgress(this.progress)
                 this.progress = null
 
-                if (viewModel.invalidDispatchList.first() == null) {
+                if (viewModel.dispatchLoadingList.value.orEmpty().isNotEmpty() && viewModel.dispatchLoadingList.value?.first() == null) {
                     UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
                 } else if (it != oldDispatchSlipList) {
                     dispatch_dispatchSlipsView.adapter?.notifyDataSetChanged()
@@ -74,16 +74,17 @@ class DispatchSlipsFragment : Fragment() {
             }
         })
 
+        this.progress = UiHelper.showProgressIndicator(activity!!, "Loading dispatch list")
         viewModel.loadDispatchLoadingLists(userId)
     }
 
 }
 
-open class SimpleDisplachListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlips: LiveData<Array<DispatchSlip?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDisplachListAdapter.ViewHolder>() {
+open class SimpleDispatchListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlips: LiveData<Array<DispatchSlip?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDispatchListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.dispatch_picking_lists_fragment, parent, false)
+                .inflate(R.layout.dispatch_list_picking_row_item, parent, false)
 
         return ViewHolder(itemView)
     }
