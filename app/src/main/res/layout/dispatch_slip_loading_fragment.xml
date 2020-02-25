@@ -47,8 +47,8 @@
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.3"
-                android:text="Id:" />
+                android:paddingRight="5dp"
+                android:text="Slip Number:" />
 
             <TextView
                 android:id="@+id/loading_dispatchSlipId"
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:text="Dispatch Slip Status:"
+                android:text="Status:"
                 android:textAlignment="textEnd"
                 android:textStyle="bold" />
 
@@ -72,7 +72,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="New" />
+                android:text="New"
+                android:textAlignment="textEnd" />
 
         </LinearLayout>
 
@@ -85,17 +86,16 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Vehicle Number" />
+                android:paddingRight="5dp"
+                android:text="Vehicle Number:" />
 
             <TextView
                 android:id="@+id/loading_truckNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Truck Number"
-                android:textAlignment="textEnd"
-                android:textStyle="bold" />
+                android:textAlignment="viewStart"
+                android:textSize="14sp" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.briot.balmerlawrie.implementor.R
@@ -92,11 +93,34 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind()
+
+        val dispatchSlip = dispatchSlips.value!![position]!!
+        holder.itemView.setOnClickListener{
+            val bundle = Bundle()
+            if (dispatchSlip.id != null) {
+                bundle.putInt("loadingDispatchSlip_id", dispatchSlip.id!!.toInt())
+            }
+
+            if (dispatchSlip.dispatchSlipNumber != null) {
+                bundle.putString("loadingDispatchSlip_slipnumber", dispatchSlip.dispatchSlipNumber!!)
+            }
+
+            if (dispatchSlip.dispatchSlipStatus != null) {
+                bundle.putString("loadingDispatchSlip_slipstatus", dispatchSlip.dispatchSlipStatus!!)
+            }
+
+            if (dispatchSlip.ttat != null && dispatchSlip.ttat!!.truckNumber !=  null) {
+                bundle.putString("loadingDispatchSlip_vehicle_number", dispatchSlip.ttat!!.truckNumber!!)
+            }
+
+            Navigation.findNavController(it).navigate(R.id.action_dispatchSlipsFragment_to_dispatchSlipLoadingFragment, bundle)
+        }
     }
 
     override fun getItemCount(): Int {
         return dispatchSlips.value?.size ?: 0
     }
+
 
     open inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         protected val dispatchSlipId: TextView
@@ -120,8 +144,8 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
 
             dispatchSlipId.text = dispatchSlip.dispatchSlipNumber
 
-            if (dispatchSlip.ttat != null)  {
-                dispatchSlipTruckNumber.text  = dispatchSlip.ttat!!.truckNumber
+            if (dispatchSlip.ttat != null) {
+                dispatchSlipTruckNumber.text = dispatchSlip.ttat!!.truckNumber
                 dispatchSlipDriverName.text = dispatchSlip.ttat!!.driver
             }
             if (dispatchSlip.depot != null) {
@@ -133,7 +157,7 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
                 val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 val output = SimpleDateFormat("yyyy-MM-dd hh:mm a")
                 parser.setTimeZone(TimeZone.getTimeZone("IST"))
-                val result =  parser.parse(value)
+                val result = parser.parse(value)
                 dispatchSlipDepotCreatedOn.text = output.format(result)
             }
         }

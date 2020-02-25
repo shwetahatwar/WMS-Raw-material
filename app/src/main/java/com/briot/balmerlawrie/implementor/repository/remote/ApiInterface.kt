@@ -87,6 +87,7 @@ class Depo {
 
 
 class DispatchSlip {
+    var id: Number? = null
     var dispatchSlipNumber: String = ""
     var truckId: Number? = null
     var depoId: Number? = null
