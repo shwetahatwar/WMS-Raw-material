@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -95,6 +96,32 @@ open class SimpleAdapter(private val recyclerView: RecyclerView, private val dis
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind()
+
+        val dispatchSlip = dispatchSlips.value!![position]!!
+        holder.itemView.setOnClickListener{
+            val bundle = Bundle()
+            if (dispatchSlip.id != null) {
+                bundle.putInt("loadingDispatchSlip_id", dispatchSlip.id!!.toInt())
+            }
+
+            if (dispatchSlip.dispatchSlipNumber != null) {
+                bundle.putString("loadingDispatchSlip_slipnumber", dispatchSlip.dispatchSlipNumber!!)
+            }
+
+            if (dispatchSlip.dispatchSlipStatus != null) {
+                bundle.putString("loadingDispatchSlip_slipstatus", dispatchSlip.dispatchSlipStatus!!)
+            }
+
+            if (dispatchSlip.ttat != null && dispatchSlip.ttat!!.truckNumber !=  null) {
+                bundle.putString("loadingDispatchSlip_vehicle_number", dispatchSlip.ttat!!.truckNumber!!)
+            }
+
+            if (dispatchSlip.truckId != null) {
+                bundle.putInt("loadingDispatchSlip_truckid", dispatchSlip.truckId!!.toInt())
+            }
+
+            Navigation.findNavController(it).navigate(R.id.action_dispatchPickingListsFragment_to_dispatchPickingListFragment, bundle)
+        }
     }
 
     override fun getItemCount(): Int {

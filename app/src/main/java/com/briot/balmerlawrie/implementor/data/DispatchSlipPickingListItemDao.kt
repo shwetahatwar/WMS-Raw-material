@@ -15,6 +15,9 @@ interface DispatchSlipPickingListItemDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: DispatchSlipPickingListItem)
 
+    @Query("SELECT * FROM dispatchslip_picking_list_item WHERE dispatchSlipId LIKE :dispatchSlipId ORDER BY timestamp ASC")
+    fun getAllDispatchSlipItems(dispatchSlipId: Int): LiveData<List<DispatchSlipPickingListItem>>
+
     @Query("DELETE from dispatchslip_picking_list_item")
     suspend fun deleteAll()
 }

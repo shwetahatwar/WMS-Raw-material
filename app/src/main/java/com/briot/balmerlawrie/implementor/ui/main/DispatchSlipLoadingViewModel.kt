@@ -15,6 +15,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
     var dispatchSlipVehicleNumber: String? = ""
     var dispatchSlipStatus: String? = ""
     var userId: Int = 0
+    var dispatchSlipTruckId: Int = 0
 
     val TAG = "DispatchLoadingListVM"
 
@@ -43,7 +44,4 @@ class DispatchSlipLoadingViewModel : ViewModel() {
             (this.dispatchloadingItems as MutableLiveData<Array<DispatchSlipItem?>>).value = invalidDispatchloadingItems
         }
     }
-
-
-
 }

@@ -113,6 +113,11 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
                 bundle.putString("loadingDispatchSlip_vehicle_number", dispatchSlip.ttat!!.truckNumber!!)
             }
 
+            if (dispatchSlip.truckId != null) {
+                bundle.putInt("loadingDispatchSlip_truckid", dispatchSlip.truckId!!.toInt())
+            }
+
+
             Navigation.findNavController(it).navigate(R.id.action_dispatchSlipsFragment_to_dispatchSlipLoadingFragment, bundle)
         }
     }

@@ -1,11 +1,15 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -53,6 +57,8 @@ class DispatchSlipLoadingFragment : Fragment() {
             viewModel.dispatchSlipVehicleNumber = this.arguments!!.getString("loadingDispatchSlip_vehicle_number")
             viewModel.dispatchSlipNumber = this.arguments!!.getString("loadingDispatchSlip_slipnumber")
             viewModel.dispatchSlipStatus = this.arguments!!.getString("loadingDispatchSlip_slipstatus")
+            viewModel.dispatchSlipTruckId = this.arguments!!.getInt("loadingDispatchSlip_truckid")
+
 
             loading_dispatchSlipId.text = viewModel.dispatchSlipNumber
             loading_dispatchListStatusId.text = viewModel.dispatchSlipStatus
@@ -83,6 +89,34 @@ class DispatchSlipLoadingFragment : Fragment() {
                 UiHelper.showNoInternetSnackbarMessage(this.activity as AppCompatActivity)
             }
         })
+
+        loading_materialBarcode.setOnEditorActionListener { _, i, keyEvent ->
+            var handled = false
+            if (keyEvent == null) {
+                Log.d("materialDetailsScan: ", "event is null")
+            } else if ((loading_materialBarcode.text != null && loading_materialBarcode.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE || ((keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
+                this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+                handled = true
+            }
+            handled
+        }
+
+        loading_items_submit_button.setOnClickListener({
+            if (viewModel.dispatchloadingItems  != null && viewModel.dispatchloadingItems.value != null && viewModel.dispatchloadingItems.value!!.size > 0) {
+                val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
+                this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+
+                // viewModel.submitDispatchItems();
+
+            } else {
+                UiHelper.showToast(this.activity as AppCompatActivity, "No items for dispatch")
+            }
+
+        })
+
 
         this.progress = UiHelper.showProgressIndicator(activity!!, "Loading dispatch slip Items")
         viewModel.loadDispatchSlipLoadingItems()
