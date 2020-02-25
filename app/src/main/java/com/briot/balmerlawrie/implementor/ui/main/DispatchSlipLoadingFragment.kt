@@ -6,10 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
-
+import androidx.navigation.Navigation
+import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.briot.balmerlawrie.implementor.R
+import com.briot.balmerlawrie.implementor.UiHelper
+import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
+import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
 
 class DispatchSlipLoadingFragment : Fragment() {
@@ -19,16 +27,24 @@ class DispatchSlipLoadingFragment : Fragment() {
     }
 
     private lateinit var viewModel: DispatchSlipLoadingViewModel
+    private var progress: Progress? = null
+    private var oldDispatchSlipItems: Array<DispatchSlipItem?>? = null
+    lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.dispatch_slip_loading_fragment, container, false)
+
+        val rootView = inflater.inflate(R.layout.dispatch_slip_loading_fragment, container, false)
+
+        this.recyclerView = rootView.findViewById(R.id.loading_dispatchSlipItems)
+        recyclerView.layoutManager = LinearLayoutManager(this.activity)
+
+        return rootView
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-//        Log.d("Loading", "successful selected loader's dispatch list details" + dispatchLoadingList.toString())
         viewModel = ViewModelProvider(this).get(DispatchSlipLoadingViewModel::class.java)
         (this.activity as AppCompatActivity).setTitle("Loading Dispatch Slip")
 
@@ -41,6 +57,78 @@ class DispatchSlipLoadingFragment : Fragment() {
             loading_dispatchSlipId.text = viewModel.dispatchSlipNumber
             loading_dispatchListStatusId.text = viewModel.dispatchSlipStatus
             loading_truckNumber.text = viewModel.dispatchSlipVehicleNumber
+        }
+
+        recyclerView.adapter = SimpleDispatchSlipLoadingItemAdapter(recyclerView, viewModel.dispatchloadingItems)
+        viewModel.dispatchloadingItems.observe(viewLifecycleOwner, Observer<Array<DispatchSlipItem?>> {
+            if (it != null) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+
+                if (viewModel.dispatchloadingItems.value.orEmpty().isNotEmpty() && viewModel.dispatchloadingItems.value?.first() == null) {
+                    UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
+                } else if (it != oldDispatchSlipItems) {
+                    loading_dispatchSlipItems.adapter?.notifyDataSetChanged()
+                }
+            }
+
+            oldDispatchSlipItems = viewModel.dispatchloadingItems.value
+        })
+
+        viewModel.networkError.observe(viewLifecycleOwner, Observer<Boolean> {
+            if (it == true) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+
+                UiHelper.showNoInternetSnackbarMessage(this.activity as AppCompatActivity)
+            }
+        })
+
+        this.progress = UiHelper.showProgressIndicator(activity!!, "Loading dispatch slip Items")
+        viewModel.loadDispatchSlipLoadingItems()
+    }
+}
+
+open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlipItems: LiveData<Array<DispatchSlipItem?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDispatchSlipLoadingItemAdapter.ViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+                .inflate(R.layout.dispatch_slip_item_row, parent, false)
+
+        return ViewHolder(itemView)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.bind()
+
+        val dispatchSlipItem = dispatchSlipItems.value!![position]!!
+        holder.itemView.setOnClickListener{
+
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return dispatchSlipItems.value?.size ?: 0
+    }
+
+
+    open inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+        protected val dispatchSlipItemBatchNumber: TextView
+        protected val dispatchSlipItemMaterialCode: TextView
+        protected val dispatchSlipItemPackQuantity: TextView
+
+        init {
+            dispatchSlipItemBatchNumber = itemView.findViewById(R.id.dispatch_slip_item_batch_number)
+            dispatchSlipItemMaterialCode = itemView.findViewById(R.id.dispatch_slip_item_material_product_code)
+            dispatchSlipItemPackQuantity = itemView.findViewById(R.id.dispatch_slip_item_material_pack_quantity)
+        }
+
+        fun bind() {
+            val dispatchSlipItem = dispatchSlipItems.value!![adapterPosition]!!
+
+            dispatchSlipItemBatchNumber.text = dispatchSlipItem.batchNumber
+            dispatchSlipItemMaterialCode.text = dispatchSlipItem.materialCode
+            dispatchSlipItemPackQuantity.text = dispatchSlipItem.numberOfPacks.toString()
         }
     }
 }

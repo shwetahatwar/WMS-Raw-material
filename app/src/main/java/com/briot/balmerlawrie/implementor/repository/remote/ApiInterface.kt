@@ -102,7 +102,15 @@ class DispatchSlip {
 }
 
 class DispatchSlipItem {
-
+    var id: Number? = null
+    var dispatchSlipId: Number? = null
+    var batchNumber: String? = null
+    var numberOfPacks: Number = 0
+    var materialCode: String? = null
+    var createdBy: String? = null
+    var updatedBy: String? = null
+    var createdAt: String? = null
+    var updatdAt: String? = null
 }
 
 class Project {
@@ -111,6 +119,11 @@ class Project {
     var start: String = ""
     var end: String = ""
     var status: Boolean = false
+//    var createdBy: String? = null
+//    var updatedBy: String? = null
+//    var createdAt: String? = null
+//    var updatdAt: String? = null
+
 //    var createdBy: User? = null
 //    var updatedBy: User? = null
 }
@@ -135,6 +148,9 @@ interface ApiInterface {
 
     @GET("/dispatchloaderrelations/users/{userid}/dispatchslips")
     fun getAssignedLoaderDispatchSlips(@Path("userid") userId: Int): Observable<Array<DispatchSlip?>>
+
+    @GET("/dispatchslips/{id}/dispatchslipmaterials")
+    fun getDispatchSlipMaterials(@Path("id") id: Int): Observable<Array<DispatchSlipItem?>>
 
     @GET("/projects/{status}")
     fun getAuditProjects(@Path("status") status: String): Observable<Array<Project?>>

@@ -53,6 +53,14 @@ class RemoteRepository {
                 .subscribe(handleResponse, handleError)
     }
 
+    fun getDispatchSlipItems(dispatchSlipId: Int, handleResponse: (Array<DispatchSlipItem?>) -> Unit, handleError: (Throwable) -> Unit) {
+        RetrofitHelper.retrofit.create(ApiInterface::class.java)
+                .getDispatchSlipMaterials(dispatchSlipId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(handleResponse, handleError)
+    }
+
     fun getProjects(status: String, handleResponse: (Array<Project?>) -> Unit, handleError: (Throwable) -> Unit) {
         RetrofitHelper.retrofit.create(ApiInterface::class.java)
                 .getAuditProjects(status)

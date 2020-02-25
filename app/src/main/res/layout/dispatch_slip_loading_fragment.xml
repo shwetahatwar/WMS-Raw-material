@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingLeft="10dp"
+        android:paddingTop="10dp"
         android:paddingRight="10dp"
         android:paddingBottom="10dp">
 
@@ -18,20 +19,28 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <EditText
+            <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/loading_materialBarcode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_bg"
                 android:ems="10"
-                android:hint="@string/material_barcode"
-                android:inputType="textPersonName" />
+                android:hint="Material barcode"
+                android:imeOptions="actionDone"
+                android:inputType="textNoSuggestions"
+                android:maxLength="30"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textColorHint="@android:color/darker_gray" />
 
             <Button
                 android:id="@+id/loading_scanButton"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
+                android:background="@color/colorAccent"
                 android:text="@string/Scan" />
 
         </LinearLayout>
@@ -41,6 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
+            android:background="@color/moveAssetButtonBackground"
             android:orientation="horizontal">
 
             <TextView
@@ -71,7 +81,6 @@
                 android:id="@+id/loading_dispatchListStatusId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="New"
                 android:textAlignment="textEnd" />
 
@@ -80,6 +89,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/moveAssetButtonBackground"
             android:orientation="horizontal">
 
             <TextView
@@ -96,12 +106,32 @@
                 android:text="Truck Number"
                 android:textAlignment="viewStart"
                 android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:paddingRight="5dp"
+                android:text="Scanned Items:"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/loading_scanned_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_blue_bright"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="0/0"
+                android:textAlignment="textEnd" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/loading_dispatchSlipItems"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingTop="10dp">
 
         </androidx.recyclerview.widget.RecyclerView>
 

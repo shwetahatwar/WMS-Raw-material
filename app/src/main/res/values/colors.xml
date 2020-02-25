@@ -14,11 +14,11 @@
     <color name="assetDetailsButtonTitle">#275D33</color>
     <color name="auditAssetButtonBackground">#FFF3F6f6</color>
     <color name="auditAssetButtonTitleButtonTitle">#FF275d33</color>
-    <color name="moveAssetButtonBackground">#FFF3F6f6</color>
+    <color name="moveAssetButtonBackground">#F3F6F6</color>
     <color name="moveAssetButtonTitle">#275d33</color>
     <color name="reportButtonBackground">#FFF3F6f6</color>
     <color name="reportButtonTitle">#FF275d33</color>
 
-    <color name="listCellBackgroundColor">#FFF3F3F3</color>
+    <color name="listCellBackgroundColor">#F3F3F3</color>
 
 </resources>
