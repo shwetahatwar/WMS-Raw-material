@@ -111,6 +111,20 @@ class DispatchSlipItem {
     var updatedBy: String? = null
     var createdAt: String? = null
     var updatdAt: String? = null
+    var scannedPacks: Number = 0
+}
+
+class DispatchSlipItemRequest {
+    var batchNumber: String? = null
+    var serialNumber: String? = null
+    var materialCode: String? = null
+}
+
+class DispatchSlipRequest {
+    var loadStartTime: String? = null
+    var loadEndTime: String? = null
+    var truckNumber: String? = null
+    var material: Array<DispatchSlipItemRequest>? = null
 }
 
 class Project {

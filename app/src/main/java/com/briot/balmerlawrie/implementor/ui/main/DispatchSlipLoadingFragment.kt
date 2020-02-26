@@ -96,8 +96,8 @@ class DispatchSlipLoadingFragment : Fragment() {
                 Log.d("materialDetailsScan: ", "event is null")
             } else if ((loading_materialBarcode.text != null && loading_materialBarcode.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE || ((keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
                 this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
-                UiHelper.hideProgress(this.progress)
-                this.progress = null
+//                UiHelper.hideProgress(this.progress)
+//                this.progress = null
                 handled = true
             }
             handled
@@ -120,6 +120,8 @@ class DispatchSlipLoadingFragment : Fragment() {
 
         this.progress = UiHelper.showProgressIndicator(activity!!, "Loading dispatch slip Items")
         viewModel.loadDispatchSlipLoadingItems()
+
+        loading_materialBarcode.requestFocus()
     }
 }
 
