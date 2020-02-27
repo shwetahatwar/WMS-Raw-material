@@ -154,7 +154,25 @@ class DispatchSlipLoadingFragment : Fragment() {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
                 if (MainApplication.hasNetwork(MainApplication.applicationContext())) {
+
+                    if (viewModel.isDispatchListSubmitted()) {
+                        UiHelper.showToast(this.activity as AppCompatActivity, "Items listed in this dispatch list is already submitted")
+
+                    } else if (!viewModel.isDispatchSlipHasEntries()) {
+                        UiHelper.showToast(this.activity as AppCompatActivity, "There is no item added to selected dispatch list")
+
+                    } else {
+
+//                        UiHelper.showAlert()
+                        // confirm with user
+
+                        // start wait indicator
+
+                        // submit
 //                    this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+                    viewModel.handleSubmitLoadingList()
+
+                    }
                 } else {
                     UiHelper.showToast(this.activity as AppCompatActivity, "Please submit the list when in Network!")
                 }

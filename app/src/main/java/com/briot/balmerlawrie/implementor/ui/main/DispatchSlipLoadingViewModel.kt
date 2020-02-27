@@ -51,6 +51,16 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
     }
 
+    private fun handleDispatchLoadingItemsError(error: Throwable) {
+        Log.d(TAG, error.localizedMessage)
+
+        if (UiHelper.isNetworkError(error)) {
+            (networkError as MutableLiveData<Boolean>).value = true
+        } else {
+            (this.dispatchloadingItems as MutableLiveData<Array<DispatchSlipItem?>>).value = invalidDispatchloadingItems
+        }
+    }
+
     private fun updatedListAsPerDatabase(items: Array<DispatchSlipItem?>) {
 
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
@@ -198,20 +208,30 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         }
     }
 
+    fun isDispatchSlipHasEntries(): Boolean {
+        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+        var dbItems = dbDao.getAllDispatchSlipItems(dispatchSlipId)
 
-    private fun handleDispatchLoadingItemsError(error: Throwable) {
-        Log.d(TAG, error.localizedMessage)
-
-        if (UiHelper.isNetworkError(error)) {
-            (networkError as MutableLiveData<Boolean>).value = true
-        } else {
-            (this.dispatchloadingItems as MutableLiveData<Array<DispatchSlipItem?>>).value = invalidDispatchloadingItems
+        if (dbItems != null && dbItems.size > 0) {
+            return true
         }
+
+        return false
+    }
+    fun isDispatchListSubmitted(): Boolean {
+        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+        var dbItems = dbDao.getSubmitedDispatchDetails(
+                dispatchSlipId
+        )
+
+        if (dbItems.value != null && dbItems.value!!.size > 0) {
+            return true
+        }
+
+        return false
     }
 
-
-
-    private fun handleSubmitLoadingList() {
+    suspend fun handleSubmitLoadingList() {
         var dispatchSlipRequestObject = DispatchSlipRequest()
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
         var dbItems = dbDao.getAllDispatchSlipItems(
@@ -221,11 +241,11 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         var items = mutableListOf<DispatchSlipItemRequest>()
         var startTime = ""
         var endTime = ""
-        if (dbItems.value != null) {
-            startTime = Date(dbItems.value!!.first().timeStamp).toString()
-            endTime = Date(dbItems.value!!.last().timeStamp).toString()
+        if (dbItems != null) {
+            startTime = Date(dbItems!!.first().timeStamp).toString()
+            endTime = Date(dbItems!!.last().timeStamp).toString()
 
-            for (dbItem in dbItems.value!!.iterator()) {
+            for (dbItem in dbItems!!.iterator()) {
                 var item = DispatchSlipItemRequest()
                 item.batchNumber = dbItem.batchCode
                 item.materialCode = dbItem.productCode
@@ -234,13 +254,21 @@ class DispatchSlipLoadingViewModel : ViewModel() {
             }
         }
 
-
         dispatchSlipRequestObject.dispatchId = dispatchSlipId
         dispatchSlipRequestObject.truckNumber = dispatchSlipVehicleNumber
         dispatchSlipRequestObject.truckId = dispatchSlipTruckId
         dispatchSlipRequestObject.loadStartTime = startTime
         dispatchSlipRequestObject.loadEndTime = endTime
         dispatchSlipRequestObject.material = items.toTypedArray()
+
+        dbDao.updateSubmittedStatus(dispatchSlipId.toString())
+    }
+
+    private fun handleDispatchLoadingItemsSubmissionResponse(dispatchSlipItems: Array<DispatchSlipItem?>) {
+
+    }
+
+    private fun handleDispatchLoadingItemsSubmissionError(error: Throwable) {
 
     }
 }
