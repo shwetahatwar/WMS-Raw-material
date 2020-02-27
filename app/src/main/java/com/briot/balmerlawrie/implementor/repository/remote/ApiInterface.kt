@@ -172,6 +172,12 @@ interface ApiInterface {
     @GET("/dispatchslips/{id}/dispatchslipmaterials")
     fun getDispatchSlipMaterials(@Path("id") id: Int): Observable<Array<DispatchSlipItem?>>
 
+    @POST("dispatchslips/{id}/dispatchslippickedmaterials")
+    fun postDispatchSlipPickedMaterials(@Path("id") id: Int): Observable<DispatchSlipRequest?>
+
+    @POST("dispatchslips/{id}/dispatchsliploadedmaterials")
+    fun postDispatchSlipLoadedMaterials(@Path("id") id: Int): Observable<DispatchSlipRequest?>
+
     @GET("/projects/{status}")
     fun getAuditProjects(@Path("status") status: String): Observable<Array<Project?>>
 }

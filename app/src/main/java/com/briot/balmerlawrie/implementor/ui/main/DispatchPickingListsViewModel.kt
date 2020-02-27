@@ -18,7 +18,7 @@ class DispatchPickingListsViewModel : ViewModel() {
 
     fun loadDispatchPickingLists(userId: Int) {
         (networkError as MutableLiveData<Boolean>).value = false
-        (this.dispatchPickerList as MutableLiveData<Array<DispatchSlip?>>).value = emptyArray()
+        (this.dispatchPickerList as MutableLiveData<Array<DispatchSlip?>>).value = null
 
         RemoteRepository.singleInstance.getAssignedPickerDispatchSlips(userId, this::handleDispatchPickingListsResponse, this::handleDispatchPickingListsError)
     }

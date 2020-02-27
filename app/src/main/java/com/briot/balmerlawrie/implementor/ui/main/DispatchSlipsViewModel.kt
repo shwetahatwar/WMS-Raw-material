@@ -18,7 +18,7 @@ class DispatchSlipsViewModel : ViewModel() {
 
     fun loadDispatchLoadingLists(userId: Int) {
         (networkError as MutableLiveData<Boolean>).value = false
-        (this.dispatchLoadingList as MutableLiveData<Array<DispatchSlip?>>).value = emptyArray()
+        (this.dispatchLoadingList as MutableLiveData<Array<DispatchSlip?>>).value = null // emptyArray()
 
         RemoteRepository.singleInstance.getAssignedLoaderDispatchSlips(userId, this::handleDispatchLoadingListsResponse, this::handleLoadingListsError)
     }

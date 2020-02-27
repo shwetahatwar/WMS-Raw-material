@@ -170,7 +170,7 @@ class DispatchSlipLoadingFragment : Fragment() {
 
                         // submit
 //                    this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
-                    viewModel.handleSubmitLoadingList()
+//                    viewModel.handleSubmitLoadingList()
 
                     }
                 } else {
@@ -242,7 +242,7 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
                 linearLayout.setBackgroundColor(Color.parseColor("#FFF3F3F3"))
             } else if (dispatchSlipItem.scannedPacks.toInt() < dispatchSlipItem.numberOfPacks.toInt()) {
                 linearLayout.setBackgroundColor(Color.parseColor("#73FF8800"))
-            } else if (dispatchSlipItem.scannedPacks.toInt() == dispatchSlipItem.numberOfPacks.toInt()) {
+            } else if (dispatchSlipItem.scannedPacks.toInt() >= dispatchSlipItem.numberOfPacks.toInt()) {
                 linearLayout.setBackgroundColor(Color.parseColor("#FF9CF780"))
             }
         }

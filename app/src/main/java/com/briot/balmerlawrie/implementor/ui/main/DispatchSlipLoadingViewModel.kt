@@ -38,7 +38,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
     fun loadDispatchSlipLoadingItems() {
         (networkError as MutableLiveData<Boolean>).value = false
-        (this.dispatchloadingItems as MutableLiveData<Array<DispatchSlipItem?>>).value = emptyArray()
+        (this.dispatchloadingItems as MutableLiveData<Array<DispatchSlipItem?>>).value = null
 
         RemoteRepository.singleInstance.getDispatchSlipItems(dispatchSlipId, this::handleDispatchLoadingItemsResponse, this::handleDispatchLoadingItemsError)
     }
@@ -261,14 +261,27 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         dispatchSlipRequestObject.loadEndTime = endTime
         dispatchSlipRequestObject.material = items.toTypedArray()
 
-        dbDao.updateSubmittedStatus(dispatchSlipId.toString())
+
+        (networkError as MutableLiveData<Boolean>).value = false
+
+        RemoteRepository.singleInstance.postDispatchSlipLoadedMaterials(dispatchSlipId, this::handleDispatchLoadingItemsSubmissionResponse, this::handleDispatchLoadingItemsSubmissionError)
+
+
     }
 
-    private fun handleDispatchLoadingItemsSubmissionResponse(dispatchSlipItems: Array<DispatchSlipItem?>) {
+    private fun handleDispatchLoadingItemsSubmissionResponse(dispatchSlipResponse: DispatchSlipRequest?) {
+//        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+//        dbDao.updateSubmittedStatus(dispatchSlipId.toString())
 
     }
 
     private fun handleDispatchLoadingItemsSubmissionError(error: Throwable) {
+        Log.d(TAG, error.localizedMessage)
 
+        if (UiHelper.isNetworkError(error)) {
+            (networkError as MutableLiveData<Boolean>).value = true
+        } else {
+
+        }
     }
 }
