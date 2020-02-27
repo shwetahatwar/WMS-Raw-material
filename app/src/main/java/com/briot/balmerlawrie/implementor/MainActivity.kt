@@ -266,7 +266,7 @@ class MainActivity : AppCompatActivity() {
 
 class UiHelper {
     companion object {
-        val SNACKBAR_COLOR = Color.parseColor("#E9E67E22")
+        val SNACKBAR_COLOR = PrefConstants().messageBackgroundColor
 
         fun showAlert(activity: AppCompatActivity, message: String, cancellable: Boolean = false) {
             AlertDialog.Builder(activity).create().apply {
@@ -342,7 +342,10 @@ class UiHelper {
         }
 
         fun showToast(activity: AppCompatActivity, message: String) {
-            Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+            var toast = Toast.makeText(activity, message, Toast.LENGTH_LONG)
+//            var backgroundView = toast.view
+//            backgroundView.setBackgroundColor(Color.parseColor("#ffff6000"))
+            toast.show()
         }
 
     }

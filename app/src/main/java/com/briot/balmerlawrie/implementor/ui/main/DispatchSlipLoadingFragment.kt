@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
@@ -27,8 +28,10 @@ import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DispatchSlipLoadingFragment : Fragment() {
 
@@ -154,7 +157,9 @@ class DispatchSlipLoadingFragment : Fragment() {
             if (viewModel.dispatchloadingItems  != null && viewModel.dispatchloadingItems.value != null && viewModel.dispatchloadingItems.value!!.size > 0) {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
-                if (MainApplication.hasNetwork(MainApplication.applicationContext())) {
+                if (viewModel.dispatchSlipStatus.toString().toLowerCase().contains("complete")) {
+                    UiHelper.showToast(this.activity as AppCompatActivity, "Items can not be scanned for completed Dispatch Slip")
+                } else if (MainApplication.hasNetwork(MainApplication.applicationContext())) {
 
                     if (viewModel.isDispatchListSubmitted()) {
                         UiHelper.showToast(this.activity as AppCompatActivity, "Items listed in this dispatch list is already submitted")
@@ -164,23 +169,25 @@ class DispatchSlipLoadingFragment : Fragment() {
 
                     } else {
 
-//                        UiHelper.showAlert()
-                        // confirm with user
+                        var thisObject = this
+                            AlertDialog.Builder(this.activity as AppCompatActivity).create().apply {
+                            setTitle("Confirm")
+                            setMessage("Are you sure you want to submit this dispatch slip items?s")
+                            setButton(AlertDialog.BUTTON_NEUTRAL, "No", { dialog, _ -> dialog.dismiss() })
+                            setButton(AlertDialog.BUTTON_POSITIVE, "Yes", {
+                                dialog, _ -> dialog.dismiss()
+                                thisObject.progress = UiHelper.showProgressIndicator(thisObject.activity as AppCompatActivity, "Please wait")
 
-                        // start wait indicator
-
-                        // submit
-//                    this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
-//                    viewModel.handleSubmitLoadingList()
-
+                                GlobalScope.launch {
+                                    viewModel.handleSubmitLoadingList()
+                                }
+                            })
+                            show()
+                        }
                     }
                 } else {
                     UiHelper.showToast(this.activity as AppCompatActivity, "Please submit the list when in Network!")
                 }
-
-                // viewModel.submitDispatchItems();
-
-            } else {
             }
 
         })

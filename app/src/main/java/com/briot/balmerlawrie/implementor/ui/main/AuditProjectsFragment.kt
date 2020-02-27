@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
+import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
+import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlip
 import com.briot.balmerlawrie.implementor.repository.remote.Project
 import io.github.pierry.progress.Progress
@@ -30,7 +32,7 @@ class AuditProjectsFragment : Fragment() {
     private var progress: Progress? = null
     private var oldProjectList: Array<Project?>? = null
     lateinit var recyclerView: RecyclerView
-    private var userId = 1;
+    private var userId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_ID, "0").toInt()
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,

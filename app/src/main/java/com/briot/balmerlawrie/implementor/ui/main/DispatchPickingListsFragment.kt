@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
+import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
+import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlip
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_picking_lists_fragment.*
@@ -33,7 +35,7 @@ class DispatchPickingListsFragment : Fragment() {
     private var progress: Progress? = null
     private var oldDispatchSlipList: Array<DispatchSlip?>? = null
     lateinit var recyclerView: RecyclerView
-    private var userId = 1;
+    private var userId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_ID, "0").toInt()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
