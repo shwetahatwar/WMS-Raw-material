@@ -56,6 +56,15 @@ class MainApplication : Application() {
         // example: SharedPreferences etc...
         val context: Context = MainApplication.applicationContext()
     }
+
+    public fun hasNetwork(): Boolean {
+        var isConnected = false // Initial Value
+        val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+        if (activeNetwork != null && activeNetwork.isConnected)
+            isConnected = true
+        return isConnected
+    }
 }
 
 

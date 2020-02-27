@@ -21,6 +21,9 @@ interface DispatchSlipLoadingListItemDao {
     @Query("SELECT COUNT (*) FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
     fun getCountForBatchMaterialCode(dispatchSlipId: Int, materialCode: String, batchNumber: String): Int
 
+    @Query("SELECT COUNT (*) FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber AND serialNumber LIKE :serialNumber ORDER BY timestamp ASC")
+    fun getCountForBatchMaterialCodeSerial(dispatchSlipId: Int, materialCode: String, batchNumber: String, serialNumber: String): Int
+
     @Query("SELECT * FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
     fun getItemsForBatch(dispatchSlipId: Int, batchNumber: String): LiveData<List<DispatchSlipLoadingListItem>>
 

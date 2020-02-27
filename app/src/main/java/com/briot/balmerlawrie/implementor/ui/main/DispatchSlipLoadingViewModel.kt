@@ -12,7 +12,7 @@ import com.briot.balmerlawrie.implementor.data.AppDatabase
 import com.briot.balmerlawrie.implementor.data.DispatchSlipLoadingListItem
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
 import com.briot.balmerlawrie.implementor.repository.remote.RemoteRepository
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import java.util.*
 
 class DispatchSlipLoadingViewModel : ViewModel() {
@@ -23,6 +23,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
     var dispatchSlipStatus: String? = ""
     var userId: Int = 0
     var dispatchSlipTruckId: Int = 0
+    var totalScannedItems: Int = 0
 
     private var appDatabase = AppDatabase.getDatabase(MainApplication.applicationContext())
 
@@ -55,6 +56,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
         var updatedItems: Array<DispatchSlipItem?> = items.clone()
 
+        totalScannedItems = 0
         for (item in updatedItems) {
             if (item != null) {
                 var count = dbDao.getCountForBatchMaterialCode(
@@ -63,6 +65,9 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                         item.batchNumber!!
                 )
                 item.scannedPacks = count
+                if (item.scannedPacks.toInt() == item.numberOfPacks.toInt()) {
+                    totalScannedItems += 1
+                }
             }
         }
 
@@ -98,7 +103,71 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         (this.dispatchloadingItems as MutableLiveData<Array<DispatchSlipItem?>>).value = updatedItems
     }
 
-    private suspend fun updateItemInDatabase(item: DispatchSlipItem) {
+    fun isMaterialBelongToSameGroup(materialCode: String, batchNumber: String): Boolean {
+        val result = responseDispatchLoadingItems.filter {
+            (it?.materialCode.equals(materialCode) && it?.batchNumber.equals(batchNumber))
+        }
+        return (result.size > 0)
+    }
+
+    fun materialQuantityPickingCompleted(materialCode: String, batchNumber: String): Boolean {
+
+        val result = responseDispatchLoadingItems.filter {
+            (it?.materialCode.equals(materialCode) && it?.batchNumber.equals(batchNumber))
+        }
+
+        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+
+        for (item in result) {
+            if (item != null) {
+                var count = dbDao.getCountForBatchMaterialCode(
+                        dispatchSlipId,
+                        item.materialCode!!,
+                        item.batchNumber!!
+                )
+                item.scannedPacks = count
+                if (item.scannedPacks.toInt() == item.numberOfPacks.toInt()) {
+                    return true
+                } else {
+                    return false
+                }
+            }
+        }
+
+        return false
+    }
+
+    fun isSameSerialNumber(materialCode: String, batchNumber: String, serialNumber: String): Boolean {
+
+        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+
+        var count = dbDao.getCountForBatchMaterialCodeSerial(
+                dispatchSlipId,
+                materialCode,
+                batchNumber,
+                serialNumber
+        )
+        if (count > 0) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+
+
+    suspend fun addMaterial(materialCode: String, batchNumber: String, serialNumber: String): Boolean {
+        val result = responseDispatchLoadingItems.filter {
+            it?.materialCode.equals(materialCode) && it?.batchNumber.equals(batchNumber)
+        }
+
+        if (result.size > 0) {
+            updateItemInDatabase(result.first()!!, serialNumber)
+        }
+        return true
+    }
+
+    private suspend fun updateItemInDatabase(item: DispatchSlipItem, serialNumber: String) {
 
         var dbItem = DispatchSlipLoadingListItem(
                 batchCode = item.batchNumber,
@@ -106,13 +175,18 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                 dispatchSlipId = item.dispatchSlipId!!.toInt(),
                 dipatchSlipNumber = dispatchSlipNumber,
                 timeStamp = Date().time,
-                serialNumber = null,
+                serialNumber = serialNumber,
                 vehicleNumber = dispatchSlipVehicleNumber, id = 0)
+
 
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
         dbDao.insert(item = dbItem)
 
-        updatedListAsPerDatabase(responseDispatchLoadingItems)
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                updatedListAsPerDatabase(responseDispatchLoadingItems)
+            }
+        }
     }
 
 

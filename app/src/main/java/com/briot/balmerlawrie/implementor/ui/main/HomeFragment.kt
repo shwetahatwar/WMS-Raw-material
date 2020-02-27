@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.home_fragment.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.briot.balmerlawrie.implementor.BuildConfig
+import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 
@@ -74,7 +75,12 @@ class HomeFragment : androidx.fragment.app.Fragment() {
 
         materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
         materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
-        materialInward.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialInwardFragment) }
+        materialInward.setOnClickListener {
+            UiHelper.showToast(this.activity as AppCompatActivity, "This feature is disabled for now as per request")
+
+//            @dinesh gajjar; kept out of scope for now on client request
+//            Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialInwardFragment)
+        }
         materialPicking.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_dispatchPickingListsFragment) }
         materialLoading.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_dispatchSlipsFragment) }
         auditProject.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_auditProjectsFragment) }

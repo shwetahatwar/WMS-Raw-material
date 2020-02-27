@@ -1,6 +1,7 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -18,11 +20,14 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.briot.balmerlawrie.implementor.MainApplication
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class DispatchSlipLoadingFragment : Fragment() {
 
@@ -73,8 +78,10 @@ class DispatchSlipLoadingFragment : Fragment() {
 
                 if (viewModel.dispatchloadingItems.value.orEmpty().isNotEmpty() && viewModel.dispatchloadingItems.value?.first() == null) {
                     UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
+                    loading_scanned_count.text = "0/0"
                 } else if (it != oldDispatchSlipItems) {
                     loading_dispatchSlipItems.adapter?.notifyDataSetChanged()
+                    loading_scanned_count.text = viewModel.totalScannedItems.toString() + "/" + it!!.size.toString()
                 }
             }
 
@@ -92,10 +99,49 @@ class DispatchSlipLoadingFragment : Fragment() {
 
         loading_materialBarcode.setOnEditorActionListener { _, i, keyEvent ->
             var handled = false
-            if (keyEvent == null) {
+            /*if (keyEvent == null) {
                 Log.d("materialDetailsScan: ", "event is null")
-            } else if ((loading_materialBarcode.text != null && loading_materialBarcode.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE || ((keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
-                this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+            } else*/
+            if ((loading_materialBarcode.text != null && loading_materialBarcode.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE || (keyEvent != null && (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
+                val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
+
+                var value = loading_materialBarcode.text!!.toString()
+                var arguments  = value.split("#")
+                var productCode = ""
+                var batchCode = ""
+                var serialNumber =  ""
+                if (arguments.size < 2 || arguments[0].length == 0 || arguments[1].length == 0 || arguments[2].length == 0) {
+                    UiHelper.showToast(this.activity as AppCompatActivity, "Invalid barcode, please try again!")
+                } else {
+                    productCode = arguments[0].toString()
+                    batchCode = arguments[1].toString()
+                    serialNumber = arguments[2].toString()
+
+                    if (viewModel.isMaterialBelongToSameGroup(productCode, batchCode)) {
+                        if (viewModel.materialQuantityPickingCompleted(productCode, batchCode)) {
+                            UiHelper.showToast(this.activity as AppCompatActivity, "For given batch and material, quantity is already picked for dispatch!")
+                        } else {
+                            if (viewModel.isSameSerialNumber(productCode, batchCode, serialNumber)) {
+                                UiHelper.showToast(this.activity as AppCompatActivity, "This barcode is already added, please add other item")
+                            } else {
+                                this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+                                // prodeed to add the material in database
+                                GlobalScope.launch {
+                                    viewModel.addMaterial(productCode, batchCode, serialNumber)
+                                }
+                            }
+                        }
+
+                    } else {
+                        UiHelper.showToast(this.activity as AppCompatActivity, "Scanned material batch and material is not matching with dispatch slip!")
+                        // @dinesh gajjar: get admin permission flow
+                    }
+
+
+//                    viewModel.in
+                }
+
 //                UiHelper.hideProgress(this.progress)
 //                this.progress = null
                 handled = true
@@ -107,13 +153,20 @@ class DispatchSlipLoadingFragment : Fragment() {
             if (viewModel.dispatchloadingItems  != null && viewModel.dispatchloadingItems.value != null && viewModel.dispatchloadingItems.value!!.size > 0) {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
-                this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+                if (MainApplication().hasNetwork()) {
+//                    this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+                } else {
+                    UiHelper.showToast(this.activity as AppCompatActivity, "Please submit the list when in Network!")
+                }
 
                 // viewModel.submitDispatchItems();
 
             } else {
-                UiHelper.showToast(this.activity as AppCompatActivity, "No items for dispatch")
             }
+
+        })
+
+        loading_scanButton.setOnClickListener({
 
         })
 
@@ -152,11 +205,13 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
         protected val dispatchSlipItemBatchNumber: TextView
         protected val dispatchSlipItemMaterialCode: TextView
         protected val dispatchSlipItemPackQuantity: TextView
+        protected val linearLayout: LinearLayout
 
         init {
             dispatchSlipItemBatchNumber = itemView.findViewById(R.id.dispatch_slip_item_batch_number)
             dispatchSlipItemMaterialCode = itemView.findViewById(R.id.dispatch_slip_item_material_product_code)
             dispatchSlipItemPackQuantity = itemView.findViewById(R.id.dispatch_slip_item_material_pack_quantity)
+            linearLayout = itemView.findViewById(R.id.dispatch_slip_layout)
         }
 
         fun bind() {
@@ -164,7 +219,14 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
 
             dispatchSlipItemBatchNumber.text = dispatchSlipItem.batchNumber
             dispatchSlipItemMaterialCode.text = dispatchSlipItem.materialCode
-            dispatchSlipItemPackQuantity.text = dispatchSlipItem.numberOfPacks.toString()
+            dispatchSlipItemPackQuantity.text = dispatchSlipItem.scannedPacks.toString() + "/" + dispatchSlipItem.numberOfPacks.toString()
+            if (dispatchSlipItem.scannedPacks.toInt() == 0) {
+                linearLayout.setBackgroundColor(Color.parseColor("#FFF3F3F3"))
+            } else if (dispatchSlipItem.scannedPacks.toInt() < dispatchSlipItem.numberOfPacks.toInt()) {
+                linearLayout.setBackgroundColor(Color.parseColor("#73FF8800"))
+            } else if (dispatchSlipItem.scannedPacks.toInt() == dispatchSlipItem.numberOfPacks.toInt()) {
+                linearLayout.setBackgroundColor(Color.parseColor("#FF9CF780"))
+            }
         }
     }
 }
