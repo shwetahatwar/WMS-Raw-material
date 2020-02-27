@@ -51,10 +51,13 @@ class LoginFragment : androidx.fragment.app.Fragment() {
 
             if (it != null) {
                 this.activity?.invalidateOptionsMenu()
-//                PrefRepository.singleInstance.setKeyValue(PrefConstants().USERLOGGEDIN, username.text.toString())
                 PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_TOKEN, it.token!!)
-//                PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_ID, it.id!!.toString())
+                PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_ID, it.userId!!.toString())
                 PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_NAME, it.username!!)
+                PrefRepository.singleInstance.setKeyValue(PrefConstants().ROLE_ID, it.roleId!!.toString())
+                PrefRepository.singleInstance.setKeyValue(PrefConstants().ROLE_NAME, it.role!!)
+                PrefRepository.singleInstance.setKeyValue(PrefConstants().EMPLOYEE_ID, it.employeeId!!)
+
                 this.context?.let { it1 -> PrefRepository.singleInstance.serializePrefs(it1) }
 
                 Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)

@@ -153,7 +153,7 @@ class DispatchSlipLoadingFragment : Fragment() {
             if (viewModel.dispatchloadingItems  != null && viewModel.dispatchloadingItems.value != null && viewModel.dispatchloadingItems.value!!.size > 0) {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
-                if (MainApplication().hasNetwork()) {
+                if (MainApplication.hasNetwork(MainApplication.applicationContext())) {
 //                    this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
                 } else {
                     UiHelper.showToast(this.activity as AppCompatActivity, "Please submit the list when in Network!")

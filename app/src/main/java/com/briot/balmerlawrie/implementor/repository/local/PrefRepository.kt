@@ -42,6 +42,7 @@ class PrefConstants {
     public val USER_ID = "USER_ID"
     public val ROLE_NAME = "ROLE_NAME"
     public val ROLE_ID = "ROLE_ID"
+    public val EMPLOYEE_ID = "EMPLOYEE_ID"
     public val EMPLOYEE_NAME = "EMPLOYEE_NAME"
     public val EMPLOYEE_EMAIL = "EMPLOYEE_EMAIL"
     public val EMPLOYEE_PHONE = "EMPLOYEE_PHONE"

@@ -30,6 +30,9 @@ interface DispatchSlipLoadingListItemDao {
     @Query("SELECT * FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
     fun getItemsForBatchMaterialCode(dispatchSlipId: Int, materialCode: String, batchNumber: String): LiveData<List<DispatchSlipLoadingListItem>>
 
+    @Query("DELETE from dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dipsatchSlipId")
+    suspend fun deleteForSelectedDispatchSlip(dipsatchSlipId: String)
+
     @Query("DELETE from dispatchslip_loading_list_item")
     suspend fun deleteAll()
 }

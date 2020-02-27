@@ -13,6 +13,10 @@ class SignInResponse {
     var message: String? = null
     var token: String? =  null
     var username: String? = null
+    var userId: Number? = null
+    var employeeId: String? = null
+    var roleId: Number? = null
+    var role: String? = null
 }
 
 class Role {
@@ -124,6 +128,8 @@ class DispatchSlipRequest {
     var loadStartTime: String? = null
     var loadEndTime: String? = null
     var truckNumber: String? = null
+    var dispatchId: Number? = null
+    var truckId: Number?  = null
     var material: Array<DispatchSlipItemRequest>? = null
 }
 

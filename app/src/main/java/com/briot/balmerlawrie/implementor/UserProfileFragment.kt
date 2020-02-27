@@ -34,28 +34,16 @@ class UserProfileFragment : Fragment() {
         (this.activity as AppCompatActivity).setTitle("User Profile")
 
 
-        val userId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_NAME, "")
-        val userName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().EMPLOYEE_NAME, "")
+        val userName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_NAME, "")
+        val userId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_ID, "")
         val roleName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_NAME, "")
-        val emailAddress = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().EMPLOYEE_EMAIL, "")
+        val employeeId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().EMPLOYEE_ID, "")
 
-        userNameValue.text = userId
-        userFullNameValue.text = userName
+        userNameValue.text = userName
+        userFullNameValue.text = userId
         userRoleValue.text = roleName
-        userEmailValue.text = emailAddress
+        userEmailValue.text = employeeId
         this.activity?.invalidateOptionsMenu()
-
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_TOKEN, "")
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_NAME, "")
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().USER_ID, "")
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().EMPLOYEE_STATUS, "")
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().EMPLOYEE_NAME, "")
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().EMPLOYEE_EMAIL, "")
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().EMPLOYEE_PHONE, "")
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().ROLE_ID, "")
-//        PrefRepository.singleInstance.setKeyValue(PrefConstants().ROLE_NAME, "")
-//
-//        val userProfileLayout = R.id.userProfileLinearLayoutId
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {

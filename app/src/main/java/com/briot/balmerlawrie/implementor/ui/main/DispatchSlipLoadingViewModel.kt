@@ -11,6 +11,8 @@ import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.data.AppDatabase
 import com.briot.balmerlawrie.implementor.data.DispatchSlipLoadingListItem
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
+import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItemRequest
+import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipRequest
 import com.briot.balmerlawrie.implementor.repository.remote.RemoteRepository
 import kotlinx.coroutines.*
 import java.util.*
@@ -97,7 +99,13 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
         }*/
 
-        updatedItems.sortWith(compareBy<DispatchSlipItem?> { it!!.scannedPacks == 0}.thenBy { (it!!.scannedPacks.toInt() < it!!.numberOfPacks.toInt()) }.thenBy { it!!.scannedPacks == it!!.numberOfPacks })
+        updatedItems.sortWith(compareBy<DispatchSlipItem?> {
+            it!!.scannedPacks.toInt() == it!!.numberOfPacks.toInt()
+        }.thenBy {
+            (it!!.scannedPacks.toInt() < it!!.numberOfPacks.toInt())
+        }.thenBy {
+            it!!.scannedPacks == 0
+        })
         //
 
         (this.dispatchloadingItems as MutableLiveData<Array<DispatchSlipItem?>>).value = updatedItems
@@ -147,6 +155,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                 batchNumber,
                 serialNumber
         )
+
         if (count > 0) {
             return true
         } else {
@@ -176,7 +185,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                 dipatchSlipNumber = dispatchSlipNumber,
                 timeStamp = Date().time,
                 serialNumber = serialNumber,
-                vehicleNumber = dispatchSlipVehicleNumber, id = 0)
+                vehicleNumber = dispatchSlipVehicleNumber, id = 0, submitted = 0)
 
 
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
@@ -203,6 +212,35 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
 
     private fun handleSubmitLoadingList() {
+        var dispatchSlipRequestObject = DispatchSlipRequest()
+        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+        var dbItems = dbDao.getAllDispatchSlipItems(
+                dispatchSlipId
+        )
+
+        var items = mutableListOf<DispatchSlipItemRequest>()
+        var startTime = ""
+        var endTime = ""
+        if (dbItems.value != null) {
+            startTime = Date(dbItems.value!!.first().timeStamp).toString()
+            endTime = Date(dbItems.value!!.last().timeStamp).toString()
+
+            for (dbItem in dbItems.value!!.iterator()) {
+                var item = DispatchSlipItemRequest()
+                item.batchNumber = dbItem.batchCode
+                item.materialCode = dbItem.productCode
+                item.serialNumber = dbItem.serialNumber
+                items.add(item)
+            }
+        }
+
+
+        dispatchSlipRequestObject.dispatchId = dispatchSlipId
+        dispatchSlipRequestObject.truckNumber = dispatchSlipVehicleNumber
+        dispatchSlipRequestObject.truckId = dispatchSlipTruckId
+        dispatchSlipRequestObject.loadStartTime = startTime
+        dispatchSlipRequestObject.loadEndTime = endTime
+        dispatchSlipRequestObject.material = items.toTypedArray()
 
     }
 }

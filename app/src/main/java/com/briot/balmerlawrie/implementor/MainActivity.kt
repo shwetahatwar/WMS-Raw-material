@@ -46,6 +46,15 @@ class MainApplication : Application() {
         fun applicationContext() : Context {
             return instance!!.applicationContext
         }
+
+        fun hasNetwork(context: Context): Boolean {
+            var isConnected = false // Initial Value
+            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
+            if (activeNetwork != null && activeNetwork.isConnected)
+                isConnected = true
+            return isConnected
+        }
     }
 
     override fun onCreate() {
@@ -55,15 +64,6 @@ class MainApplication : Application() {
         // Use ApplicationContext.
         // example: SharedPreferences etc...
         val context: Context = MainApplication.applicationContext()
-    }
-
-    public fun hasNetwork(): Boolean {
-        var isConnected = false // Initial Value
-        val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = connectivityManager.activeNetworkInfo
-        if (activeNetwork != null && activeNetwork.isConnected)
-            isConnected = true
-        return isConnected
     }
 }
 
