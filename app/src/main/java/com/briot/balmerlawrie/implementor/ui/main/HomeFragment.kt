@@ -2,6 +2,7 @@ package com.briot.balmerlawrie.implementor.ui.main
 
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
@@ -39,6 +40,57 @@ class HomeFragment : androidx.fragment.app.Fragment() {
 
         (this.activity as AppCompatActivity).setTitle("Home")
 
+        val roleName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_NAME, "")
+        val roleId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_ID, "0").toInt()
+
+        viewStatus(true)
+        var disableTextColor = Color.parseColor("#FFa3a3a3")
+        if (roleName.toLowerCase().equals("admin")) {
+            materialInward.isEnabled = false
+            materialInward.setTextColor(disableTextColor)
+        } else if (roleName.toLowerCase().equals("picker")) {
+            materialDetails.isEnabled = true
+
+            materialInward.isEnabled = false
+            materialInward.setTextColor(disableTextColor)
+
+            materialPicking.isEnabled = true
+
+            materialLoading.isEnabled = false
+            materialLoading.setTextColor(disableTextColor)
+
+            auditProject.isEnabled = false
+            auditProject.setTextColor(disableTextColor)
+
+        } else if (roleName.toLowerCase().equals("loader")) {
+            materialDetails.isEnabled = true
+
+            materialInward.isEnabled = false
+            materialInward.setTextColor(disableTextColor)
+
+            materialPicking.isEnabled = false
+            materialPicking.setTextColor(disableTextColor)
+
+            materialLoading.isEnabled = true
+
+            auditProject.isEnabled = false
+            auditProject.setTextColor(disableTextColor)
+
+        } else if (roleName.toLowerCase().equals("auditor")) {
+            materialDetails.isEnabled = true
+
+            materialInward.isEnabled = false
+            materialInward.setTextColor(disableTextColor)
+
+            materialPicking.isEnabled = false
+            materialPicking.setTextColor(disableTextColor)
+
+            materialLoading.isEnabled = false
+            materialLoading.setTextColor(disableTextColor)
+
+            auditProject.isEnabled = true
+        }
+
         /*this.viewModel.roleAccessRelations.observe(this, Observer<Array<RoleAccessRelation>> {
             if (it != null) {
                 val roleName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_NAME, "")
@@ -73,11 +125,9 @@ class HomeFragment : androidx.fragment.app.Fragment() {
         // hide all options initially,  enable it as per role only
         viewStatus(true)
 
-        materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
-        materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
+            materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
         materialInward.setOnClickListener {
             UiHelper.showToast(this.activity as AppCompatActivity, "This feature is disabled for now as per request")
-
 //            @dinesh gajjar; kept out of scope for now on client request
 //            Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialInwardFragment)
         }
@@ -86,21 +136,19 @@ class HomeFragment : androidx.fragment.app.Fragment() {
         auditProject.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_auditProjectsFragment) }
     }
 
-    fun viewStatus(show: Boolean) {
+    fun viewStatus( show: Boolean) {
         if (show) {
-//            materialDetails.visibility = View.VISIBLE
-            materialLoading.visibility = View.VISIBLE
             materialDetails.visibility = View.VISIBLE
             materialInward.visibility = View.VISIBLE
             materialPicking.visibility = View.VISIBLE
-        } else {
-//            materialDetails.visibility = View.GONE
             materialLoading.visibility = View.VISIBLE
+            auditProject.visibility = View.VISIBLE
+        } else {
             materialDetails.visibility = View.GONE
             materialInward.visibility = View.GONE
             materialPicking.visibility = View.GONE
+            materialLoading.visibility = View.VISIBLE
+            auditProject.visibility = View.GONE
         }
-
     }
-
 }

@@ -1,10 +1,12 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
+import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlip
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_slips_fragment.*
@@ -134,6 +137,7 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
         protected val dispatchSlipDepotName: TextView
         protected val dispatchSlipDepotLocation: TextView
         protected val dispatchSlipDepotCreatedOn: TextView
+        protected val linearLayout: LinearLayout
 
         init {
             dispatchSlipId = itemView.findViewById(R.id.dispatch_list_row_title)
@@ -142,6 +146,7 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
             dispatchSlipDepotName = itemView.findViewById(R.id.dispatch_list_row_depot_name)
             dispatchSlipDepotLocation = itemView.findViewById(R.id.dispatch_list_row_depot_location)
             dispatchSlipDepotCreatedOn = itemView.findViewById(R.id.dispatch_list_row_creation_date)
+            linearLayout = itemView.findViewById(R.id.dispatch_slips_row_layout)
         }
 
         fun bind() {
@@ -164,6 +169,18 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
                 parser.setTimeZone(TimeZone.getTimeZone("IST"))
                 val result = parser.parse(value)
                 dispatchSlipDepotCreatedOn.text = output.format(result)
+            }
+
+            if (dispatchSlip.dispatchSlipStatus != null) {
+                if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("active")) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
+                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("progress")) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
+                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("complete")) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
+                } else {
+                    linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
+                }
             }
         }
     }

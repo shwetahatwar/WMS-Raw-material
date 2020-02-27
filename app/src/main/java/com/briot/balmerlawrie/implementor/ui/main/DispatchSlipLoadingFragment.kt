@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.briot.balmerlawrie.implementor.MainApplication
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
+import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
@@ -239,11 +240,11 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
             dispatchSlipItemMaterialCode.text = dispatchSlipItem.materialCode
             dispatchSlipItemPackQuantity.text = dispatchSlipItem.scannedPacks.toString() + "/" + dispatchSlipItem.numberOfPacks.toString()
             if (dispatchSlipItem.scannedPacks.toInt() == 0) {
-                linearLayout.setBackgroundColor(Color.parseColor("#FFF3F3F3"))
+                linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
             } else if (dispatchSlipItem.scannedPacks.toInt() < dispatchSlipItem.numberOfPacks.toInt()) {
-                linearLayout.setBackgroundColor(Color.parseColor("#73FF8800"))
+                linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
             } else if (dispatchSlipItem.scannedPacks.toInt() >= dispatchSlipItem.numberOfPacks.toInt()) {
-                linearLayout.setBackgroundColor(Color.parseColor("#FF9CF780"))
+                linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
             }
         }
     }

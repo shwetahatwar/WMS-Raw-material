@@ -1,6 +1,7 @@
 package com.briot.balmerlawrie.implementor.repository.local
 
 import android.content.Context
+import android.graphics.Color
 
 class PrefRepository {
     companion object {
@@ -50,5 +51,9 @@ class PrefConstants {
 
     public val MAX_STALE = 60 * 60 * 24 * 1 // one day
     public val MAX_AGE = 5000
+
+    val lightGreenColor = Color.parseColor("#FF9CF780")
+    val lightOrangeColor = Color.parseColor("#73FF8800")
+    val lightGrayColor = Color.parseColor("#FFF3F3F3")
 
 }
