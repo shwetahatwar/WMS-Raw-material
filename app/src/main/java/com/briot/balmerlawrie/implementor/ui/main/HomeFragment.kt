@@ -141,7 +141,7 @@ class HomeFragment : androidx.fragment.app.Fragment() {
 
             materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
         materialInward.setOnClickListener {
-            UiHelper.showToast(this.activity as AppCompatActivity, "This feature is disabled for now as per request")
+            UiHelper.showWarningToast(this.activity as AppCompatActivity, "This feature is disabled for now as per request")
 //            @dinesh gajjar; kept out of scope for now on client request
 //            Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialInwardFragment)
         }

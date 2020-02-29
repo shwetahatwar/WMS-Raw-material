@@ -18,6 +18,7 @@ import androidx.navigation.Navigation.findNavController
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 import com.google.android.material.snackbar.Snackbar
+import es.dmoral.toasty.Toasty
 import io.github.pierry.progress.Progress
 import okhttp3.Cache
 import okhttp3.Interceptor
@@ -282,15 +283,16 @@ class UiHelper {
             val coordinatorLayout = activity.findViewById<androidx.coordinatorlayout.widget.CoordinatorLayout>(R.id.container)
 
             val snackbar = Snackbar.make(coordinatorLayout!!, message, duration)
-                    .setAction("OK", View.OnClickListener {
+            if (duration == Snackbar.LENGTH_INDEFINITE) {
+                snackbar.setAction("OK", View.OnClickListener {
 
-                    })
+                })
+                val actionButton = snackbar.view.findViewById<Button>(com.google.android.material.R.id.snackbar_action)
+//            actionButton.typeface = ResourcesCompat.getFont(activity, R.font.lato_bold)
+                actionButton.textSize = 18f
+            }
 
             snackbar.setActionTextColor(Color.WHITE)
-            val actionButton = snackbar.view.findViewById<Button>(com.google.android.material.R.id.snackbar_action)
-//            actionButton.typeface = ResourcesCompat.getFont(activity, R.font.lato_bold)
-            actionButton.textSize = 18f
-
             val snackbarTextView = snackbar.view
                     .findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
             snackbarTextView.setTextColor(Color.WHITE)
@@ -341,10 +343,20 @@ class UiHelper {
             }
         }
 
-        fun showToast(activity: AppCompatActivity, message: String) {
-            var toast = Toast.makeText(activity, message, Toast.LENGTH_LONG)
-//            var backgroundView = toast.view
-//            backgroundView.setBackgroundColor(Color.parseColor("#ffff6000"))
+        fun showSuccessToast(activity: AppCompatActivity, message: String) {
+            var toast = Toasty.success(activity, message, 3000)
+//            var toast = Toast.makeText(activity, message, Toast.LENGTH_LONG)
+            toast.show()
+        }
+
+        fun showErrorToast(activity: AppCompatActivity, message: String) {
+            var toast = Toasty.error(activity, message, 3000)
+//            var toast = Toast.makeText(activity, message, Toast.LENGTH_LONG)
+            toast.show()
+        }
+        fun showWarningToast(activity: AppCompatActivity, message: String) {
+            var toast = Toasty.warning(activity, message, 3000)
+//            var toast = Toast.makeText(activity, message, Toast.LENGTH_LONG)
             toast.show()
         }
 

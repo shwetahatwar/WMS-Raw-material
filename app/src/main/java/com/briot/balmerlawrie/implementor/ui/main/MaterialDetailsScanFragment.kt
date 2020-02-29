@@ -83,7 +83,7 @@ class MaterialDetailsScanFragment : Fragment() {
             oldMaterialInward = it
 
             if (it == null) {
-                UiHelper.showToast(this.activity as AppCompatActivity, "Material not found for scanned Barcode")
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Material not found for scanned Barcode")
                 materialScanText.text?.clear()
                 materialScanText.requestFocus()
             }

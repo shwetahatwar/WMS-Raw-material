@@ -26,6 +26,7 @@ import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
+import com.google.android.material.snackbar.Snackbar
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
 import kotlinx.coroutines.Dispatchers
@@ -121,9 +122,6 @@ class DispatchSlipLoadingFragment : Fragment() {
 
         loading_materialBarcode.setOnEditorActionListener { _, i, keyEvent ->
             var handled = false
-            /*if (keyEvent == null) {
-                Log.d("materialDetailsScan: ", "event is null")
-            } else*/
             if ((loading_materialBarcode.text != null && loading_materialBarcode.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE || (keyEvent != null && (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
@@ -134,7 +132,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                 var batchCode = ""
                 var serialNumber =  ""
                 if (arguments.size < 2 || arguments[0].length == 0 || arguments[1].length == 0 || arguments[2].length == 0) {
-                    UiHelper.showToast(this.activity as AppCompatActivity, "Invalid barcode, please try again!")
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "Invalid barcode, please try again!")
                 } else {
                     productCode = arguments[0].toString()
                     batchCode = arguments[1].toString()
@@ -142,10 +140,10 @@ class DispatchSlipLoadingFragment : Fragment() {
 
                     if (viewModel.isMaterialBelongToSameGroup(productCode, batchCode)) {
                         if (viewModel.materialQuantityPickingCompleted(productCode, batchCode)) {
-                            UiHelper.showToast(this.activity as AppCompatActivity, "For given batch and material, quantity is already picked for dispatch!")
+                            UiHelper.showErrorToast(this.activity as AppCompatActivity, "For given batch and material, quantity is already picked for dispatch!")
                         } else {
                             if (viewModel.isSameSerialNumber(productCode, batchCode, serialNumber)) {
-                                UiHelper.showToast(this.activity as AppCompatActivity, "This barcode is already added, please add other item")
+                                UiHelper.showErrorToast(this.activity as AppCompatActivity, "This barcode is already added, please add other item")
                             } else {
                                 this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
                                 // prodeed to add the material in database
@@ -156,7 +154,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                         }
 
                     } else {
-                        UiHelper.showToast(this.activity as AppCompatActivity, "Scanned material batch and material is not matching with dispatch slip!")
+                        UiHelper.showErrorToast(this.activity as AppCompatActivity, "Scanned material batch and material is not matching with dispatch slip!")
                         // @dinesh gajjar: get admin permission flow
                     }
                 }
@@ -171,14 +169,14 @@ class DispatchSlipLoadingFragment : Fragment() {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
                 if (viewModel.dispatchSlipStatus.toString().toLowerCase().contains("complete")) {
-                    UiHelper.showToast(this.activity as AppCompatActivity, "Items can not be scanned for completed Dispatch Slip")
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "Items can not be scanned for completed Dispatch Slip")
                 } else if (MainApplication.hasNetwork(MainApplication.applicationContext())) {
 
                     if (viewModel.isDispatchListSubmitted()) {
-                        UiHelper.showToast(this.activity as AppCompatActivity, "Items listed in this dispatch list is already submitted")
+                        UiHelper.showErrorToast(this.activity as AppCompatActivity, "Items listed in this dispatch list is already submitted")
 
                     } else if (!viewModel.isDispatchSlipHasEntries()) {
-                        UiHelper.showToast(this.activity as AppCompatActivity, "There is no item added to selected dispatch list")
+                        UiHelper.showErrorToast(this.activity as AppCompatActivity, "There is no item added to selected dispatch list")
 
                     } else {
 
@@ -199,7 +197,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                         }
                     }
                 } else {
-                    UiHelper.showToast(this.activity as AppCompatActivity, "Please submit the list when in Network!")
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "Please submit the list when in Network!")
                 }
             }
 

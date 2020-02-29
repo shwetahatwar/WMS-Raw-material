@@ -62,7 +62,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
 
                 Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)
             } else {
-                UiHelper.showToast(this.activity as AppCompatActivity, "An error has occurred, please try again.");
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "An error has occurred, please try again.");
             }
 
         })
@@ -78,7 +78,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
                     message = viewModel.errorMessage
                 }
 
-                UiHelper.showToast(this.activity as AppCompatActivity, message);
+                UiHelper.showSnackbarMessage(this.activity as AppCompatActivity, message, 3000);
             }
         })
 
