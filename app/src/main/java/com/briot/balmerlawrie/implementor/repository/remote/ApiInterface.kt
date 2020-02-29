@@ -134,7 +134,7 @@ class DispatchSlipRequest {
     var truckNumber: String? = null
     var dispatchId: Number? = null
     var truckId: Number?  = null
-    var material: Array<DispatchSlipItemRequest>? = null
+    var materials: Array<DispatchSlipItemRequest>? = null
 }
 
 class Project {

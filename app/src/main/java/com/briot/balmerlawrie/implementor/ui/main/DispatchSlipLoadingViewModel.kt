@@ -275,7 +275,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         dispatchSlipRequestObject.truckId = dispatchSlipTruckId
         dispatchSlipRequestObject.loadStartTime = startTime
         dispatchSlipRequestObject.loadEndTime = endTime
-        dispatchSlipRequestObject.material = items.toTypedArray()
+        dispatchSlipRequestObject.materials = items.toTypedArray()
 
 
         GlobalScope.launch {
