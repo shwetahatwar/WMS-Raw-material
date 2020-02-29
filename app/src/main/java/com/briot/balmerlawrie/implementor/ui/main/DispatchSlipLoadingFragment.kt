@@ -68,11 +68,12 @@ class DispatchSlipLoadingFragment : Fragment() {
             viewModel.dispatchSlipNumber = this.arguments!!.getString("loadingDispatchSlip_slipnumber")
             viewModel.dispatchSlipStatus = this.arguments!!.getString("loadingDispatchSlip_slipstatus")
             viewModel.dispatchSlipTruckId = this.arguments!!.getInt("loadingDispatchSlip_truckid")
-
+            viewModel.customer = this.arguments!!.getString("loadingDispatchSlip_customer")
 
             loading_dispatchSlipId.text = viewModel.dispatchSlipNumber
             loading_dispatchListStatusId.text = viewModel.dispatchSlipStatus
             loading_truckNumber.text = viewModel.dispatchSlipVehicleNumber
+            loading_dispatchListCustomer.text = viewModel.customer
         }
 
         recyclerView.adapter = SimpleDispatchSlipLoadingItemAdapter(recyclerView, viewModel.dispatchloadingItems)
@@ -90,6 +91,10 @@ class DispatchSlipLoadingFragment : Fragment() {
                 }
             }
 
+            loading_materialBarcode.text?.clear()
+            loading_materialBarcode.requestFocus()
+
+
             oldDispatchSlipItems = viewModel.dispatchloadingItems.value
         })
 
@@ -98,7 +103,13 @@ class DispatchSlipLoadingFragment : Fragment() {
                 UiHelper.hideProgress(this.progress)
                 this.progress = null
 
-                UiHelper.showNoInternetSnackbarMessage(this.activity as AppCompatActivity)
+
+                if (viewModel.errorMessage != null) {
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, viewModel.errorMessage)
+                } else {
+                    UiHelper.showNoInternetSnackbarMessage(this.activity as AppCompatActivity)
+                }
+
             }
         })
 
@@ -176,7 +187,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                         UiHelper.showErrorToast(this.activity as AppCompatActivity, "Items listed in this dispatch list is already submitted")
 
                     } else if (!viewModel.isDispatchSlipHasEntries()) {
-                        UiHelper.showErrorToast(this.activity as AppCompatActivity, "There is no item added to selected dispatch list")
+                        UiHelper.showErrorToast(this.activity as AppCompatActivity, "There is no item added for selected dispatch list")
 
                     } else {
 
@@ -229,6 +240,8 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
 
         val dispatchSlipItem = dispatchSlipItems.value!![position]!!
         holder.itemView.setOnClickListener{
+
+            // display spinner of choices
 
         }
     }

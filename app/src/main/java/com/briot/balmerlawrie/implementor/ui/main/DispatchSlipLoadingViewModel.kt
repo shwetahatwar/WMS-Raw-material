@@ -12,6 +12,10 @@ import com.briot.balmerlawrie.implementor.data.AppDatabase
 import com.briot.balmerlawrie.implementor.data.DispatchSlipLoadingListItem
 import com.briot.balmerlawrie.implementor.repository.remote.*
 import kotlinx.coroutines.*
+import retrofit2.HttpException
+import java.net.SocketException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.*
 
 class DispatchSlipLoadingViewModel : ViewModel() {
@@ -23,6 +27,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
     var userId: Int = 0
     var dispatchSlipTruckId: Int = 0
     var totalScannedItems: Int = 0
+    var customer: String? = null
 
     private var appDatabase = AppDatabase.getDatabase(MainApplication.applicationContext())
 
@@ -33,6 +38,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
     val dispatchloadingItems: LiveData<Array<DispatchSlipItem?>> = MutableLiveData()
     private var responseDispatchLoadingItems: Array<DispatchSlipItem?> = arrayOf(null)
     val invalidDispatchloadingItems: Array<DispatchSlipItem?> = arrayOf(null)
+    var errorMessage: String = ""
 
     fun loadDispatchSlipLoadingItems() {
         (networkError as MutableLiveData<Boolean>).value = false
@@ -54,8 +60,20 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
         if (UiHelper.isNetworkError(error)) {
             (networkError as MutableLiveData<Boolean>).value = true
-        } else {
+            errorMessage = "Not able to connect to the server."
+        } else if (error is HttpException) {
+            if (error.code() >= 401) {
+                var msg = error.response()?.errorBody()?.string()
+                if (msg != null && msg.isNotEmpty()) {
+                    errorMessage = msg
+                } else {
+                    errorMessage = error.message()
+                }
+            }
+            (networkError as MutableLiveData<Boolean>).value = true
+        }  else {
             (this.dispatchloadingItems as MutableLiveData<Array<DispatchSlipItem?>>).value = invalidDispatchloadingItems
+            errorMessage = "Oops something went wrong."
         }
     }
 
@@ -193,7 +211,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                 dipatchSlipNumber = dispatchSlipNumber,
                 timeStamp = Date().time,
                 serialNumber = serialNumber,
-                vehicleNumber = dispatchSlipVehicleNumber, id = 0, submitted = 0)
+                vehicleNumber = dispatchSlipVehicleNumber, id = 0, submitted = 0, submittedOn = 0)
 
 
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
@@ -260,9 +278,13 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         dispatchSlipRequestObject.material = items.toTypedArray()
 
 
-        (networkError as MutableLiveData<Boolean>).value = false
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                (networkError as MutableLiveData<Boolean>).value = false
+            }
+        }
 
-        RemoteRepository.singleInstance.postDispatchSlipLoadedMaterials(dispatchSlipId, this::handleDispatchLoadingItemsSubmissionResponse, this::handleDispatchLoadingItemsSubmissionError)
+        RemoteRepository.singleInstance.postDispatchSlipLoadedMaterials(dispatchSlipId, dispatchSlipRequestObject, this::handleDispatchLoadingItemsSubmissionResponse, this::handleDispatchLoadingItemsSubmissionError)
 
 
     }
@@ -270,7 +292,8 @@ class DispatchSlipLoadingViewModel : ViewModel() {
     private fun handleDispatchLoadingItemsSubmissionResponse(dispatchSlipResponse: DispatchSlipItemResponse?) {
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
         GlobalScope.launch {
-            dbDao.updateSubmittedStatus(dispatchSlipId.toString())
+            val timestamp = Date().time
+            dbDao.updateSubmittedStatus(dispatchSlipId.toString(), timestamp)
         }
 
     }
@@ -280,8 +303,22 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
         if (UiHelper.isNetworkError(error)) {
             (networkError as MutableLiveData<Boolean>).value = true
-        } else {
-
+            errorMessage = "Not able to connect to the server."
+        } else if (error is HttpException) {
+            if (error.code() >= 401) {
+                var msg = error.response()?.errorBody()?.string()
+                if (error.message() != null && error.message().length > 0) {
+                    errorMessage = error.message()
+                } else if (msg != null && msg.isNotEmpty()) {
+                    errorMessage = msg
+                } else {
+                    errorMessage = "Unknown error has occurred, please try again later!"
+                }
+            }
+            (networkError as MutableLiveData<Boolean>).value = true
+        }  else {
+            (networkError as MutableLiveData<Boolean>).value = true
+            errorMessage = "Oops something went wrong."
         }
     }
 }

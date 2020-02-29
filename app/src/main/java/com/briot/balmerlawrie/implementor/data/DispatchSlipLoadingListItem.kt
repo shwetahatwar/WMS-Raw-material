@@ -18,5 +18,6 @@ public data class DispatchSlipLoadingListItem(
     @ColumnInfo(name = "dispatchSlipId") val dispatchSlipId: Int,
     @ColumnInfo(name = "dipatchSlipNumber") val dipatchSlipNumber: String?,
     @ColumnInfo(name = "vehicleNumber") val vehicleNumber: String?,
-    @ColumnInfo(name = "submitted") val submitted: Int
+    @ColumnInfo(name = "submitted") val submitted: Int,
+    @ColumnInfo(name = "submittedOn") val submittedOn: Long
 )

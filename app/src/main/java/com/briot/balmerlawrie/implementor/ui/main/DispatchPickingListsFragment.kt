@@ -164,7 +164,7 @@ open class SimpleAdapter(private val recyclerView: RecyclerView, private val dis
             if (dispatchSlip.createdAt !=  null) {
                 val value = dispatchSlip.createdAt!!
                 val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                val output = SimpleDateFormat("yyyy-MM-dd hh:mm a")
+                val output = SimpleDateFormat("dd/MM/yyyy hh:mm a")
                 parser.setTimeZone(TimeZone.getTimeZone("IST"))
                 val result =  parser.parse(value)
                 dispatchSlipDepotCreatedOn.text = output.format(result)

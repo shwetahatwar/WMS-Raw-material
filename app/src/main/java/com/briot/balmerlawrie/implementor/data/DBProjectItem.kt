@@ -7,17 +7,17 @@ import androidx.room.PrimaryKey
 import java.sql.Date
 import java.util.*
 
-@Entity(tableName = "dispatchslip_picking_list_item")
-public data class DispatchSlipPickingListItem(
+@Entity(tableName = "audit_project_list_item")
+public data class DBProjectItem(
 
     @PrimaryKey(autoGenerate = true) var id: Int,
     @ColumnInfo(name = "serialNumber") val serialNumber: String?,
     @ColumnInfo(name = "batchCode") val batchCode: String?,
     @ColumnInfo(name = "productCode") val productCode: String?,
-    @ColumnInfo(name = "timestamp") val timeStamp: Long,
+    @ColumnInfo(name = "itemStatus") val itemStatus: String?,
     @ColumnInfo(name = "dispatchSlipId") val dispatchSlipId: Int,
-    @ColumnInfo(name = "dipatchSlipNumber") val dipatchSlipNumber: String?,
-    @ColumnInfo(name = "vehicleNumber") val vehicleNumber: String?,
-    @ColumnInfo(name = "submitted") val submitted: Int,
-    @ColumnInfo(name = "submittedOn") val submittedOn: Long
+    @ColumnInfo(name = "projectId") val projectId: String?,
+    @ColumnInfo(name = "timestamp") val timeStamp: Long,
+    @ColumnInfo(name = "submittedOn") val submittedOn: Long,
+    @ColumnInfo(name = "submitted") val submitted: Int
 )

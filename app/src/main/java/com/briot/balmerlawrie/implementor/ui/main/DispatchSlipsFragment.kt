@@ -54,7 +54,7 @@ class DispatchSlipsFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(DispatchSlipsViewModel::class.java)
         (this.activity as AppCompatActivity).setTitle("Loading Dispatch Slips")
 
-        recyclerView.adapter = SimpleDispatchListAdapter(recyclerView, viewModel.dispatchLoadingList)
+        recyclerView.adapter = SimpleDispatchListAdapter(recyclerView, viewModel.dispatchLoadingList, viewModel)
 
         viewModel.dispatchLoadingList.observe(viewLifecycleOwner, Observer<Array<DispatchSlip?>> {
             if (it != null) {
@@ -86,8 +86,9 @@ class DispatchSlipsFragment : Fragment() {
 
 }
 
-open class SimpleDispatchListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlips: LiveData<Array<DispatchSlip?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDispatchListAdapter.ViewHolder>() {
+open class SimpleDispatchListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlips: LiveData<Array<DispatchSlip?>>, viewModel: DispatchSlipsViewModel) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDispatchListAdapter.ViewHolder>() {
 
+    private var viewModel: DispatchSlipsViewModel = viewModel
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
                 .inflate(R.layout.dispatch_list_picking_row_item, parent, false)
@@ -119,6 +120,10 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
 
             if (dispatchSlip.truckId != null) {
                 bundle.putInt("loadingDispatchSlip_truckid", dispatchSlip.truckId!!.toInt())
+            }
+
+            if (dispatchSlip.depot != null && dispatchSlip.depot!!.name != null) {
+                bundle.putString("loadingDispatchSlip_customer", dispatchSlip.depot!!.name)
             }
 
 
@@ -166,14 +171,16 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
             if (dispatchSlip.createdAt != null) {
                 val value = dispatchSlip.createdAt!!
                 val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                val output = SimpleDateFormat("yyyy-MM-dd hh:mm a")
+                val output = SimpleDateFormat("dd/MM/yyyy hh:mm a")
                 parser.setTimeZone(TimeZone.getTimeZone("IST"))
                 val result = parser.parse(value)
                 dispatchSlipDepotCreatedOn.text = output.format(result)
             }
 
             if (dispatchSlip.dispatchSlipStatus != null) {
-                if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("active")) {
+                if (dispatchSlip.id != null && viewModel.isDispatchSlipInProgress(dispatchSlip.id!!.toInt())) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
+                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("active")) {
                     linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
                 } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("progress")) {
                     linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
@@ -182,6 +189,8 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
                 } else {
                     linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
                 }
+            } else if (dispatchSlip.id != null && viewModel.isDispatchSlipInProgress(dispatchSlip.id!!.toInt())) {
+                linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
             }
         }
     }
