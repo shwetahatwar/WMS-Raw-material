@@ -269,8 +269,8 @@ class UiHelper {
         val SNACKBAR_COLOR = PrefConstants().messageBackgroundColor
 
         fun showAlert(activity: AppCompatActivity, message: String, cancellable: Boolean = false) {
-            AlertDialog.Builder(activity).create().apply {
-                setTitle("Alert")
+            AlertDialog.Builder(activity, R.style.MyDialogTheme).create().apply {
+            setTitle("Alert")
                 setMessage(message)
                 setCancelable(cancellable)
                 setButton(AlertDialog.BUTTON_NEUTRAL, "OK", { dialog, _ -> dialog.dismiss() })
@@ -333,8 +333,8 @@ class UiHelper {
                 error is SocketException || error is SocketTimeoutException || error is UnknownHostException
 
         fun showAlert(activity: AppCompatActivity, message: String) {
-            AlertDialog.Builder(activity).create().apply {
-                setTitle("Alert")
+            AlertDialog.Builder(activity, R.style.MyDialogTheme).create().apply {
+            setTitle("Alert")
                 setMessage(message)
                 setButton(AlertDialog.BUTTON_NEUTRAL, "OK", { dialog, _ -> dialog.dismiss() })
                 show()

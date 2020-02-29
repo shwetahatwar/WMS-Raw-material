@@ -85,7 +85,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                     loading_scanned_count.text = "0/0"
                 } else if (it != oldDispatchSlipItems) {
                     loading_dispatchSlipItems.adapter?.notifyDataSetChanged()
-                    loading_scanned_count.text = viewModel.totalScannedItems.toString() + "/" + it!!.size.toString()
+                    loading_scanned_count.text = viewModel.totalScannedItems.toString() + "/" + it.size.toString()
                 }
             }
 
@@ -98,6 +98,24 @@ class DispatchSlipLoadingFragment : Fragment() {
                 this.progress = null
 
                 UiHelper.showNoInternetSnackbarMessage(this.activity as AppCompatActivity)
+            }
+        })
+
+        viewModel.itemSubmissionSuccessful.observe(viewLifecycleOwner, Observer<Boolean> {
+            if (it == true) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+
+                var thisObject = this
+                AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
+                setTitle("Success")
+                    setMessage("Dispatch slip for loading oberation submitted successfully.")
+                    setButton(AlertDialog.BUTTON_NEUTRAL, "Ok", {
+                        dialog, _ -> dialog.dismiss()
+                        Navigation.findNavController(thisObject.recyclerView).popBackStack()
+                    })
+                    show()
+                }
             }
         })
 
@@ -141,13 +159,8 @@ class DispatchSlipLoadingFragment : Fragment() {
                         UiHelper.showToast(this.activity as AppCompatActivity, "Scanned material batch and material is not matching with dispatch slip!")
                         // @dinesh gajjar: get admin permission flow
                     }
-
-
-//                    viewModel.in
                 }
 
-//                UiHelper.hideProgress(this.progress)
-//                this.progress = null
                 handled = true
             }
             handled
@@ -170,10 +183,10 @@ class DispatchSlipLoadingFragment : Fragment() {
                     } else {
 
                         var thisObject = this
-                            AlertDialog.Builder(this.activity as AppCompatActivity).create().apply {
+                        AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
                             setTitle("Confirm")
-                            setMessage("Are you sure you want to submit this dispatch slip items?s")
-                            setButton(AlertDialog.BUTTON_NEUTRAL, "No", { dialog, _ -> dialog.dismiss() })
+                            setMessage("Are you sure you want to submit this dispatch slip items")
+                            setButton(AlertDialog.BUTTON_NEGATIVE, "No", { dialog, _ -> dialog.dismiss() })
                             setButton(AlertDialog.BUTTON_POSITIVE, "Yes", {
                                 dialog, _ -> dialog.dismiss()
                                 thisObject.progress = UiHelper.showProgressIndicator(thisObject.activity as AppCompatActivity, "Please wait")

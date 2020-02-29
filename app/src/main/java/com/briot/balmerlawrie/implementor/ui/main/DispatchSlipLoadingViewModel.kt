@@ -10,10 +10,7 @@ import com.briot.balmerlawrie.implementor.MainApplication
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.data.AppDatabase
 import com.briot.balmerlawrie.implementor.data.DispatchSlipLoadingListItem
-import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
-import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItemRequest
-import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipRequest
-import com.briot.balmerlawrie.implementor.repository.remote.RemoteRepository
+import com.briot.balmerlawrie.implementor.repository.remote.*
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -32,6 +29,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
     val TAG = "DispatchLoadingListVM"
 
     val networkError: LiveData<Boolean> = MutableLiveData()
+    val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
     val dispatchloadingItems: LiveData<Array<DispatchSlipItem?>> = MutableLiveData()
     private var responseDispatchLoadingItems: Array<DispatchSlipItem?> = arrayOf(null)
     val invalidDispatchloadingItems: Array<DispatchSlipItem?> = arrayOf(null)
@@ -269,9 +267,11 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
     }
 
-    private fun handleDispatchLoadingItemsSubmissionResponse(dispatchSlipResponse: DispatchSlipRequest?) {
-//        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
-//        dbDao.updateSubmittedStatus(dispatchSlipId.toString())
+    private fun handleDispatchLoadingItemsSubmissionResponse(dispatchSlipResponse: DispatchSlipItemResponse?) {
+        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+        GlobalScope.launch {
+            dbDao.updateSubmittedStatus(dispatchSlipId.toString())
+        }
 
     }
 

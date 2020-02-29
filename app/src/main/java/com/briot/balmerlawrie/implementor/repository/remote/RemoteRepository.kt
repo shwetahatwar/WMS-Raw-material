@@ -61,7 +61,7 @@ class RemoteRepository {
                 .subscribe(handleResponse, handleError)
     }
 
-    fun postDispatchSlipPickedMaterials(dispatchSlipId: Int, handleResponse: (DispatchSlipRequest?) -> Unit, handleError: (Throwable) -> Unit) {
+    fun postDispatchSlipPickedMaterials(dispatchSlipId: Int, handleResponse: (DispatchSlipItemResponse?) -> Unit, handleError: (Throwable) -> Unit) {
         RetrofitHelper.retrofit.create(ApiInterface::class.java)
                 .postDispatchSlipPickedMaterials(dispatchSlipId)
                 .subscribeOn(Schedulers.io())
@@ -69,7 +69,7 @@ class RemoteRepository {
                 .subscribe(handleResponse, handleError)
     }
 
-    fun postDispatchSlipLoadedMaterials(dispatchSlipId: Int, handleResponse: (DispatchSlipRequest?) -> Unit, handleError: (Throwable) -> Unit) {
+    fun postDispatchSlipLoadedMaterials(dispatchSlipId: Int, handleResponse: (DispatchSlipItemResponse?) -> Unit, handleError: (Throwable) -> Unit) {
         RetrofitHelper.retrofit.create(ApiInterface::class.java)
                 .postDispatchSlipLoadedMaterials(dispatchSlipId)
                 .subscribeOn(Schedulers.io())

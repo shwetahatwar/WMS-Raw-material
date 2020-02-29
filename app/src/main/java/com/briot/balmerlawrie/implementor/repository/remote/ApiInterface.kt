@@ -124,6 +124,10 @@ class DispatchSlipItemRequest {
     var materialCode: String? = null
 }
 
+class DispatchSlipItemResponse {
+    var message: String? = null
+}
+
 class DispatchSlipRequest {
     var loadStartTime: String? = null
     var loadEndTime: String? = null
@@ -134,22 +138,33 @@ class DispatchSlipRequest {
 }
 
 class Project {
-    var name: String = ""
+        var name: String = ""
     var auditors: String = ""
     var start: String = ""
     var end: String = ""
     var status: Boolean = false
-//    var createdBy: String? = null
-//    var updatedBy: String? = null
-//    var createdAt: String? = null
-//    var updatdAt: String? = null
-
-//    var createdBy: User? = null
-//    var updatedBy: User? = null
+    var projectStatus: String? = null
+    var createdBy: String? = null
+    var updatedBy: String? = null
+    var createdAt: String? = null
+    var updatdAt: String? = null
 }
 
-class ProjectAuditItem {
-
+class ProjectItem {
+    var projectId: Number? = null
+    var materialCode: String? = null
+    var batchNumber: String? = null
+    var serialNumber: String? = null
+    var itemStatus: String? = null
+//    "id": 82,
+//    "projectId": 8,
+//    "materialCode": "6005581",
+//    "batchNumber": "s20/817262",
+//    "serialNumber": "6005581#s20/817262#000002",
+//    "status": true,
+//    "itemStatus": "Scrap",
+//    "createdBy": "nikhil",
+//    "updatedBy": "nikhil"
 }
 
 
@@ -172,12 +187,18 @@ interface ApiInterface {
     @GET("/dispatchslips/{id}/dispatchslipmaterials")
     fun getDispatchSlipMaterials(@Path("id") id: Int): Observable<Array<DispatchSlipItem?>>
 
-    @POST("dispatchslips/{id}/dispatchslippickedmaterials")
-    fun postDispatchSlipPickedMaterials(@Path("id") id: Int): Observable<DispatchSlipRequest?>
+    @POST("dispatchslips/{id}/dispatchslippickermaterials")
+    fun postDispatchSlipPickedMaterials(@Path("id") id: Int): Observable<DispatchSlipItemResponse?>
 
-    @POST("dispatchslips/{id}/dispatchsliploadedmaterials")
-    fun postDispatchSlipLoadedMaterials(@Path("id") id: Int): Observable<DispatchSlipRequest?>
+    @POST("dispatchslips/{id}/dispatchsliploadermaterials")
+    fun postDispatchSlipLoadedMaterials(@Path("id") id: Int): Observable<DispatchSlipItemResponse?>
 
     @GET("/projects/{status}")
     fun getAuditProjects(@Path("status") status: String): Observable<Array<Project?>>
+
+    @GET("/project/{id}/projectitems")
+    fun getProjectItems(@Path("id") id: String): Observable<Array<ProjectItem?>>
+
+    @POST("/project/{id}/projectitems")
+    fun postProjectItems(@Path("id") id: String): Observable<Array<ProjectItem?>>
 }
