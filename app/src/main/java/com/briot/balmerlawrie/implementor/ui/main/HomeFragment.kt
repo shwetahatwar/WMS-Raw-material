@@ -89,6 +89,20 @@ class HomeFragment : androidx.fragment.app.Fragment() {
             materialLoading.setTextColor(disableTextColor)
 
             auditProject.isEnabled = true
+        } else {
+            materialDetails.isEnabled = true
+
+            materialInward.isEnabled = false
+            materialInward.setTextColor(disableTextColor)
+
+            materialPicking.isEnabled = false
+            materialPicking.setTextColor(disableTextColor)
+
+            materialLoading.isEnabled = false
+            materialLoading.setTextColor(disableTextColor)
+
+            auditProject.isEnabled = false
+            auditProject.setTextColor(disableTextColor)
         }
 
         /*this.viewModel.roleAccessRelations.observe(this, Observer<Array<RoleAccessRelation>> {

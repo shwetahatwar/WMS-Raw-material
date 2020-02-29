@@ -112,7 +112,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                     setMessage("Dispatch slip for loading oberation submitted successfully.")
                     setButton(AlertDialog.BUTTON_NEUTRAL, "Ok", {
                         dialog, _ -> dialog.dismiss()
-                        Navigation.findNavController(thisObject.recyclerView).popBackStack()
+                        Navigation.findNavController(thisObject.recyclerView).popBackStack(R.id.homeFragment, false)
                     })
                     show()
                 }
@@ -186,7 +186,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                         AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
                             setTitle("Confirm")
                             setMessage("Are you sure you want to submit this dispatch slip items")
-                            setButton(AlertDialog.BUTTON_NEGATIVE, "No", { dialog, _ -> dialog.dismiss() })
+                            setButton(AlertDialog.BUTTON_NEUTRAL, "No", { dialog, _ -> dialog.dismiss() })
                             setButton(AlertDialog.BUTTON_POSITIVE, "Yes", {
                                 dialog, _ -> dialog.dismiss()
                                 thisObject.progress = UiHelper.showProgressIndicator(thisObject.activity as AppCompatActivity, "Please wait")
