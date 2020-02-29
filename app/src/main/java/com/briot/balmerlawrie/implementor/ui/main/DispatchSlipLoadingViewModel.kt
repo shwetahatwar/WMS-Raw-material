@@ -294,6 +294,10 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         GlobalScope.launch {
             val timestamp = Date().time
             dbDao.updateSubmittedStatus(dispatchSlipId.toString(), timestamp)
+
+            withContext(Dispatchers.Main) {
+                (itemSubmissionSuccessful as MutableLiveData<Boolean>).value = true
+            }
         }
 
     }

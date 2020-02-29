@@ -178,14 +178,14 @@ open class SimpleDispatchListAdapter(private val recyclerView: androidx.recycler
             }
 
             if (dispatchSlip.dispatchSlipStatus != null) {
-                if (dispatchSlip.id != null && viewModel.isDispatchSlipInProgress(dispatchSlip.id!!.toInt())) {
-                    linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
-                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("active")) {
-                    linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
-                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("progress")) {
+                if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("progress")) {
                     linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
                 } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("complete")) {
                     linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
+                } else if (dispatchSlip.id != null && viewModel.isDispatchSlipInProgress(dispatchSlip.id!!.toInt())) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
+                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("active")) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
                 } else {
                     linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
                 }

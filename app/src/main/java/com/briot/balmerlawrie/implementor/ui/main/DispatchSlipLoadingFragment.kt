@@ -94,7 +94,6 @@ class DispatchSlipLoadingFragment : Fragment() {
             loading_materialBarcode.text?.clear()
             loading_materialBarcode.requestFocus()
 
-
             oldDispatchSlipItems = viewModel.dispatchloadingItems.value
         })
 
@@ -124,7 +123,8 @@ class DispatchSlipLoadingFragment : Fragment() {
                     setMessage("Dispatch slip for loading oberation submitted successfully.")
                     setButton(AlertDialog.BUTTON_NEUTRAL, "Ok", {
                         dialog, _ -> dialog.dismiss()
-                        Navigation.findNavController(thisObject.recyclerView).popBackStack(R.id.homeFragment, false)
+//                        Navigation.findNavController(thisObject.recyclerView).popBackStack(R.id.homeFragment, false)
+                        Navigation.findNavController(thisObject.recyclerView).popBackStack()
                     })
                     show()
                 }
@@ -170,6 +170,9 @@ class DispatchSlipLoadingFragment : Fragment() {
                     }
                 }
 
+                loading_materialBarcode.text?.clear()
+                loading_materialBarcode.requestFocus()
+
                 handled = true
             }
             handled
@@ -180,7 +183,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
                 if (viewModel.dispatchSlipStatus.toString().toLowerCase().contains("complete")) {
-                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "Items can not be scanned for completed Dispatch Slip")
+                    UiHelper.showWarningToast(this.activity as AppCompatActivity, "Items can not be scanned for completed Dispatch Slip")
                 } else if (MainApplication.hasNetwork(MainApplication.applicationContext())) {
 
                     if (viewModel.isDispatchListSubmitted()) {
@@ -210,6 +213,9 @@ class DispatchSlipLoadingFragment : Fragment() {
                 } else {
                     UiHelper.showErrorToast(this.activity as AppCompatActivity, "Please submit the list when in Network!")
                 }
+
+                loading_materialBarcode.text?.clear()
+                loading_materialBarcode.requestFocus()
             }
 
         })
