@@ -10,6 +10,8 @@ import com.briot.balmerlawrie.implementor.MainApplication
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.data.AppDatabase
 import com.briot.balmerlawrie.implementor.data.DispatchSlipLoadingListItem
+import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
+import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 import com.briot.balmerlawrie.implementor.repository.remote.*
 import kotlinx.coroutines.*
 import retrofit2.HttpException
@@ -204,6 +206,8 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
     private suspend fun updateItemInDatabase(item: DispatchSlipItem, serialNumber: String) {
 
+        val userName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_NAME, "")
+
         var dbItem = DispatchSlipLoadingListItem(
                 batchCode = item.batchNumber,
                 productCode = item.materialCode,
@@ -211,7 +215,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                 dipatchSlipNumber = dispatchSlipNumber,
                 timeStamp = Date().time,
                 serialNumber = serialNumber,
-                vehicleNumber = dispatchSlipVehicleNumber, id = 0, submitted = 0, submittedOn = 0)
+                vehicleNumber = dispatchSlipVehicleNumber, id = 0, submitted = 0, submittedOn = 0, user = userName)
 
 
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()

@@ -19,5 +19,6 @@ public data class DBProjectItem(
     @ColumnInfo(name = "projectId") val projectId: String?,
     @ColumnInfo(name = "timestamp") val timeStamp: Long,
     @ColumnInfo(name = "submittedOn") val submittedOn: Long,
+    @ColumnInfo(name = "user") val user: String?,
     @ColumnInfo(name = "submitted") val submitted: Int
 )

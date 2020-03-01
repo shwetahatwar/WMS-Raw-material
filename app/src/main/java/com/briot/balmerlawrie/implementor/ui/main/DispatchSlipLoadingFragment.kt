@@ -243,6 +243,10 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
         val dispatchSlipItem = dispatchSlipItems.value!![position]!!
         holder.itemView.setOnClickListener{
 
+            if (viewModel.dispatchSlipStatus.toString().toLowerCase().contains("complete")) {
+                return@setOnClickListener
+            }
+
             val list = mutableListOf<String>()
             var dbItems = viewModel.getItemsOfSameBatchProductCode(dispatchSlipItem.batchNumber!!, dispatchSlipItem.materialCode!!)
             if (dbItems != null) {
