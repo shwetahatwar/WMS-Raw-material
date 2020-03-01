@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.ListPopupWindow
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.briot.balmerlawrie.implementor.R
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,7 +26,7 @@ import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
+import com.briot.balmerlawrie.implementor.R
 
 class DispatchSlipLoadingFragment : Fragment() {
 
@@ -245,10 +247,11 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
             var dbItems = viewModel.getItemsOfSameBatchProductCode(dispatchSlipItem.batchNumber!!, dispatchSlipItem.materialCode!!)
             if (dbItems != null) {
                 for (dbItem in dbItems!!.iterator()) {
-                    var item = dbItem.batchCode + "|" + dbItem.productCode + "|" + dbItem.serialNumber
+                    var item = dbItem.batchCode + "#" + dbItem.productCode + "#" + dbItem.serialNumber
                     list.add(item)
                 }
             }
+
             val listPopupWindow = ListPopupWindow(this.recyclerView.context)
             listPopupWindow.setAnchorView(it)
             listPopupWindow.setDropDownGravity(Gravity.CENTER_HORIZONTAL)
@@ -257,6 +260,26 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
             listPopupWindow.isModal = true
             listPopupWindow.setAdapter(ArrayAdapter(this.recyclerView.context,
                     android.R.layout.simple_list_item_1, list.toTypedArray())) // list_item is your textView with gravity.
+
+            listPopupWindow.setOnItemClickListener { parent, view, position, id ->
+                listPopupWindow.dismiss()
+                var item = dbItems[position]
+                var message = "Are you sure you want to remove this item  from scanned dispatch list?"
+                AlertDialog.Builder(recyclerView.context, R.style.MyDialogTheme).create().apply {
+                    setTitle("Confirm")
+                    setMessage("Are you sure you want to remove this item \n\n${list[position]}\n\nfrom scanned dispatch list?")
+                    setButton(AlertDialog.BUTTON_NEUTRAL, "NO", {
+                        dialog, _ -> dialog.dismiss()
+                    })
+                    setButton(AlertDialog.BUTTON_POSITIVE, "YES", {
+                        dialog, _ -> dialog.dismiss()
+                        if (item.batchCode != null && item.productCode != null && item.serialNumber != null) {
+                            viewModel.deleteItemFromDB(item.batchCode!!, item.productCode!!, item.serialNumber!!)
+                        }
+                    })
+                    show()
+                }
+            }
 
             listPopupWindow.show()
         }

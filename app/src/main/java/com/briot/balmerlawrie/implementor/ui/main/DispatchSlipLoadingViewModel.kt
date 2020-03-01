@@ -240,7 +240,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                 dispatchSlipId
         )
 
-        if (dbItems.value != null && dbItems.value!!.size > 0) {
+        if (dbItems != null && dbItems.size > 0) {
             return true
         }
 
@@ -326,22 +326,32 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         }
     }
 
-    fun getItemsOfSameBatchProductCode(batchNumber: String, materialCode: String): List<DispatchSlipLoadingListItem>? {
+    fun getItemsOfSameBatchProductCode(batchNumber: String, materialCode: String): List<DispatchSlipLoadingListItem> {
 
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
 
-        /*var dbItems1 = dbDao.getAllDispatchSlipItems(dispatchSlipId)
-
-        var dbItems2 = dbDao.getItemsForBatch(dispatchSlipId, batchNumber)
-
-        var result2 = dbDao.getItemsForBatch(dispatchSlipId, batchNumber).value
-        */
         var dbItems = dbDao.getItemsForBatchMaterialCode(
                 dispatchSlipId,
                 materialCode,
                 batchNumber
         )
 
-        return dbItems.value
+        return dbItems
+    }
+
+    fun deleteItemFromDB(batchNumber: String, materialCode: String, serialNumber: String) {
+
+        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+
+        GlobalScope.launch {
+
+            dbDao.deleteSelectedItem(dispatchSlipId, materialCode, batchNumber, serialNumber)
+
+            withContext(Dispatchers.Main) {
+                updatedListAsPerDatabase(responseDispatchLoadingItems)
+            }
+        }
+
+
     }
 }
