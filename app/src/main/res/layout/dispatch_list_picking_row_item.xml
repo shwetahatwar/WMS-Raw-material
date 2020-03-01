@@ -97,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Depot" />
+            android:text="Customer" />
 
         <TextView
             android:id="@+id/dispatch_list_row_depot_name"
@@ -122,7 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Depot Location" />
+            android:text="Location" />
 
         <TextView
             android:id="@+id/dispatch_list_row_depot_location"

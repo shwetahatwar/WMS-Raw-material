@@ -21,25 +21,25 @@ interface DispatchSlipLoadingListItemDao {
     @Query("SELECT COUNt (*) FROM dispatchslip_loading_list_item WHERE dispatchSlipId = :dispatchSlipId ORDER BY timestamp ASC")
     fun getAllDispatchSlipItemsCount(dispatchSlipId: Int): Int
 
-    @Query("SELECT COUNT (*) FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
+    @Query("SELECT COUNT (*) FROM dispatchslip_loading_list_item WHERE dispatchSlipId = :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
     fun getCountForBatchMaterialCode(dispatchSlipId: Int, materialCode: String, batchNumber: String): Int
 
-    @Query("SELECT COUNT (*) FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber AND serialNumber LIKE :serialNumber ORDER BY timestamp ASC")
+    @Query("SELECT COUNT (*) FROM dispatchslip_loading_list_item WHERE dispatchSlipId = :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber AND serialNumber LIKE :serialNumber ORDER BY timestamp ASC")
     fun getCountForBatchMaterialCodeSerial(dispatchSlipId: Int, materialCode: String, batchNumber: String, serialNumber: String): Int
 
-    @Query("SELECT * FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
+    @Query("SELECT * FROM dispatchslip_loading_list_item WHERE dispatchSlipId = :dispatchSlipId AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
     fun getItemsForBatch(dispatchSlipId: Int, batchNumber: String): LiveData<List<DispatchSlipLoadingListItem>>
 
-    @Query("SELECT * FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
+    @Query("SELECT * FROM dispatchslip_loading_list_item WHERE dispatchSlipId = :dispatchSlipId AND productCode LIKE :materialCode AND batchCode LIKE :batchNumber ORDER BY timestamp ASC")
     fun getItemsForBatchMaterialCode(dispatchSlipId: Int, materialCode: String, batchNumber: String): LiveData<List<DispatchSlipLoadingListItem>>
 
-    @Query("SELECT * FROM dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dispatchSlipId AND submitted = 1 ORDER BY timestamp ASC")
+    @Query("SELECT * FROM dispatchslip_loading_list_item WHERE dispatchSlipId = :dispatchSlipId AND submitted = 1 ORDER BY timestamp ASC")
     fun getSubmitedDispatchDetails(dispatchSlipId: Int): LiveData<List<DispatchSlipLoadingListItem>>
 
     @Query("UPDATE dispatchslip_loading_list_item SET submitted = 1, submittedOn = :timestamp WHERE dispatchSlipId LIKE :dipsatchSlipId")
     suspend fun updateSubmittedStatus(dipsatchSlipId: String,  timestamp: Long)
 
-    @Query("DELETE from dispatchslip_loading_list_item WHERE dispatchSlipId LIKE :dipsatchSlipId")
+    @Query("DELETE from dispatchslip_loading_list_item WHERE dispatchSlipId = :dipsatchSlipId")
     suspend fun deleteForSelectedDispatchSlip(dipsatchSlipId: String)
 
     @Query("DELETE from dispatchslip_loading_list_item WHERE dispatchSlipId = :dipsatchSlipId AND serialNumber LIKE :serialNumber")

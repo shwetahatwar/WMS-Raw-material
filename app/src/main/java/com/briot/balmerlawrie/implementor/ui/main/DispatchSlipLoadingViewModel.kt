@@ -325,4 +325,23 @@ class DispatchSlipLoadingViewModel : ViewModel() {
             errorMessage = "Oops something went wrong."
         }
     }
+
+    fun getItemsOfSameBatchProductCode(batchNumber: String, materialCode: String): List<DispatchSlipLoadingListItem>? {
+
+        var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+
+        /*var dbItems1 = dbDao.getAllDispatchSlipItems(dispatchSlipId)
+
+        var dbItems2 = dbDao.getItemsForBatch(dispatchSlipId, batchNumber)
+
+        var result2 = dbDao.getItemsForBatch(dispatchSlipId, batchNumber).value
+        */
+        var dbItems = dbDao.getItemsForBatchMaterialCode(
+                dispatchSlipId,
+                materialCode,
+                batchNumber
+        )
+
+        return dbItems.value
+    }
 }

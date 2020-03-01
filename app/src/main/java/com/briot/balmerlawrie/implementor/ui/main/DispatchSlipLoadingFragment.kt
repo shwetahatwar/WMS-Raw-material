@@ -1,38 +1,30 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.briot.balmerlawrie.implementor.R
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.RecyclerView
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.briot.balmerlawrie.implementor.MainApplication
-import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlipItem
-import com.google.android.material.snackbar.Snackbar
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 class DispatchSlipLoadingFragment : Fragment() {
 
@@ -76,7 +68,7 @@ class DispatchSlipLoadingFragment : Fragment() {
             loading_dispatchListCustomer.text = viewModel.customer
         }
 
-        recyclerView.adapter = SimpleDispatchSlipLoadingItemAdapter(recyclerView, viewModel.dispatchloadingItems)
+        recyclerView.adapter = SimpleDispatchSlipLoadingItemAdapter(recyclerView, viewModel.dispatchloadingItems, viewModel)
         viewModel.dispatchloadingItems.observe(viewLifecycleOwner, Observer<Array<DispatchSlipItem?>> {
             if (it != null) {
                 UiHelper.hideProgress(this.progress)
@@ -232,7 +224,9 @@ class DispatchSlipLoadingFragment : Fragment() {
     }
 }
 
-open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlipItems: LiveData<Array<DispatchSlipItem?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDispatchSlipLoadingItemAdapter.ViewHolder>() {
+open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlipItems: LiveData<Array<DispatchSlipItem?>>, private val viewModel: DispatchSlipLoadingViewModel) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDispatchSlipLoadingItemAdapter.ViewHolder>() {
+
+//    private var viewModel: DispatchSlipsViewModel = viewModel
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -247,8 +241,24 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
         val dispatchSlipItem = dispatchSlipItems.value!![position]!!
         holder.itemView.setOnClickListener{
 
-            // display spinner of choices
+            val list = mutableListOf<String>()
+            var dbItems = viewModel.getItemsOfSameBatchProductCode(dispatchSlipItem.batchNumber!!, dispatchSlipItem.materialCode!!)
+            if (dbItems != null) {
+                for (dbItem in dbItems!!.iterator()) {
+                    var item = dbItem.batchCode + "|" + dbItem.productCode + "|" + dbItem.serialNumber
+                    list.add(item)
+                }
+            }
+            val listPopupWindow = ListPopupWindow(this.recyclerView.context)
+            listPopupWindow.setAnchorView(it)
+            listPopupWindow.setDropDownGravity(Gravity.CENTER_HORIZONTAL)
+            listPopupWindow.height = ListPopupWindow.WRAP_CONTENT
+            listPopupWindow.width = ListPopupWindow.MATCH_PARENT
+            listPopupWindow.isModal = true
+            listPopupWindow.setAdapter(ArrayAdapter(this.recyclerView.context,
+                    android.R.layout.simple_list_item_1, list.toTypedArray())) // list_item is your textView with gravity.
 
+            listPopupWindow.show()
         }
     }
 
