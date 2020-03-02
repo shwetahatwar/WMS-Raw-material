@@ -234,7 +234,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showUserProfile() {
-        findNavController(findViewById(R.id.nav_host_fragment)).navigate(R.id.action_homeFragment_to_userProfileFragment)
+        var view:View = findViewById(R.id.nav_host_fragment)
+        if (view != null) {
+            try {
+                findNavController(view).navigate(R.id.action_homeFragment_to_userProfileFragment)
+            } catch (e: Exception) {
+
+            }
+        }
     }
 
     private fun logout() {
