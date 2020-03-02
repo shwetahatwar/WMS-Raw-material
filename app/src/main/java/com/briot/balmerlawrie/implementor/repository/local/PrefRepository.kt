@@ -49,8 +49,8 @@ class PrefConstants {
     public val EMPLOYEE_PHONE = "EMPLOYEE_PHONE"
     public val EMPLOYEE_STATUS = "EMPLOYEE_STATUS"
 
-    public val MAX_STALE = 60 * 60 * 24 * 1 // one day
-    public val MAX_AGE = 5000
+    public val MAX_STALE = 60 * 60 * 3 * 1 // 3 hours
+    public val MAX_AGE = 60 * 60 * 2 // 2 hours
 
     val lightGreenColor = Color.parseColor("#FF9CF780")
     val lightOrangeColor = Color.parseColor("#73FF8800")

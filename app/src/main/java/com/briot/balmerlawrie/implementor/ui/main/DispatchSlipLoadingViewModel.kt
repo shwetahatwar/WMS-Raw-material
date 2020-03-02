@@ -259,11 +259,12 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         )
 
         var items = mutableListOf<DispatchSlipItemRequest>()
-        var startTime = ""
-        var endTime = ""
+        var startTime: Long = 0
+        var endTime: Long = 0
         if (dbItems != null) {
-            startTime = Date(dbItems!!.first().timeStamp).toString()
-            endTime = Date(dbItems!!.last().timeStamp).toString()
+
+            startTime = dbItems!!.first().timeStamp
+            endTime = dbItems!!.last().timeStamp
 
             for (dbItem in dbItems!!.iterator()) {
                 var item = DispatchSlipItemRequest()

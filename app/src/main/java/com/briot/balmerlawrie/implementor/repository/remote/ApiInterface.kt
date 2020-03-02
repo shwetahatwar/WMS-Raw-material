@@ -129,8 +129,8 @@ class DispatchSlipItemResponse {
 }
 
 class DispatchSlipRequest {
-    var loadStartTime: String? = null
-    var loadEndTime: String? = null
+    var loadStartTime: Number? = null
+    var loadEndTime: Number? = null
     var truckNumber: String? = null
     var dispatchId: Number? = null
     var truckId: Number?  = null
