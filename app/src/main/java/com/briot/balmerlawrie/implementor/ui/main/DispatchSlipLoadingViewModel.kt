@@ -251,6 +251,8 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         return false
     }
 
+
+
     suspend fun handleSubmitLoadingList() {
         var dispatchSlipRequestObject = DispatchSlipRequest()
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
@@ -270,7 +272,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                 var item = DispatchSlipItemRequest()
                 item.batchNumber = dbItem.batchCode
                 item.materialCode = dbItem.productCode
-                item.serialNumber = dbItem.serialNumber
+                item.serialNumber = dbItem.productCode+"#"+dbItem.batchCode+"#"+dbItem.serialNumber
                 items.add(item)
             }
         }
@@ -289,7 +291,8 @@ class DispatchSlipLoadingViewModel : ViewModel() {
             }
         }
 
-        RemoteRepository.singleInstance.postDispatchSlipLoadedMaterials(dispatchSlipId, dispatchSlipRequestObject, this::handleDispatchLoadingItemsSubmissionResponse, this::handleDispatchLoadingItemsSubmissionError)
+        RemoteRepository.singleInstance.postDispatchSlipLoadedMaterials(dispatchSlipId, dispatchSlipRequestObject,
+                this::handleDispatchLoadingItemsSubmissionResponse, this::handleDispatchLoadingItemsSubmissionError)
 
 
     }

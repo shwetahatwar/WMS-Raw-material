@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
@@ -38,14 +39,13 @@ class DispatchPickingListsFragment : Fragment() {
     private var userId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_ID, "0").toInt()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.dispatch_picking_lists_fragment, container, false)
 
         this.recyclerView = rootView.findViewById(R.id.picking_dispatchSlipsView)
         recyclerView.layoutManager = LinearLayoutManager(this.activity)
-
         return rootView
     }
 
@@ -55,7 +55,7 @@ class DispatchPickingListsFragment : Fragment() {
 
         (this.activity as AppCompatActivity).setTitle("Picking Dispatch Slips")
 
-        recyclerView.adapter = SimpleAdapter(recyclerView, viewModel.dispatchPickerList)
+        recyclerView.adapter = SimpleAdapter(recyclerView, viewModel.dispatchPickerList, viewModel)
 
         viewModel.dispatchPickerList.observe(viewLifecycleOwner, Observer<Array<DispatchSlip?>> {
             if (it != null) {
@@ -86,9 +86,10 @@ class DispatchPickingListsFragment : Fragment() {
     }
 
 }
+open class SimpleAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlips:
+LiveData<Array<DispatchSlip?>>, viewModel: DispatchPickingListsViewModel) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleAdapter.ViewHolder>() {
 
-open class SimpleAdapter(private val recyclerView: RecyclerView, private val dispatchSlips: LiveData<Array<DispatchSlip?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleAdapter.ViewHolder>() {
-
+    private var viewModel: DispatchPickingListsViewModel = viewModel
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
                 .inflate(R.layout.dispatch_list_picking_row_item, parent, false)
@@ -121,6 +122,12 @@ open class SimpleAdapter(private val recyclerView: RecyclerView, private val dis
             if (dispatchSlip.truckId != null) {
                 bundle.putInt("loadingDispatchSlip_truckid", dispatchSlip.truckId!!.toInt())
             }
+            //my changes
+            if (dispatchSlip.depot != null && dispatchSlip.depot!!.name != null) {
+                bundle.putString("loadingDispatchSlip_customer", dispatchSlip.depot!!.name)
+            }
+            //end
+
 
             Navigation.findNavController(it).navigate(R.id.action_dispatchPickingListsFragment_to_dispatchPickingListFragment, bundle)
         }
@@ -131,7 +138,7 @@ open class SimpleAdapter(private val recyclerView: RecyclerView, private val dis
     }
 
     open inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
+        protected val linearLayout: LinearLayout
         protected val dispatchSlipId: TextView
         protected val dispatchSlipTruckNumber: TextView
         protected val dispatchSlipDriverName: TextView
@@ -146,6 +153,7 @@ open class SimpleAdapter(private val recyclerView: RecyclerView, private val dis
             dispatchSlipDepotName = itemView.findViewById(R.id.dispatch_list_row_depot_name)
             dispatchSlipDepotLocation = itemView.findViewById(R.id.dispatch_list_row_depot_location)
             dispatchSlipDepotCreatedOn = itemView.findViewById(R.id.dispatch_list_row_creation_date)
+            linearLayout = itemView.findViewById(R.id.dispatch_slips_row_layout)
         }
 
         fun bind() {
@@ -168,6 +176,21 @@ open class SimpleAdapter(private val recyclerView: RecyclerView, private val dis
                 parser.setTimeZone(TimeZone.getTimeZone("IST"))
                 val result =  parser.parse(value)
                 dispatchSlipDepotCreatedOn.text = output.format(result)
+            }
+            if (dispatchSlip.dispatchSlipStatus != null) {
+                if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("progress")) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
+                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("complete")) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
+                } else if (dispatchSlip.id != null && viewModel.isDispatchSlipInProgress(dispatchSlip.id!!.toInt())) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
+                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("active")) {
+                    linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
+                } else {
+                    linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
+                }
+            } else if (dispatchSlip.id != null && viewModel.isDispatchSlipInProgress(dispatchSlip.id!!.toInt())) {
+                linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
             }
         }
     }

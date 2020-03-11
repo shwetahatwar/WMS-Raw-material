@@ -68,7 +68,6 @@ class MainApplication : Application() {
     }
 }
 
-
 class ResponseHeaderAuthTokenInterceptor : Interceptor {
 
     fun hasNetwork(context: Context): Boolean {

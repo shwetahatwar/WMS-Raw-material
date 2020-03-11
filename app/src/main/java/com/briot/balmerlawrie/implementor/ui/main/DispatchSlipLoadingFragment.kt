@@ -127,7 +127,10 @@ class DispatchSlipLoadingFragment : Fragment() {
 
         loading_materialBarcode.setOnEditorActionListener { _, i, keyEvent ->
             var handled = false
-            if ((loading_materialBarcode.text != null && loading_materialBarcode.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE || (keyEvent != null && (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
+
+            if ((loading_materialBarcode.text != null && loading_materialBarcode.text!!.isNotEmpty())
+                    && i == EditorInfo.IME_ACTION_DONE || (keyEvent != null && (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER ||
+                            keyEvent.keyCode == KeyEvent.KEYCODE_TAB) && keyEvent.action == KeyEvent.ACTION_DOWN)) {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
 
@@ -136,12 +139,13 @@ class DispatchSlipLoadingFragment : Fragment() {
                 var productCode = ""
                 var batchCode = ""
                 var serialNumber =  ""
+
                 if (arguments.size < 2 || arguments[0].length == 0 || arguments[1].length == 0 || arguments[2].length == 0) {
                     UiHelper.showErrorToast(this.activity as AppCompatActivity, "Invalid barcode, please try again!")
                 } else {
                     productCode = arguments[0].toString()
                     batchCode = arguments[1].toString()
-                    serialNumber = arguments[2].toString()
+                    serialNumber = value
 
                     if (viewModel.isMaterialBelongToSameGroup(productCode, batchCode)) {
                         if (viewModel.materialQuantityPickingCompleted(productCode, batchCode)) {
