@@ -91,6 +91,9 @@ class LoginFragment : androidx.fragment.app.Fragment() {
             // @dineshgajjar - remove following coments later on
             this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
             viewModel.loginUser(username.text.toString(), password.text.toString())
+            username.setText("");
+            password.setText("");
+
         }
     }
 

@@ -180,7 +180,8 @@ LiveData<Array<DispatchSlip?>>, viewModel: DispatchPickingListsViewModel) : andr
             if (dispatchSlip.dispatchSlipStatus != null) {
                 if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("progress")) {
                     linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
-                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("complete")) {
+                } else if (dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("complete") ||
+                        dispatchSlip.dispatchSlipStatus!!.toLowerCase().contains("picked" ) ) {
                     linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
                 } else if (dispatchSlip.id != null && viewModel.isDispatchSlipInProgress(dispatchSlip.id!!.toInt())) {
                     linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)

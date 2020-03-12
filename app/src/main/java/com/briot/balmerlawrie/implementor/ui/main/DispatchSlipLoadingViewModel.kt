@@ -272,7 +272,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                 var item = DispatchSlipItemRequest()
                 item.batchNumber = dbItem.batchCode
                 item.materialCode = dbItem.productCode
-                item.serialNumber = dbItem.productCode+"#"+dbItem.batchCode+"#"+dbItem.serialNumber
+                item.serialNumber = dbItem.serialNumber
                 items.add(item)
             }
         }

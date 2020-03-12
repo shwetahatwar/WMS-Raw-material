@@ -114,7 +114,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                 var thisObject = this
                 AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
                 setTitle("Success")
-                    setMessage("Dispatch slip for loading oberation submitted successfully.")
+                    setMessage("Dispatch slip for loading operation submitted successfully.")
                     setButton(AlertDialog.BUTTON_NEUTRAL, "Ok", {
                         dialog, _ -> dialog.dismiss()
 //                        Navigation.findNavController(thisObject.recyclerView).popBackStack(R.id.homeFragment, false)
