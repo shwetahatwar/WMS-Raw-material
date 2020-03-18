@@ -86,7 +86,8 @@ class DispatchSlipsFragment : Fragment() {
 
 }
 
-open class SimpleDispatchListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlips: LiveData<Array<DispatchSlip?>>, viewModel: DispatchSlipsViewModel) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDispatchListAdapter.ViewHolder>() {
+open class SimpleDispatchListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val dispatchSlips:
+LiveData<Array<DispatchSlip?>>, viewModel: DispatchSlipsViewModel) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleDispatchListAdapter.ViewHolder>() {
 
     private var viewModel: DispatchSlipsViewModel = viewModel
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

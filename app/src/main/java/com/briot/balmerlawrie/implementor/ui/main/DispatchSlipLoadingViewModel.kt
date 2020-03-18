@@ -251,6 +251,8 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         return false
     }
 
+
+
     suspend fun handleSubmitLoadingList() {
         var dispatchSlipRequestObject = DispatchSlipRequest()
         var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
@@ -289,7 +291,8 @@ class DispatchSlipLoadingViewModel : ViewModel() {
             }
         }
 
-        RemoteRepository.singleInstance.postDispatchSlipLoadedMaterials(dispatchSlipId, dispatchSlipRequestObject, this::handleDispatchLoadingItemsSubmissionResponse, this::handleDispatchLoadingItemsSubmissionError)
+        RemoteRepository.singleInstance.postDispatchSlipLoadedMaterials(dispatchSlipId, dispatchSlipRequestObject,
+                this::handleDispatchLoadingItemsSubmissionResponse, this::handleDispatchLoadingItemsSubmissionError)
 
 
     }

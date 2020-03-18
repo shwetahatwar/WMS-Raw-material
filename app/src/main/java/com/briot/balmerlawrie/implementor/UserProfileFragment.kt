@@ -35,12 +35,10 @@ class UserProfileFragment : Fragment() {
 
 
         val userName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_NAME, "")
-        val userId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_ID, "")
         val roleName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_NAME, "")
         val employeeId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().EMPLOYEE_ID, "")
 
         userNameValue.text = userName
-        userFullNameValue.text = userId
         userRoleValue.text = roleName
         userEmailValue.text = employeeId
         this.activity?.invalidateOptionsMenu()
