@@ -211,6 +211,8 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         var dbItem = DispatchSlipLoadingListItem(
                 batchCode = item.batchNumber,
                 productCode = item.materialCode,
+                genericName = item.genericName,
+                materialDescription = item.materialDescription,
                 dispatchSlipId = item.dispatchSlipId!!.toInt(),
                 dipatchSlipNumber = dispatchSlipNumber,
                 timeStamp = Date().time,

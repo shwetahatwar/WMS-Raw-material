@@ -14,6 +14,8 @@ public data class DispatchSlipLoadingListItem(
     @ColumnInfo(name = "serialNumber") val serialNumber: String?,
     @ColumnInfo(name = "batchCode") val batchCode: String?,
     @ColumnInfo(name = "productCode") val productCode: String?,
+    @ColumnInfo(name = "genericName") val genericName: String?,
+    @ColumnInfo(name = "materialDescription") val materialDescription: String?,
     @ColumnInfo(name = "timestamp") val timeStamp: Long,
     @ColumnInfo(name = "dispatchSlipId") val dispatchSlipId: Int,
     @ColumnInfo(name = "dipatchSlipNumber") val dipatchSlipNumber: String?,

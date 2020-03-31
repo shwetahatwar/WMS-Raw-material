@@ -111,6 +111,8 @@ class DispatchSlipItem {
     var batchNumber: String? = null
     var numberOfPacks: Number = 0
     var materialCode: String? = null
+    var genericName: String? = null
+    var materialDescription: String? = null
     var createdBy: String? = null
     var updatedBy: String? = null
     var createdAt: String? = null

@@ -301,6 +301,7 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
     open inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         protected val dispatchSlipItemBatchNumber: TextView
         protected val dispatchSlipItemMaterialCode: TextView
+        protected val dispatchSlipItemMaterialDetails:  TextView
         protected val dispatchSlipItemPackQuantity: TextView
         protected val linearLayout: LinearLayout
 
@@ -308,6 +309,7 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
             dispatchSlipItemBatchNumber = itemView.findViewById(R.id.dispatch_slip_item_batch_number)
             dispatchSlipItemMaterialCode = itemView.findViewById(R.id.dispatch_slip_item_material_product_code)
             dispatchSlipItemPackQuantity = itemView.findViewById(R.id.dispatch_slip_item_material_pack_quantity)
+            dispatchSlipItemMaterialDetails = itemView.findViewById(R.id.dispatch_slip_item_material_product_details)
             linearLayout = itemView.findViewById(R.id.dispatch_slip_layout)
         }
 
@@ -316,6 +318,7 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
 
             dispatchSlipItemBatchNumber.text = dispatchSlipItem.batchNumber
             dispatchSlipItemMaterialCode.text = dispatchSlipItem.materialCode
+            dispatchSlipItemMaterialDetails.text = dispatchSlipItem.genericName;
             dispatchSlipItemPackQuantity.text = dispatchSlipItem.scannedPacks.toString() + "/" + dispatchSlipItem.numberOfPacks.toString()
             if (dispatchSlipItem.scannedPacks.toInt() == 0) {
                 linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
