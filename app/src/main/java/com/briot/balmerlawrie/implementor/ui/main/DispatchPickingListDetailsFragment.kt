@@ -376,7 +376,7 @@ open class SimpleDispatchSlipPickingItemAdapter(private val recyclerView: androi
 
             dispatchSlipItemBatchNumber.text = dispatchSlipItem.batchNumber
             dispatchSlipItemMaterialCode.text = dispatchSlipItem.materialCode
-            dispatchSlipItemMaterialDetails.text = dispatchSlipItem.genericName;
+            dispatchSlipItemMaterialDetails.text = dispatchSlipItem.materialGenericName;
             dispatchSlipItemPackQuantity.text = dispatchSlipItem.scannedPacks.toString() + "/" + dispatchSlipItem.numberOfPacks.toString()
             if (dispatchSlipItem.scannedPacks.toInt() == 0) {
                 linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)

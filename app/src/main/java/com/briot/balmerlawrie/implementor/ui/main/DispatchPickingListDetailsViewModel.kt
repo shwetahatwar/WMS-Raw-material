@@ -181,7 +181,7 @@ class DispatchPickingListDetailsViewModel : ViewModel() {
                 batchCode = item.batchNumber,
                 productCode = item.materialCode,
                 materialDescription = item.materialDescription,
-                genericName = item.genericName,
+                genericName = item.materialGenericName,
                 dispatchSlipId = item.dispatchSlipId!!.toInt(),
                 dipatchSlipNumber = dispatchSlipNumber,
                 timeStamp = Date().time,
