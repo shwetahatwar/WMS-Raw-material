@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.briot.balmerlawrie.implementor.R
+import kotlinx.android.synthetic.main.login_dialog_fragment.view.*
 
 class DispatchSlipLoadingFragment : Fragment() {
 
@@ -134,13 +135,13 @@ class DispatchSlipLoadingFragment : Fragment() {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
 
-                var value = loading_materialBarcode.text!!.toString()
+                var value = loading_materialBarcode.text!!.toString().trim()
                 var arguments  = value.split("#")
                 var productCode = ""
                 var batchCode = ""
                 var serialNumber =  ""
 
-                if (arguments.size < 2 || arguments[0].length == 0 || arguments[1].length == 0 || arguments[2].length == 0) {
+                if (arguments.size < 3 || arguments[0].length == 0 || arguments[1].length == 0 || arguments[2].length == 0) {
                     UiHelper.showErrorToast(this.activity as AppCompatActivity, "Invalid barcode, please try again!")
                 } else {
                     productCode = arguments[0].toString()
@@ -165,6 +166,20 @@ class DispatchSlipLoadingFragment : Fragment() {
                     } else {
                         UiHelper.showErrorToast(this.activity as AppCompatActivity, "Scanned material batch and material is not matching with dispatch slip!")
                         // @dinesh gajjar: get admin permission flow
+
+                        /*var thisObject = this
+                        AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
+                            setTitle("Confirm")
+                            setMessage("Are you sure you want to load this material from different batch?")
+                            setButton(AlertDialog.BUTTON_NEUTRAL, "No", { dialog, _ -> dialog.dismiss() })
+                            setButton(AlertDialog.BUTTON_POSITIVE, "Yes", {
+                                dialog, _ -> dialog.dismiss()
+                                // open another dialog of credentials  to check  if user has valid admin role
+                                // call thisObject.addItemToList(productCode, batchCode, serialNumber)
+                                thisObject.openLoginDialog(productCode, batchCode, serialNumber)
+                            })
+                            show()
+                        }*/
                     }
                 }
 
@@ -227,6 +242,45 @@ class DispatchSlipLoadingFragment : Fragment() {
         viewModel.loadDispatchSlipLoadingItems()
 
         loading_materialBarcode.requestFocus()
+    }
+
+    fun addItemToList(productCode: String, batchCode:  String, serialNumber: String) {
+        this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+
+        if (viewModel.isSameSerialNumber(productCode, batchCode, serialNumber)) {
+            UiHelper.showErrorToast(this.activity as AppCompatActivity, "This barcode is already added, please add other item")
+        } else {
+            this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+            // prodeed to add the material in database
+            GlobalScope.launch {
+                viewModel.addMaterial(productCode, batchCode, serialNumber)
+            }
+        }
+    }
+
+    fun openLoginDialog(productCode: String, batchCode:  String, serialNumber: String) {
+        val mDialogView = LayoutInflater.from(this.context).inflate(R.layout.login_dialog_fragment, null)
+        //AlertDialogBuilder
+        val mBuilder = AlertDialog.Builder(this.requireContext())
+                .setView(mDialogView)
+                .setTitle("Admin Login")
+        //show dialog
+        val  mAlertDialog = mBuilder.show()
+        (mDialogView as? LoginDialog)?.alertDialog = mAlertDialog
+
+        //login button click of custom layout
+        /*mDialogView.dialogLoginBtn.setOnClickListener {
+            //dismiss dialog
+            mAlertDialog.dismiss()
+            //get text from EditTexts of custom layout
+            val name = mDialogView.dialogNameEt.text.toString()
+            val password = mDialogView.dialogPasswEt.text.toString()
+        }
+        //cancel button click of custom layout
+        mDialogView.dialogCancelBtn.setOnClickListener {
+            //dismiss dialog
+            mAlertDialog.dismiss()
+        }*/
     }
 }
 

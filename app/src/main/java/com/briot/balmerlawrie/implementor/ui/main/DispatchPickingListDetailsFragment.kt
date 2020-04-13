@@ -140,12 +140,12 @@ class DispatchPickingListDetailsFragment : Fragment() {
                             && keyEvent.action == KeyEvent.ACTION_DOWN)) {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
-                var value = picking_materialBarcode.text!!.toString()
+                var value = picking_materialBarcode.text!!.toString().trim()
                 var arguments = value.split("#")
                 var productCode = ""
                 var batchCode = ""
                 var serialNumber = ""
-                if (arguments.size < 2 || arguments[0].length == 0 || arguments[1].length == 0 || arguments[2].length == 0) {
+                if (arguments.size < 3 || arguments[0].length == 0 || arguments[1].length == 0 || arguments[2].length == 0) {
                     UiHelper.showErrorToast(this.activity as AppCompatActivity, "Invalid barcode, please try again!")
                 } else {
                     productCode = arguments[0].toString()

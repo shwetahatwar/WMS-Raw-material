@@ -114,7 +114,7 @@ class MaterialDetailsScanFragment : Fragment() {
                 this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
 //                materialResultId.removeAllViews()
                 (materialItemsList.adapter as MaterialItemsAdapter).clear()
-                viewModel.loadMaterialItems(materialScanText.text.toString())
+                viewModel.loadMaterialItems(materialScanText.text.toString().trim())
 
                 handled = true
             }
