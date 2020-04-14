@@ -1,7 +1,10 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
+import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -27,7 +30,10 @@ import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.briot.balmerlawrie.implementor.R
+import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
+import com.briot.balmerlawrie.implementor.repository.remote.SignInResponse
 import kotlinx.android.synthetic.main.login_dialog_fragment.view.*
+import kotlinx.android.synthetic.main.login_fragment.*
 
 class DispatchSlipLoadingFragment : Fragment() {
 
@@ -36,9 +42,14 @@ class DispatchSlipLoadingFragment : Fragment() {
     }
 
     private lateinit var viewModel: DispatchSlipLoadingViewModel
+    private lateinit var viewModelLogin: LoginViewModel
     private var progress: Progress? = null
     private var oldDispatchSlipItems: Array<DispatchSlipItem?>? = null
     lateinit var recyclerView: RecyclerView
+    var productCode1: String = ""
+    var batchCode1: String = ""
+    var serialNumber1: String = ""
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -55,6 +66,8 @@ class DispatchSlipLoadingFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(DispatchSlipLoadingViewModel::class.java)
+        viewModelLogin = ViewModelProvider(this).get(LoginViewModel::class.java)
+
         (this.activity as AppCompatActivity).setTitle("Loading Dispatch Slip")
 
         if (this.arguments != null) {
@@ -126,6 +139,36 @@ class DispatchSlipLoadingFragment : Fragment() {
             }
         })
 
+        viewModelLogin.signInResponse.observe(this, Observer<SignInResponse> {
+            UiHelper.hideProgress(this.progress)
+            this.progress = null
+            if (it != null) {
+                var thisObject = this
+                Log.d(TAG, "user input productCode -->"+ productCode1)
+                Log.d(TAG, "user input batchCode -->"+ batchCode1)
+                Log.d(TAG, "user input serialNumber -->"+ serialNumber1)
+
+               thisObject.addItemToList(productCode1, batchCode1, serialNumber1)
+
+            } else {
+                Log.d(TAG, "on failure admin -->")
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "An error has occurred, please try again.");
+            }
+
+        })
+
+        viewModelLogin.networkError.observe(this, Observer<Boolean> {
+            if (it == true) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+                var message: String = "Server is not reachable, please check if your network connection is working"
+                if (viewModelLogin.errorMessage.isNotEmpty()) {
+                    Log.d(TAG, "error Loading-->"+ viewModelLogin.errorMessage)
+                    message = viewModelLogin.errorMessage
+                }
+                UiHelper.showSnackbarMessage(this.activity as AppCompatActivity, message, 3000);
+            }
+        })
         loading_materialBarcode.setOnEditorActionListener { _, i, keyEvent ->
             var handled = false
 
@@ -158,6 +201,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                                 this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
                                 // prodeed to add the material in database
                                 GlobalScope.launch {
+                                    Log.d(TAG,"inide loading material barcode"+productCode)
                                     viewModel.addMaterial(productCode, batchCode, serialNumber)
                                 }
                             }
@@ -167,7 +211,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                         UiHelper.showErrorToast(this.activity as AppCompatActivity, "Scanned material batch and material is not matching with dispatch slip!")
                         // @dinesh gajjar: get admin permission flow
 
-                        /*var thisObject = this
+                        var thisObject = this
                         AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
                             setTitle("Confirm")
                             setMessage("Are you sure you want to load this material from different batch?")
@@ -179,7 +223,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                                 thisObject.openLoginDialog(productCode, batchCode, serialNumber)
                             })
                             show()
-                        }*/
+                        }
                     }
                 }
 
@@ -245,20 +289,26 @@ class DispatchSlipLoadingFragment : Fragment() {
     }
 
     fun addItemToList(productCode: String, batchCode:  String, serialNumber: String) {
-        this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
 
         if (viewModel.isSameSerialNumber(productCode, batchCode, serialNumber)) {
             UiHelper.showErrorToast(this.activity as AppCompatActivity, "This barcode is already added, please add other item")
         } else {
-            this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+            Log.d(TAG, "in else to add item-->")
+            // this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
             // prodeed to add the material in database
             GlobalScope.launch {
+                Log.d(TAG, "productCode-->"+ productCode)
                 viewModel.addMaterial(productCode, batchCode, serialNumber)
             }
         }
     }
 
     fun openLoginDialog(productCode: String, batchCode:  String, serialNumber: String) {
+        // set value for update in database
+        productCode1 = productCode
+        batchCode1 = batchCode
+        serialNumber1 = serialNumber
+
         val mDialogView = LayoutInflater.from(this.context).inflate(R.layout.login_dialog_fragment, null)
         //AlertDialogBuilder
         val mBuilder = AlertDialog.Builder(this.requireContext())
@@ -269,18 +319,20 @@ class DispatchSlipLoadingFragment : Fragment() {
         (mDialogView as? LoginDialog)?.alertDialog = mAlertDialog
 
         //login button click of custom layout
-        /*mDialogView.dialogLoginBtn.setOnClickListener {
+        mDialogView.dialogLoginBtn.setOnClickListener {
             //dismiss dialog
             mAlertDialog.dismiss()
             //get text from EditTexts of custom layout
             val name = mDialogView.dialogNameEt.text.toString()
             val password = mDialogView.dialogPasswEt.text.toString()
+            viewModelLogin.loginUser(name, password)
+
         }
         //cancel button click of custom layout
         mDialogView.dialogCancelBtn.setOnClickListener {
             //dismiss dialog
             mAlertDialog.dismiss()
-        }*/
+        }
     }
 }
 

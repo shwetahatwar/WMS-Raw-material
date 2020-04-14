@@ -197,10 +197,38 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         val result = responseDispatchLoadingItems.filter {
             it?.materialCode.equals(materialCode) && it?.batchNumber.equals(batchNumber)
         }
+        Log.d(TAG, "--materialCode -->"+materialCode)
+        Log.d(TAG, "--batchNumber  -->"+batchNumber)
+        Log.d(TAG, "--serialNumber -->"+serialNumber)
 
         if (result.size > 0) {
             updateItemInDatabase(result.first()!!, serialNumber)
+        }else{
+            val userName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_NAME, "")
+
+            var dbItem = DispatchSlipLoadingListItem(
+                    batchCode = batchNumber,
+                    productCode = materialCode,
+                    materialGenericName = "", // item.materialGenericName,
+                    materialDescription = "", //item.materialDescription,
+                    dispatchSlipId = 2, //item.dispatchSlipId!!.toInt(),
+                    dipatchSlipNumber = dispatchSlipNumber,
+                    timeStamp = Date().time,
+                    serialNumber = serialNumber,
+                    vehicleNumber = dispatchSlipVehicleNumber, id = 0, submitted = 0, submittedOn = 0, user = "nikhil")
+
+
+            var dbDao = appDatabase.dispatchSlipLoadingItemDuo()
+            dbDao.insert(item = dbItem)
+
+            Log.d(TAG, "--after inset data -->"+dbDao.getAllItems())
+            GlobalScope.launch {
+                withContext(Dispatchers.Main) {
+                    updatedListAsPerDatabase(responseDispatchLoadingItems)
+                }
+            }
         }
+
         return true
     }
 

@@ -22,17 +22,17 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            //buildConfigField "String", "HOSTNAME", "\"https://briot-balmer-lawrie.herokuapp.com/\""
+            buildConfigField "String", "HOSTNAME", "\"https://briot-balmer-lawrie.herokuapp.com/\""
             //buildConfigField "String", "HOSTNAME", "\"http://10.26.6.20:3000/\""
-            buildConfigField "String", "HOSTNAME", "\"http://192.168.0.14:3000/\""
+           // buildConfigField "String", "HOSTNAME", "\"http://192.168.0.14:3000/\""
 
         }
 
         debug {
 //            buildConfigField "String", "HOSTNAME", "\"http://10.0.2.2:3000\""
-            //buildConfigField "String", "HOSTNAME", "\"https://briot-balmer-lawrie.herokuapp.com/\""
+            buildConfigField "String", "HOSTNAME", "\"https://briot-balmer-lawrie.herokuapp.com/\""
             //buildConfigField "String", "HOSTNAME", "\"http://10.26.6.20:3000/\""
-            buildConfigField "String", "HOSTNAME", "\"http://192.168.0.14:3000/\""
+            //buildConfigField "String", "HOSTNAME", "\"http://192.168.0.14:3000/\""
 
         }
         lintOptions {
