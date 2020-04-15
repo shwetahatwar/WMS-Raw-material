@@ -1,6 +1,5 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
@@ -11,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.ListPopupWindow
+import androidx.fragment.app.DialogFragment
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -30,26 +30,30 @@ import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import com.briot.balmerlawrie.implementor.R
-import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 import com.briot.balmerlawrie.implementor.repository.remote.SignInResponse
 import kotlinx.android.synthetic.main.login_dialog_fragment.view.*
-import kotlinx.android.synthetic.main.login_fragment.*
 
-class DispatchSlipLoadingFragment : Fragment() {
+class DispatchSlipLoadingFragment : Fragment(), LoginDialogListener {
+
+
+    override fun onSuccessfulAdminLogin(productCode: String, batchCode:String, serialNumber:String ) {
+        // UiHelper.showErrorToast(this.activity as AppCompatActivity, "dismissed dialog!")
+        Log.d(TAG, "After success ---->")
+        addItemToList(productCode, batchCode, serialNumber)
+        Log.d(TAG, "After add list ---->")
+
+    }
 
     companion object {
         fun newInstance() = DispatchSlipLoadingFragment()
     }
 
     private lateinit var viewModel: DispatchSlipLoadingViewModel
-    private lateinit var viewModelLogin: LoginViewModel
+    private lateinit var LoginDialog: LoginDialog
+
     private var progress: Progress? = null
     private var oldDispatchSlipItems: Array<DispatchSlipItem?>? = null
     lateinit var recyclerView: RecyclerView
-    var productCode1: String = ""
-    var batchCode1: String = ""
-    var serialNumber1: String = ""
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -66,7 +70,8 @@ class DispatchSlipLoadingFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         viewModel = ViewModelProvider(this).get(DispatchSlipLoadingViewModel::class.java)
-        viewModelLogin = ViewModelProvider(this).get(LoginViewModel::class.java)
+
+        // viewModel.getUsers()
 
         (this.activity as AppCompatActivity).setTitle("Loading Dispatch Slip")
 
@@ -139,36 +144,17 @@ class DispatchSlipLoadingFragment : Fragment() {
             }
         })
 
-        viewModelLogin.signInResponse.observe(this, Observer<SignInResponse> {
-            UiHelper.hideProgress(this.progress)
-            this.progress = null
-            if (it != null) {
-                var thisObject = this
-                Log.d(TAG, "user input productCode -->"+ productCode1)
-                Log.d(TAG, "user input batchCode -->"+ batchCode1)
-                Log.d(TAG, "user input serialNumber -->"+ serialNumber1)
+//        viewModel.signInResponse.observe(this, Observer<SignInResponse> {
+//            UiHelper.hideProgress(this.progress)
+//            this.progress = null
+//
+//            if (it != null) {
+//                this.addItemToList(viewModel.productCode, viewModel.batchCode, viewModel.serialNumber)
+//            } else {
+//                UiHelper.showErrorToast(this.activity as AppCompatActivity, "An error has occurred, please try again.");
+//            }
+//        })
 
-               thisObject.addItemToList(productCode1, batchCode1, serialNumber1)
-
-            } else {
-                Log.d(TAG, "on failure admin -->")
-                UiHelper.showErrorToast(this.activity as AppCompatActivity, "An error has occurred, please try again.");
-            }
-
-        })
-
-        viewModelLogin.networkError.observe(this, Observer<Boolean> {
-            if (it == true) {
-                UiHelper.hideProgress(this.progress)
-                this.progress = null
-                var message: String = "Server is not reachable, please check if your network connection is working"
-                if (viewModelLogin.errorMessage.isNotEmpty()) {
-                    Log.d(TAG, "error Loading-->"+ viewModelLogin.errorMessage)
-                    message = viewModelLogin.errorMessage
-                }
-                UiHelper.showSnackbarMessage(this.activity as AppCompatActivity, message, 3000);
-            }
-        })
         loading_materialBarcode.setOnEditorActionListener { _, i, keyEvent ->
             var handled = false
 
@@ -220,6 +206,7 @@ class DispatchSlipLoadingFragment : Fragment() {
                                 dialog, _ -> dialog.dismiss()
                                 // open another dialog of credentials  to check  if user has valid admin role
                                 // call thisObject.addItemToList(productCode, batchCode, serialNumber)
+                                // thisObject.addItemToList(productCode, batchCode, serialNumber)
                                 thisObject.openLoginDialog(productCode, batchCode, serialNumber)
                             })
                             show()
@@ -293,46 +280,66 @@ class DispatchSlipLoadingFragment : Fragment() {
         if (viewModel.isSameSerialNumber(productCode, batchCode, serialNumber)) {
             UiHelper.showErrorToast(this.activity as AppCompatActivity, "This barcode is already added, please add other item")
         } else {
-            Log.d(TAG, "in else to add item-->")
             // this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
             // prodeed to add the material in database
             GlobalScope.launch {
-                Log.d(TAG, "productCode-->"+ productCode)
                 viewModel.addMaterial(productCode, batchCode, serialNumber)
             }
         }
     }
 
     fun openLoginDialog(productCode: String, batchCode:  String, serialNumber: String) {
-        // set value for update in database
-        productCode1 = productCode
-        batchCode1 = batchCode
-        serialNumber1 = serialNumber
+//        viewModel.productCode = productCode
+//        viewModel.batchCode = batchCode
+//        viewModel.serialNumber = serialNumber
+        val dialogFragment = LoginDialog()
+        dialogFragment.loginDialogListener = this
+        dialogFragment.productCode = productCode
+        dialogFragment.batchCode = batchCode
+        dialogFragment.serialNumber = serialNumber
+        val ft = this.activity!!.supportFragmentManager.beginTransaction()
+        val prev = this.activity!!.supportFragmentManager.findFragmentByTag("dialog")
+        if (prev != null)
+        {
+            ft.remove(prev)
+        }
+        ft.addToBackStack(null)
+        dialogFragment.show(ft, "dialog")
+//        if(dialogFragment.adminAuthenticated == true){
+//            Log.d(TAG, "in side if to call additem to list-->")
+//            addItemToList(productCode, batchCode, serialNumber)
+//        }
+
+
+//        dialogFragment.onDismiss{
+//            UiHelper.showErrorToast(this.activity as AppCompatActivity, "dismissed dialog!")
+//        }
+//        mAlertDialog.setOnDismissListener({
+//            UiHelper.showErrorToast(this.activity as AppCompatActivity, "dismissed dialog!")
+//        })
+         return;
 
         val mDialogView = LayoutInflater.from(this.context).inflate(R.layout.login_dialog_fragment, null)
         //AlertDialogBuilder
         val mBuilder = AlertDialog.Builder(this.requireContext())
                 .setView(mDialogView)
-                .setTitle("Admin Login")
         //show dialog
         val  mAlertDialog = mBuilder.show()
         (mDialogView as? LoginDialog)?.alertDialog = mAlertDialog
 
-        //login button click of custom layout
-        mDialogView.dialogLoginBtn.setOnClickListener {
-            //dismiss dialog
-            mAlertDialog.dismiss()
-            //get text from EditTexts of custom layout
-            val name = mDialogView.dialogNameEt.text.toString()
-            val password = mDialogView.dialogPasswEt.text.toString()
-            viewModelLogin.loginUser(name, password)
+//         Log.d(TAG, "adminAuthenticated 316 Line-->"+LoginDialog.adminAuthenticated)
 
-        }
-        //cancel button click of custom layout
-        mDialogView.dialogCancelBtn.setOnClickListener {
-            //dismiss dialog
-            mAlertDialog.dismiss()
-        }
+        mAlertDialog.setOnDismissListener({
+           //only checking admin Authentication
+            UiHelper.showErrorToast(this.activity as AppCompatActivity, "dismissed dialog!")
+            Log.d(TAG, "LoginDialog.adminAuthenticated -- "+LoginDialog.adminAuthenticated)
+
+//            if(mDialogView.adminAuthenticated == true){
+            if(LoginDialog.adminAuthenticated == true){
+                Log.d(TAG, "in side if to call additem to list-->")
+                addItemToList(productCode,batchCode,serialNumber)
+            }
+        })
     }
 }
 

@@ -19,6 +19,13 @@ class SignInResponse {
     var role: String? = null
 }
 
+
+class userResponse {
+    var username: String? = null
+    var roleId: Number? = null
+    var role: String? = null
+}
+
 class Role {
     var id: Number? = null
     var roleName:  String? = null
@@ -173,6 +180,9 @@ class ProjectItem {
 interface ApiInterface {
     @POST("users/sign_in")
     fun login(@Body signInRequest: SignInRequest): Observable<SignInResponse>
+
+    @GET("users")
+    fun getUsers(): Observable<Array<userResponse?>>
 
     @GET("materialinwards")
     fun getMaterialDetails(@Query("serialNumber")  serialNumber: String): Observable<Array<MaterialInward>>

@@ -20,6 +20,13 @@ class RemoteRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(handleResponse, handleError)
     }
+    fun getUsers(handleResponse: (Array<userResponse?>) -> Unit, handleError: (Throwable) -> Unit) {
+        RetrofitHelper.retrofit.create(ApiInterface::class.java)
+                .getUsers()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(handleResponse, handleError)
+    }
 
     fun getMaterialDetails(barcodeSerial: String, handleResponse: (Array<MaterialInward>) -> Unit, handleError: (Throwable) -> Unit) {
         RetrofitHelper.retrofit.create(ApiInterface::class.java)
