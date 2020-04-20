@@ -137,42 +137,64 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
 
     class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
+//        val materialBarcode: TextView
+//        val materialType: TextView
+//        val materialProductCode: TextView
+//        val materialProductName: TextView
+//        val materialGenericName: TextView
+//        var materialUOM: TextView
+//        val materialGrossWeight: TextView
+//        val materialTareWeight: TextView
+//        val materialNetWeight: TextView
+//        val materialBatchCode: TextView
+//        val materialInwardDate: TextView
+//        val materialDispatchSlipNumber: TextView
+//        val materialPicker: TextView
+//        val materialLoader: TextView
+//        val materialDispatchTruckNumber: TextView
+//        val depot: TextView
+//        var materialScrapped: TextView
+
         val materialBarcode: TextView
-        val materialType: TextView
-        val materialProductCode: TextView
-        val materialProductName: TextView
         val materialGenericName: TextView
-        var materialUOM: TextView
-        val materialGrossWeight: TextView
-        val materialTareWeight: TextView
-        val materialNetWeight: TextView
-        val materialBatchCode: TextView
-        val materialInwardDate: TextView
+        val materialDescription: TextView
+        val inwardedOn: TextView
+        val inwardedBy: TextView
+        val scrappedOn: TextView
+        val scrappedBy: TextView
+        val recoveredOn: TextView
+        val recoveredBy: TextView
+        val pickedOn: TextView
+        val pickedBy: TextView
+        val loadedOn: TextView
+        val loadedBy: TextView
         val materialDispatchSlipNumber: TextView
-        val materialPicker: TextView
-        val materialLoader: TextView
         val materialDispatchTruckNumber: TextView
         val depot: TextView
-        var materialScrapped: TextView
 
         init {
             materialBarcode = itemView.material_serialnumber_value as TextView
-            materialType = itemView.material_type_value as TextView
-            materialProductCode = itemView.material_productcode_value as TextView
-            materialProductName = itemView.material_productname_value as TextView
-            materialGenericName = itemView.material_genericname_value as TextView
-            materialUOM = itemView.material_uom_value as TextView
-            materialGrossWeight = itemView.material_grossweight_value as TextView
-            materialTareWeight = itemView.material_tareweight_value as TextView
-            materialNetWeight = itemView.material_netweight_value as TextView
-            materialBatchCode = itemView.material_batchcode_value as TextView
-            materialInwardDate = itemView.material_inwardon_value as TextView
-            materialDispatchSlipNumber = itemView.material_dispatchslipnumber_value as TextView
-            materialPicker = itemView.material_picker_value as TextView
-            materialLoader = itemView.material_loader_value as TextView
-            materialDispatchTruckNumber = itemView.material_trucknumber_value as TextView
+            materialGenericName = itemView.material_generic_name_value as TextView
+            materialDescription = itemView.material_description_value as TextView
+            inwardedOn = itemView.inwarded_on_value as TextView
+            inwardedBy = itemView.inwarded_by_value as TextView
+            scrappedOn = itemView.scrapped_on_value as TextView
+            scrappedBy = itemView.material_grossweight_value as TextView
+            recoveredOn = itemView.recovered_on_value as TextView
+            recoveredBy = itemView.recovered_by_value as TextView
+            pickedOn = itemView.picked_on_value as TextView
+            pickedBy = itemView.picked_by_value as TextView
+            loadedOn = itemView.loaded_on_value as TextView
+            loadedBy = itemView.loaded_by_value as TextView
+            materialDispatchSlipNumber = itemView.dispatch_slip_value as TextView
+            materialDispatchTruckNumber = itemView.material_trucknumber as TextView
             depot = itemView.material_depot_value as TextView
-            materialScrapped = itemView.material_scrap_value as TextView
+
+
+//            materialLoader = itemView.material_loader_value as TextView
+//            materialDispatchTruckNumber = itemView.material_trucknumber_value as TextView
+//            depot = itemView.material_depot_value as TextView
+//            materialScrapped = itemView.material_scrap_value as TextView
         }
     }
 
@@ -185,39 +207,58 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
         val item = getItem(position) as MaterialInward
 
         holder.materialBarcode.text = item.serialNumber
-        holder.materialBatchCode.text = item.batchNumber
-        if(item.isScrapped == true) {
-            holder.materialScrapped.text = "Scrapped"
-        } else {
-            holder.materialScrapped.text = "Active"
-        }
+        holder.materialGenericName.text = item.materialGenericName
+        holder.materialDescription.text = item.materialDescription
+        holder.inwardedOn.text = item.inwardedOn
+        holder.inwardedBy.text = item.inwardedBy
+        holder.scrappedOn.text = item.scrappedOn
+        holder.scrappedBy.text = item.scrappedBy
+        holder.recoveredOn.text = item.recoveredOn
+        holder.recoveredBy.text = item.recoveredBy
+        holder.pickedOn.text = item.pickedOn
+        holder.pickedBy.text = item.pickedBy
+        holder.loadedOn.text = item.loadedOn
+        holder.loadedBy.text = item.loadedBy
+//        holder.materialBarcode.text = item.serialNumber
+//        holder.materialBatchCode.text = item.batchNumber
+//        if(item.isScrapped == true) {
+//            holder.materialScrapped.text = "Scrapped"
+//        } else {
+//            holder.materialScrapped.text = "Active"
+//        }
 
-        if (item.materialId != null) {
-            holder.materialType.text = item.material!!.materialType
-            holder.materialProductCode.text = item.material!!.materialCode
-            holder.materialProductName.text = item.material!!.materialDescription
-            holder.materialGenericName.text = item.material!!.genericName
-            holder.materialUOM.text = item.material!!.UOM
-            holder.materialGrossWeight.text = item.material!!.grossWeight
-            holder.materialTareWeight.text = item.material!!.tareWeight
-            holder.materialNetWeight.text = item.material!!.netWeight
-        }
+//        if (item.materialId != null) {
+//            holder.materialType.text = item.material!!.materialType
+//            holder.materialProductCode.text = item.material!!.materialCode
+//            holder.materialProductName.text = item.material!!.materialDescription
+//            holder.materialGenericName.text = item.material!!.genericName
+//            holder.materialUOM.text = item.material!!.UOM
+//            holder.materialGrossWeight.text = item.material!!.grossWeight
+//            holder.materialTareWeight.text = item.material!!.tareWeight
+//            holder.materialNetWeight.text = item.material!!.netWeight
+//        }
 
 //        holder.materialInwardDate.text = item.
 
-        if (item.dispatchSlip != null) {
-            holder.materialPicker.text = item.dispatchSlip!!.toString()
-            holder.materialLoader.text = item.dispatchSlipId!!.toString()
+        if (item.dispatchslip != null) {
+//            holder.materialPicker.text = item.dispatchSlip!!.toString()
+//            holder.materialLoader.text = item.dispatchSlipId!!.toString()
 
-            holder.materialDispatchSlipNumber.text = item.dispatchSlip!!.dispatchSlipNumber
+            holder.materialDispatchSlipNumber.text = item.dispatchslip!!.dispatchSlipNumber
 
-            if  (item.dispatchSlip!!.truckId != null) {
-                holder.materialDispatchTruckNumber.text = item.dispatchSlip!!.ttat!!.truckNumber
-            }
-
-            if (item.dispatchSlip!!.depoId != null) {
-                holder.depot.text = item.dispatchSlip!!.depot!!.name
-            }
+//            if  (item.dispatchSlip!!.truckId != null) {
+//                holder.materialDispatchTruckNumber.text = item.dispatchSlip!!.ttat!!.truckNumber
+//            }
+//
+//            if (item.dispatchSlip!!.depoId != null) {
+//                holder.depot.text = item.dispatchSlip!!.depot!!.name
+//            }
+        }
+        if(item.ttat != null){
+            holder.materialDispatchTruckNumber.text = item.ttat!!.truckNumber
+        }
+        if(item.depot != null){
+            holder.depot.text = item.depot!!.name
         }
     }
 

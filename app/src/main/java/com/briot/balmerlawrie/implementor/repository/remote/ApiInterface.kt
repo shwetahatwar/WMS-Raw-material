@@ -55,16 +55,32 @@ class Material {
 }
 
 class  MaterialInward {
-    var materialId: Number? = null
-    var materialCode: Number = 0
-    var batchNumber: String? = null
     var serialNumber: String? = null
-    var isScrapped: Boolean = false
-    var isInward: Boolean = false
-    var dispatchSlipId: Number? = null
-    var status: Boolean = false
-    var dispatchSlip: DispatchSlip? = null
-    var material: Material? = null
+    var inwardedOn: String? = null
+    var inwardedBy: String? = null
+    var scrappedOn: String? = null
+    var scrappedBy: String? = null
+    var recoveredOn: String? = null
+    var recoveredBy: String? = null
+    var pickedOn: String? = null
+    var pickedBy: String? = null
+    var materialGenericName: String? = null
+    var materialDescription: String? = null
+    var loadedOn: String? = null
+    var loadedBy: String? = null
+    var dispatchslip: DispatchSlip? = null
+    var ttat: Ttat? = null
+    var depot: Depo? = null
+//    var materialId: Number? = null
+//    var materialCode: Number = 0
+//    var batchNumber: String? = null
+//    var serialNumber: String? = null
+//    var isScrapped: Boolean = false
+//    var isInward: Boolean = false
+//    var dispatchSlipId: Number? = null
+//    var status: Boolean = false
+//    var dispatchSlip: DispatchSlip? = null
+//    var material: Material? = null
 //    var createdBy: User? = null
 //    var updatedBy: User? = null
     }
@@ -147,7 +163,7 @@ class DispatchSlipRequest {
 }
 
 class Project {
-        var name: String = ""
+    var name: String = ""
     var auditors: String = ""
     var start: String = ""
     var end: String = ""
@@ -184,7 +200,7 @@ interface ApiInterface {
     @GET("users")
     fun getUsers(): Observable<Array<userResponse?>>
 
-    @GET("materialinwards")
+    @GET("materialtransactions")
     fun getMaterialDetails(@Query("serialNumber")  serialNumber: String): Observable<Array<MaterialInward>>
 
     @GET("dispatchslip")
