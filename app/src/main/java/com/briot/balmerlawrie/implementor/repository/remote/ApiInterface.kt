@@ -68,7 +68,7 @@ class  MaterialInward {
     var materialDescription: String? = null
     var loadedOn: String? = null
     var loadedBy: String? = null
-    var dispatchslip: DispatchSlip? = null
+    var dispatchSlip: DispatchSlip? = null
     var ttat: Ttat? = null
     var depot: Depo? = null
 //    var materialId: Number? = null

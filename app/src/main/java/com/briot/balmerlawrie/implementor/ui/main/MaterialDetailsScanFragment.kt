@@ -179,7 +179,7 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
             inwardedOn = itemView.inwarded_on_value as TextView
             inwardedBy = itemView.inwarded_by_value as TextView
             scrappedOn = itemView.scrapped_on_value as TextView
-            scrappedBy = itemView.material_grossweight_value as TextView
+            scrappedBy = itemView.scrapped_by_value as TextView
             recoveredOn = itemView.recovered_on_value as TextView
             recoveredBy = itemView.recovered_by_value as TextView
             pickedOn = itemView.picked_on_value as TextView
@@ -187,7 +187,7 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
             loadedOn = itemView.loaded_on_value as TextView
             loadedBy = itemView.loaded_by_value as TextView
             materialDispatchSlipNumber = itemView.dispatch_slip_value as TextView
-            materialDispatchTruckNumber = itemView.material_trucknumber as TextView
+            materialDispatchTruckNumber = itemView.material_trucknumber_value as TextView
             depot = itemView.material_depot_value as TextView
 
 
@@ -240,11 +240,11 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
 
 //        holder.materialInwardDate.text = item.
 
-        if (item.dispatchslip != null) {
+        if (item.dispatchSlip != null) {
 //            holder.materialPicker.text = item.dispatchSlip!!.toString()
 //            holder.materialLoader.text = item.dispatchSlipId!!.toString()
 
-            holder.materialDispatchSlipNumber.text = item.dispatchslip!!.dispatchSlipNumber
+            holder.materialDispatchSlipNumber.text = item.dispatchSlip!!.dispatchSlipNumber
 
 //            if  (item.dispatchSlip!!.truckId != null) {
 //                holder.materialDispatchTruckNumber.text = item.dispatchSlip!!.ttat!!.truckNumber
