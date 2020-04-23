@@ -100,6 +100,7 @@ class DispatchSlipLoadingFragment : Fragment(), LoginDialogListener {
                     loading_scanned_count.text = "0/0"
                 } else if (it != oldDispatchSlipItems) {
                     loading_dispatchSlipItems.adapter?.notifyDataSetChanged()
+
                     loading_scanned_count.text = viewModel.totalScannedItems.toString() + "/" + it.size.toString()
                 }
             }
@@ -187,7 +188,7 @@ class DispatchSlipLoadingFragment : Fragment(), LoginDialogListener {
                                 this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
                                 // prodeed to add the material in database
                                 GlobalScope.launch {
-                                    Log.d(TAG,"inide loading material barcode"+productCode)
+                                    Log.d(TAG,"inside loading material barcode"+productCode)
                                     viewModel.addMaterial(productCode, batchCode, serialNumber)
                                 }
                             }

@@ -108,38 +108,109 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 //        Log.d(TAG, "----b4 add --> "+ updatedItems.size)
 //        Log.d(TAG, "----b4 add --> "+ updatedItems[1])
 
-        if (dbItems.size > 0) {
-            totalScannedItems = 0
-            for (dbitem in dbItems) {
-                var item = DispatchSlipItem()
-                item.id = 0
-                item.scannedPacks = 1
-                item.batchNumber = dbitem.batchCode
-                item.materialCode = dbitem.productCode
-                item.dispatchSlipId = dbitem.dispatchSlipId
-                item.numberOfPacks = 1
-                // update Loading list response with new added entry
-                updatedItems += item
-                totalScannedItems += 1
-            }
-        }
-        else{
-            totalScannedItems = 0
-            for (item in updatedItems) { // batch no not existing in server items added in updated items
-                // Log.d(TAG, "updatedItems---->" + updatedItems)
-                if (item != null) {
-                    var count = dbDao.getCountForBatchMaterialCode( //updated item from server
-                            dispatchSlipId,
-                            item.materialCode!!,
-                            item.batchNumber!!
-                    )
-                    item.scannedPacks = count
-                    if (item.scannedPacks.toInt() == item.numberOfPacks.toInt()) {
-                        totalScannedItems += 1
-                    }
+        totalScannedItems = 0
+        for (item in updatedItems) {
+            if (item != null) {
+                var count = dbDao.getCountForBatchMaterialCode(
+                        dispatchSlipId,
+                        item.materialCode!!,
+                        item.batchNumber!!
+                )
+                item.scannedPacks = count
+                if (item.scannedPacks.toInt() == item.numberOfPacks.toInt()) {
+                    totalScannedItems += 1
                 }
             }
         }
+
+        var checkingItems = updatedItems;
+        for (dbitem in dbItems){
+            for(item in checkingItems){
+                var checkArguments  = dbitem.serialNumber!!.split("#")
+                if(dbitem.productCode == item!!.materialCode && checkArguments[1] != item.batchNumber){
+                    var arguments  = dbitem.serialNumber!!.split("#")
+                    var item = DispatchSlipItem()
+                    item.id = 0
+                    item.scannedPacks = 1
+//                item.batchNumber = dbitem.batchCode
+                    item.batchNumber = arguments[1]
+                    item.materialCode = dbitem.productCode
+                    item.dispatchSlipId = dbitem.dispatchSlipId
+                    item.materialGenericName = dbitem.materialGenericName
+                    item.numberOfPacks = 1
+                    updatedItems += item
+                    totalScannedItems += 1
+                }
+            }
+        }
+//    }
+
+//        if (dbItems.size > 0) {
+//            totalScannedItems = 0
+//            for (dbitem in dbItems) {
+//                var arguments  = dbitem.serialNumber!!.split("#")
+//                var item = DispatchSlipItem()
+//                item.id = 0
+//                item.scannedPacks = 1
+////                item.batchNumber = dbitem.batchCode
+//                item.batchNumber = arguments[1]
+//                item.materialCode = dbitem.productCode
+//                item.dispatchSlipId = dbitem.dispatchSlipId
+//                item.materialGenericName = dbitem.materialGenericName
+//                item.numberOfPacks = 1
+//                // update Loading list response with new added entry
+//
+//                updatedItems += item
+//                totalScannedItems += 1
+//            }
+//
+////            var arrayData : MutableList<String> = mutableListOf<String>()
+////            for (dbitem in dbItems) {
+////                for (item in updatedItems) {
+////                    var dbItemsarguments  = dbitem.serialNumber!!.split("#")
+////                    if (item!!.materialCode == dbitem!!.productCode) {
+////                        if (item.batchNumber != dbItemsarguments[1]) {
+////                            if(arrayData.contains(item.materialCode)){
+////
+////                            }
+////                            else{
+////                                item.numberOfPacks = item.numberOfPacks.toInt() - 1
+////                                arrayData.add(item.materialCode.toString())
+////                            }
+//////                            if(item.numberOfPacks.toInt() > 1){
+//////
+//////                            }
+////                        }
+////                    }
+////                }
+////            }
+//        }
+//        else{
+//            totalScannedItems = 0
+//            for (item in updatedItems) { // batch no not existing in server items added in updated items
+//                // Log.d(TAG, "updatedItems---->" + updatedItems)
+//                if (item != null) {
+//                    var count = dbDao.getCountForBatchMaterialCode( //updated item from server
+//                            dispatchSlipId,
+//                            item.materialCode!!,
+//                            item.batchNumber!!
+//                    )
+//                    item.scannedPacks = count
+//                    if (item.scannedPacks.toInt() == item.numberOfPacks.toInt()) {
+//                        totalScannedItems += 1
+//                    }
+//
+//
+////                    for (dbitem in dbItems){
+////                        if(item.materialCode == dbitem!!.productCode){
+////                            if(item.batchNumber != dbitem.batchCode){
+////                                item.numberOfPacks = item.numberOfPacks.toInt() - 1
+////                            }
+////                        }
+////                    }
+//                }
+//            }
+//        }
 
 //logic for different batch code
         /*

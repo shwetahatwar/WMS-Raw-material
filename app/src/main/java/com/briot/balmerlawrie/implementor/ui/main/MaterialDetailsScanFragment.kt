@@ -71,12 +71,12 @@ class MaterialDetailsScanFragment : Fragment() {
                     keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
                 }
 
-                if (it.dispatchSlip == null)  {
+                if (it.dispatchslip == null)  {
                     UiHelper.hideProgress(this.progress)
                     this.progress = null
                     (materialItemsList.adapter as MaterialItemsAdapter).notifyDataSetChanged()
                 }  else  {
-                    viewModel.getMaterialDispatchSlip(it.dispatchSlip!!.dispatchSlipNumber)
+                    viewModel.getMaterialDispatchSlip(it.dispatchslip!!.dispatchSlipNumber)
                 }
             }
 
@@ -100,7 +100,7 @@ class MaterialDetailsScanFragment : Fragment() {
 
         viewModel.dispatchSlip.observe(this, Observer<DispatchSlip> {
             if (it != null) {
-                (this.materialItemsList.adapter as MaterialItemsAdapter).getItem(0)?.dispatchSlip = it
+                (this.materialItemsList.adapter as MaterialItemsAdapter).getItem(0)?.dispatchslip = it
             }
 
             (materialItemsList.adapter as MaterialItemsAdapter).notifyDataSetChanged()
@@ -240,11 +240,11 @@ class MaterialItemsAdapter(val context: Context) : ArrayAdapter<MaterialInward, 
 
 //        holder.materialInwardDate.text = item.
 
-        if (item.dispatchSlip != null) {
+        if (item.dispatchslip != null) {
 //            holder.materialPicker.text = item.dispatchSlip!!.toString()
 //            holder.materialLoader.text = item.dispatchSlipId!!.toString()
 
-            holder.materialDispatchSlipNumber.text = item.dispatchSlip!!.dispatchSlipNumber
+            holder.materialDispatchSlipNumber.text = item.dispatchslip!!.dispatchSlipNumber
 
 //            if  (item.dispatchSlip!!.truckId != null) {
 //                holder.materialDispatchTruckNumber.text = item.dispatchSlip!!.ttat!!.truckNumber
