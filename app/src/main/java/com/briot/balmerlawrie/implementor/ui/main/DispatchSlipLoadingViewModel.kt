@@ -125,9 +125,21 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 
         var checkingItems = updatedItems;
         for (dbitem in dbItems){
+            var checkStatus = false;
+            var newItem = null;
             for(item in checkingItems){
                 var checkArguments  = dbitem.serialNumber!!.split("#")
-                if(dbitem.productCode == item!!.materialCode && checkArguments[1] != item.batchNumber){
+                if(item!!.materialCode == dbitem.productCode && item.batchNumber == checkArguments[1]){
+                    checkStatus = false
+                    break;
+                }
+                else{
+                    checkStatus = true
+                }
+            }
+            if(checkStatus == true){
+                var checkArguments  = dbitem.serialNumber!!.split("#")
+//                if(dbitem.productCode == item!!.materialCode && checkArguments[1] != item.batchNumber && item.numberOfPacks != item.scannedPacks){
                     var arguments  = dbitem.serialNumber!!.split("#")
                     var item = DispatchSlipItem()
                     item.id = 0
@@ -140,103 +152,11 @@ class DispatchSlipLoadingViewModel : ViewModel() {
                     item.numberOfPacks = 1
                     updatedItems += item
                     totalScannedItems += 1
-                }
+//                    break;
+//                }
             }
         }
 //    }
-
-//        if (dbItems.size > 0) {
-//            totalScannedItems = 0
-//            for (dbitem in dbItems) {
-//                var arguments  = dbitem.serialNumber!!.split("#")
-//                var item = DispatchSlipItem()
-//                item.id = 0
-//                item.scannedPacks = 1
-////                item.batchNumber = dbitem.batchCode
-//                item.batchNumber = arguments[1]
-//                item.materialCode = dbitem.productCode
-//                item.dispatchSlipId = dbitem.dispatchSlipId
-//                item.materialGenericName = dbitem.materialGenericName
-//                item.numberOfPacks = 1
-//                // update Loading list response with new added entry
-//
-//                updatedItems += item
-//                totalScannedItems += 1
-//            }
-//
-////            var arrayData : MutableList<String> = mutableListOf<String>()
-////            for (dbitem in dbItems) {
-////                for (item in updatedItems) {
-////                    var dbItemsarguments  = dbitem.serialNumber!!.split("#")
-////                    if (item!!.materialCode == dbitem!!.productCode) {
-////                        if (item.batchNumber != dbItemsarguments[1]) {
-////                            if(arrayData.contains(item.materialCode)){
-////
-////                            }
-////                            else{
-////                                item.numberOfPacks = item.numberOfPacks.toInt() - 1
-////                                arrayData.add(item.materialCode.toString())
-////                            }
-//////                            if(item.numberOfPacks.toInt() > 1){
-//////
-//////                            }
-////                        }
-////                    }
-////                }
-////            }
-//        }
-//        else{
-//            totalScannedItems = 0
-//            for (item in updatedItems) { // batch no not existing in server items added in updated items
-//                // Log.d(TAG, "updatedItems---->" + updatedItems)
-//                if (item != null) {
-//                    var count = dbDao.getCountForBatchMaterialCode( //updated item from server
-//                            dispatchSlipId,
-//                            item.materialCode!!,
-//                            item.batchNumber!!
-//                    )
-//                    item.scannedPacks = count
-//                    if (item.scannedPacks.toInt() == item.numberOfPacks.toInt()) {
-//                        totalScannedItems += 1
-//                    }
-//
-//
-////                    for (dbitem in dbItems){
-////                        if(item.materialCode == dbitem!!.productCode){
-////                            if(item.batchNumber != dbitem.batchCode){
-////                                item.numberOfPacks = item.numberOfPacks.toInt() - 1
-////                            }
-////                        }
-////                    }
-//                }
-//            }
-//        }
-
-//logic for different batch code
-        /*
-//        var differentItems = Array<DispatchSlipItem>()
-
-        for (dbItem in dbItems.value!!.iterator()) {
-            var foundItems = updatedItems.filter {
-                return  (dbItem.batchCode.equals(it?.batchNumber))
-            }
-
-            if (foundItems!!.size == 0) {
-                var item = DispatchSlipItem()
-                item.id = 0
-                item.scannedPacks = 1
-                item.batchNumber = dbItem.batchCode
-                item.materialCode = dbItem.productCode
-                item.dispatchSlipId = dbItem.dispatchSlipId
-                item.numberOfPacks = 1
-                differentItems.add   (item)
-            }
-//            for (item in updatedItems) {
-//                if (item != null) {
-//                    var dbBatchwiseItems = dbDao.getItemsForBatch(dispatchSlipId, item!!.batchNumber)
-//                }
-//            }
-        }*/
 
         updatedItems.sortWith(compareBy<DispatchSlipItem?> {
             it!!.scannedPacks.toInt() == it!!.numberOfPacks.toInt()
@@ -304,6 +224,7 @@ class DispatchSlipLoadingViewModel : ViewModel() {
     suspend fun addMaterial(materialCode: String, batchNumber: String, serialNumber: String): Boolean {
         val result = responseDispatchLoadingItems.filter {
             it?.materialCode.equals(materialCode)
+//            it?.batchNumber.equals(batchNumber)
         }
         if (result.size > 0) {
             updateItemInDatabase(result.first()!!, serialNumber)
@@ -327,8 +248,10 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         val userName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_NAME, "")
 
         // Log.d(TAG, "item in update "+ item.batchNumber)
+        var argument = serialNumber.split("#")
         var dbItem = DispatchSlipLoadingListItem(
-                batchCode = item.batchNumber,
+//                batchCode = item.batchNumber,
+                batchCode = argument[1],
                 productCode = item.materialCode,
                 materialGenericName = item.materialGenericName,
                 materialDescription = item.materialDescription,
