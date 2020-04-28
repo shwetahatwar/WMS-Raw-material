@@ -298,6 +298,10 @@ class DispatchSlipLoadingFragment : Fragment(), LoginDialogListener {
         dialogFragment.productCode = productCode
         dialogFragment.batchCode = batchCode
         dialogFragment.serialNumber = serialNumber
+        viewModel.serialNumber = serialNumber
+        viewModel.batchCode = batchCode
+        viewModel.productCode = productCode
+
         val ft = this.activity!!.supportFragmentManager.beginTransaction()
         val prev = this.activity!!.supportFragmentManager.findFragmentByTag("dialog")
         if (prev != null)
@@ -440,6 +444,9 @@ open class SimpleDispatchSlipLoadingItemAdapter(private val recyclerView: androi
                 linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
             } else if (dispatchSlipItem.scannedPacks.toInt() >= dispatchSlipItem.numberOfPacks.toInt()) {
                 linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
+            }
+            if (dispatchSlipItem.materialCode == viewModel.productCode && dispatchSlipItem.batchNumber == viewModel.batchCode){
+               linearLayout.setBackgroundColor(PrefConstants().lightYellowColor)
             }
         }
     }

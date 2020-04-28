@@ -55,5 +55,6 @@ class PrefConstants {
     val lightGreenColor = Color.parseColor("#FF9CF780")
     val lightOrangeColor = Color.parseColor("#73FF8800")
     val lightGrayColor = Color.parseColor("#FFF3F3F3")
+    val lightYellowColor = Color.parseColor("#FFFF99")
     val messageBackgroundColor = Color.parseColor("#FFD50000")
 }
