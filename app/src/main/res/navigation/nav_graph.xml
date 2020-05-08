@@ -73,7 +73,11 @@
         android:id="@+id/auditProjectsFragment"
         android:name="com.briot.balmerlawrie.implementor.ui.main.AuditProjectsFragment"
         android:label="audit_projects_fragment"
-        tools:layout="@layout/audit_projects_fragment" />
+        tools:layout="@layout/audit_projects_fragment" >
+        <action
+            android:id="@+id/action_auditProjectsFragment_to_auditProjectList"
+            app:destination="@id/auditProjectList" />
+    </fragment>
     <fragment
         android:id="@+id/dispatchPickingListFragment"
         android:name="com.briot.balmerlawrie.implementor.ui.main.DispatchPickingListDetailsFragment"
@@ -99,4 +103,9 @@
         android:name="com.briot.balmerlawrie.implementor.ui.main.DispatchSlipLoadingFragment"
         android:label="dispatch_slip_loading_fragment"
         tools:layout="@layout/dispatch_slip_loading_fragment" />
+    <fragment
+        android:id="@+id/auditProjectList"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.AuditProjectList"
+        android:label="audit_project_list_fragment"
+        tools:layout="@layout/audit_project_list_fragment" />
 </navigation>

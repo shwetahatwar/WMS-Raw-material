@@ -1,6 +1,8 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -20,7 +23,10 @@ import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
 import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlip
 import com.briot.balmerlawrie.implementor.repository.remote.Project
 import io.github.pierry.progress.Progress
+import kotlinx.android.synthetic.main.audit_project_list_fragment.*
 import kotlinx.android.synthetic.main.dispatch_slips_fragment.*
+import kotlinx.android.synthetic.main.home_fragment.*
+import kotlinx.android.synthetic.main.projects_row_layout.*
 
 class AuditProjectsFragment : Fragment() {
 
@@ -50,18 +56,17 @@ class AuditProjectsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(AuditProjectsViewModel::class.java)
         (this.activity as AppCompatActivity).setTitle("Audit Projects")
-
+        viewModel.loadAuditProjects("In Progress")
         recyclerView.adapter = SimpleProjectListAdapter(recyclerView, viewModel.projects)
 
         viewModel.projects.observe(viewLifecycleOwner, Observer<Array<Project?>> {
             if (it != null) {
                 UiHelper.hideProgress(this.progress)
                 this.progress = null
-
-                if (viewModel.invalidProjects.first() == null) {
+                if (viewModel.projects.value.orEmpty().isNotEmpty() && viewModel.projects.value?.first() == null){
                     UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
                 } else if (it != oldProjectList) {
-                    dispatch_dispatchSlipsView.adapter?.notifyDataSetChanged()
+                    auditprojects_projectlist.adapter?.notifyDataSetChanged()
                 }
             }
 
@@ -76,10 +81,7 @@ class AuditProjectsFragment : Fragment() {
                 UiHelper.showNoInternetSnackbarMessage(this.activity as AppCompatActivity)
             }
         })
-
-        viewModel.loadAuditProjects("In-Progress")
     }
-
 }
 
 open class SimpleProjectListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val projects: LiveData<Array<Project?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleProjectListAdapter.ViewHolder>() {
@@ -93,6 +95,10 @@ open class SimpleProjectListAdapter(private val recyclerView: androidx.recyclerv
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind()
+        holder.itemView.setOnClickListener {
+            val bundle = Bundle()
+            Navigation.findNavController(it).navigate(R.id.action_auditProjectsFragment_to_auditProjectList, bundle)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -101,15 +107,43 @@ open class SimpleProjectListAdapter(private val recyclerView: androidx.recyclerv
 
     open inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         protected val projecNameValue: TextView
+        protected val auditor: TextView
+        protected val projectStatus: TextView
+//        protected val start: TextView
+//        protected val end: TextView
+        // protected val status: TextView
+//        protected val createdBy: TextView
+//        protected val updatedBy: TextView
+//        protected val createdAt: TextView
+//        protected val updatdAt: TextView
+
 
         init {
             projecNameValue = itemView.findViewById(R.id.projects_title_value)
+            auditor = itemView.findViewById(R.id.auditor)
+            projectStatus = itemView.findViewById(R.id.project_status)
+//            start = itemView.findViewById(R.id.start_value)
+//            end = itemView.findViewById(R.id.end_value)
+            //status = itemView.findViewById(R.id.status_value)
+//            createdBy = itemView.findViewById(R.id.createdBy_value)
+//            updatedBy = itemView.findViewById(R.id.updatedBy_value)
+//            createdAt = itemView.findViewById(R.id.createdAt_value)
+//            updatdAt = itemView.findViewById(R.id.updatdAt_value)
         }
 
         fun bind() {
             val project = projects.value!![adapterPosition]!!
 
             projecNameValue.text = project.name
+            auditor.text = project.auditors
+            projectStatus.text = project.projectStatus
+//            start.text = project.start
+//            end.text = project.end
+            //status.text = project.status.toString()
+//            createdAt.text = project.createdAt
+//            createdBy.text = project.createdBy
+//            updatdAt.text = project.updatdAt
+//            updatedBy.text = project.updatedBy
         }
     }
 }

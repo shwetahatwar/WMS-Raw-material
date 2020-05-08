@@ -163,6 +163,7 @@ class DispatchSlipRequest {
 }
 
 class Project {
+    var id: Number? = null
     var name: String = ""
     var auditors: String = ""
     var start: String = ""
@@ -173,6 +174,11 @@ class Project {
     var updatedBy: String? = null
     var createdAt: String? = null
     var updatdAt: String? = null
+}
+
+class auditProjectItem {
+    var projectId: Number? = null
+    var serialNumber: String? = null
 }
 
 class ProjectItem {
@@ -221,12 +227,18 @@ interface ApiInterface {
     @POST("dispatchslips/{id}/dispatchsliploadermaterials")
     fun postDispatchSlipLoadedMaterials(@Path("id") id: Int, @Body requestbody: DispatchSlipRequest): Observable<DispatchSlipItemResponse?>
 
-    @GET("/projects/{status}")
-    fun getAuditProjects(@Path("status") status: String): Observable<Array<Project?>>
+//    @GET("/projects/{status}")
+//    fun getAuditProjects(@Path("status") status: String): Observable<Array<Project?>>
+
+    @GET("/projects")
+    fun getAuditProjects(@Query("projectStatus") projectStatus: String): Observable<Array<Project?>>
 
     @GET("/project/{id}/projectitems")
     fun getProjectItems(@Path("id") id: String): Observable<Array<ProjectItem?>>
 
-    @POST("/project/{id}/projectitems")
-    fun postProjectItems(@Path("id") id: String): Observable<Array<ProjectItem?>>
+//    @POST("/project/{id}/projectitems")
+//    fun postProjectItems(@Path("id") id: String): Observable<Array<ProjectItem?>>
+
+    @POST("/projects/projectItems")
+    fun postProjectItems(@Body auditRequestBody: Array<auditProjectItem>): Observable<Array<auditProjectItem?>>
 }

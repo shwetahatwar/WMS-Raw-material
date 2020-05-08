@@ -92,5 +92,12 @@ class RemoteRepository {
                 .subscribe(handleResponse, handleError)
     }
 
+    fun postProjectItems(auditRequestBody: Array<auditProjectItem>, handleResponse: (Array<auditProjectItem?>) -> Unit, handleError: (Throwable) -> Unit) {
+        RetrofitHelper.retrofit.create(ApiInterface::class.java)
+                .postProjectItems(auditRequestBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(handleResponse, handleError)
+    }
 
 }
