@@ -9,9 +9,15 @@ import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.remote.Project
 import com.briot.balmerlawrie.implementor.repository.remote.RemoteRepository
 import com.briot.balmerlawrie.implementor.repository.remote.auditProjectItem
+import com.google.gson.JsonParser
+import retrofit2.HttpException
+import java.net.SocketException
+import java.net.SocketTimeoutException
 
 class AuditProjectListViewModel : ViewModel() {
     // TODO: Implement the ViewModel
+
+    var errorMessage: String = ""
     var material_barcode = ""
     var batch_number = ""
     var barcode_serial = ""
@@ -21,7 +27,7 @@ class AuditProjectListViewModel : ViewModel() {
     val auditProject: LiveData<Array<auditProjectItem?>> = MutableLiveData()
     val invalidProjects: Array<Project?> = arrayOf(null)
 
-    fun updateAuditProjects(auditRequestBody: auditProjectItem){
+    fun updateAuditProjects(auditRequestBody: auditProjectItem) {
 
         RemoteRepository.singleInstance.postProjectItems(arrayOf(auditRequestBody),
                 this::handleAuditProjectsResponse, this::handleProjectsError)
@@ -45,7 +51,7 @@ class AuditProjectListViewModel : ViewModel() {
     }
 
     private fun handleProjectsError(error: Throwable) {
-        Log.d(TAG, "error msg--->"+error.localizedMessage)
+        Log.d(TAG, "error msg--->" + error.localizedMessage)
         if (UiHelper.isNetworkError(error)) {
             (networkError as MutableLiveData<Boolean>).value = true
         } else {
@@ -53,3 +59,25 @@ class AuditProjectListViewModel : ViewModel() {
         }
     }
 }
+//    private fun handleProjectsError(error: Throwable) {
+//    Log.d(TAG, "error------> "+ error.localizedMessage)
+//    if (error is HttpException) {
+//        if (error.code() >= 401) {
+//            var msg = error.response()?.errorBody()?.string()
+//            var message = JsonParser().parse(msg)
+//                    .asJsonObject["message"]
+//                    .asString
+//            if (message != null && message.isNotEmpty()) {
+//                errorMessage = message + " Please enter valid barcode."
+//            } else {
+//                errorMessage = error.message()
+//            }
+//        }
+//        (networkError as MutableLiveData<Boolean>).value = true
+//    } else if (error is SocketException || error is SocketTimeoutException) {
+//        (networkError as MutableLiveData<Boolean>).value = true
+//    } else {
+////            (this.user as MutableLiveData<PopulatedUser>).value = invalidUser
+//    }
+//}
+//}

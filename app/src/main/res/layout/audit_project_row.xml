@@ -71,7 +71,7 @@
         <TextView
             android:id="@+id/barcodeSerialLabel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Barcode Serial" />
 
@@ -81,6 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1"
+            android:maxLength="30"
             android:textAlignment="textEnd"
             android:textStyle="bold" />
     </LinearLayout>

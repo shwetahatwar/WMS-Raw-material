@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,11 +46,6 @@ class AuditProjectList : Fragment() {
         this.recyclerView = rootView.findViewById(R.id.auditprojects_projectlist)
         recyclerView.layoutManager = LinearLayoutManager(this.activity)
         auditsubmit = rootView.findViewById(R.id.audit_items_submit_button)
-//        materialBarcode = rootView.findViewById(R.id.material_barcode)
-//        barcodeSerial = rootView.findViewById(R.id.barcode_serial)
-//        batchSNumber = rootView.findViewById(R.id.batch_number)
-
-
         return rootView
     }
 
@@ -58,56 +54,37 @@ class AuditProjectList : Fragment() {
         viewModel = ViewModelProviders.of(this).get(AuditProjectListViewModel::class.java)
         // TODO: Use the ViewModel
 
-
         viewModel.loadAuditProjects("In Progress")
         audit_materialBarcode.requestFocus()
-
-        viewModel.projects.observe(viewLifecycleOwner, Observer<Array<Project?>> {
-            if (it != null) {
-                if (viewModel.projects.value.orEmpty().isNotEmpty() && viewModel.projects.value?.first() == null) {
-                    UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
-                }
-//                } else {
-//                    //var projectId = viewModel.projects.value?.get(0)!!.id
-//                    Log.d(TAG, " ---value -- > "+ (viewModel.projects.value?.size))
-//
-//                    viewModel.projectId = viewModel.projects.value?.get(0)!!.id
-//                }
-            }
-//            Log.d(TAG, " ---value -- > "+ (viewModel.projects.value?.size))
-//            viewModel.projectId = viewModel.projects.value?.get(0)!!.id
-
-        })
 
         audit_scanButton.setOnClickListener {
             var thisObject = this
             var value = audit_materialBarcode.text!!.toString().trim()
             var arguments  = value.split("#")
-
             if (arguments.size < 3 || arguments[0].length == 0 || arguments[1].length == 0 || arguments[2].length == 0) {
-                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Invalid barcode, please try again!")
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Please Enter barcode")
             } else {
                 viewModel.material_barcode = arguments[0].toString()
                 viewModel.batch_number = arguments[1].toString()
                 viewModel.barcode_serial = value
+                recyclerView.adapter = SimpleAuditItemAdapter(recyclerView, viewModel)
             }
 
             audit_materialBarcode.text?.clear()
-            //recyclerView.adapter = SimplePickingItemAdapter(recyclerView, viewModel.pickingItems, viewModel)
-            recyclerView.adapter = SimpleAuditItemAdapter(recyclerView, viewModel)
             GlobalScope.launch {
             }
         };
+
         audit_items_submit_button.setOnClickListener {
-//            viewModel.loadAuditProjects("In Progress")
-            Log.d(TAG, " ---value -- > "+ (viewModel.projects.value?.size))
-            var projectId = viewModel.projects.value?.get(0)!!.id
-            var auditProjectItem = auditProjectItem()
-            auditProjectItem.projectId = projectId
-            auditProjectItem.serialNumber = viewModel.barcode_serial
-            Log.d(TAG, "barcode --->"+viewModel.barcode_serial)
-            Log.d(TAG, "projectId --->"+projectId)
-            viewModel.updateAuditProjects(auditProjectItem)
+            if (viewModel.barcode_serial != "") {
+                var projectId = viewModel.projects.value?.get(0)!!.id
+                var auditProjectItem = auditProjectItem()
+                auditProjectItem.projectId = projectId
+                auditProjectItem.serialNumber = viewModel.barcode_serial
+                viewModel.updateAuditProjects(auditProjectItem)
+            }else{
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Please provide barcode");
+            }
         }
     }
 
@@ -140,13 +117,11 @@ class AuditProjectList : Fragment() {
             protected val material_barcode: TextView
             protected val batch_number: TextView
             protected val barcode_serial: TextView
-
             init {
                 material_barcode = itemView.findViewById(R.id.material_barcode)
                 batch_number = itemView.findViewById(R.id.batch_number)
                 barcode_serial = itemView.findViewById(R.id.barcode_serial)
             }
-
             fun bind() {
                 material_barcode.text = viewModel.material_barcode
                 batch_number.text = viewModel.batch_number
