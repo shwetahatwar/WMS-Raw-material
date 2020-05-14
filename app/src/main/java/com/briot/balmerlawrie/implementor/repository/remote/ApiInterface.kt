@@ -163,7 +163,7 @@ class DispatchSlipRequest {
 }
 
 class Project {
-    var id: Number? = null
+    var id: Int = 0
     var name: String = ""
     var auditors: String = ""
     var start: String = ""
@@ -180,6 +180,16 @@ class auditProjectItem {
     var projectId: Number? = null
     var serialNumber: String? = null
 }
+
+class auditProjectList {
+    var projectId: Int = 0
+    var serialNumber: String? = null
+    var batchCode : String? = null
+    var productCode: String? = null
+}
+//class auditProjectList(var serialNumber: String?,
+//                       var batchCode : String?,
+//                       var productCode: String?)
 
 class ProjectItem {
     var projectId: Number? = null
@@ -240,5 +250,5 @@ interface ApiInterface {
 //    fun postProjectItems(@Path("id") id: String): Observable<Array<ProjectItem?>>
 
     @POST("/projects/projectItems")
-    fun postProjectItems(@Body auditRequestBody: Array<auditProjectItem>): Observable<Array<auditProjectItem?>>
+    fun postProjectItems(@Body auditRequestBody: Array<auditProjectItem>): Observable<auditProjectItem?>
 }

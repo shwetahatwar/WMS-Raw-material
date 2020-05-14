@@ -6,11 +6,12 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = arrayOf(DispatchSlipLoadingListItem::class, DispatchSlipPickingListItem::class, DBProjectItem::class), version = 1, exportSchema = false)
+@Database(entities = arrayOf(DispatchSlipLoadingListItem::class, DispatchSlipPickingListItem::class, DBAuditItem:: class, DBProjectItem::class), version = 1, exportSchema = false)
 public abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dispatchSlipLoadingItemDuo() : DispatchSlipLoadingListItemDao
     abstract fun dispatchSlipPickingItemDuo() : DispatchSlipPickingListItemDao
+    abstract fun auditListItemDuo() : DBAuditItemDao
     abstract fun dbProjectItemDao() : DBProjectItemDao
 
     companion object {

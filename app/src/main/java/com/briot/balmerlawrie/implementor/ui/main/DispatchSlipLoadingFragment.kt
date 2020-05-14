@@ -38,9 +38,9 @@ class DispatchSlipLoadingFragment : Fragment(), LoginDialogListener {
 
     override fun onSuccessfulAdminLogin(productCode: String, batchCode:String, serialNumber:String ) {
         // UiHelper.showErrorToast(this.activity as AppCompatActivity, "dismissed dialog!")
-        Log.d(TAG, "After success ---->")
+        // Log.d(TAG, "After success ---->")
         addItemToList(productCode, batchCode, serialNumber)
-        Log.d(TAG, "After add list ---->")
+        // Log.d(TAG, "After add list ---->")
 
     }
 

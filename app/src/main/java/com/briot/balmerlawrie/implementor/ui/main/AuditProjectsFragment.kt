@@ -57,7 +57,7 @@ class AuditProjectsFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(AuditProjectsViewModel::class.java)
         (this.activity as AppCompatActivity).setTitle("Audit Projects")
         viewModel.loadAuditProjects("In Progress")
-        recyclerView.adapter = SimpleProjectListAdapter(recyclerView, viewModel.projects)
+        recyclerView.adapter = SimpleProjectListAdapter(recyclerView, viewModel.projects, viewModel)
 
         viewModel.projects.observe(viewLifecycleOwner, Observer<Array<Project?>> {
             if (it != null) {
@@ -84,7 +84,9 @@ class AuditProjectsFragment : Fragment() {
     }
 }
 
-open class SimpleProjectListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView, private val projects: LiveData<Array<Project?>>) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleProjectListAdapter.ViewHolder>() {
+open class SimpleProjectListAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView,
+                                    private val projects: LiveData<Array<Project?>>,
+                            private val viewModel: AuditProjectsViewModel) : androidx.recyclerview.widget.RecyclerView.Adapter<SimpleProjectListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -94,9 +96,12 @@ open class SimpleProjectListAdapter(private val recyclerView: androidx.recyclerv
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        var projectData = projects.value!!.get(position)
+        var projectId: Int = projectData!!.id
         holder.bind()
         holder.itemView.setOnClickListener {
             val bundle = Bundle()
+            bundle.putInt("projectId", projectId)
             Navigation.findNavController(it).navigate(R.id.action_auditProjectsFragment_to_auditProjectList, bundle)
         }
     }
@@ -109,41 +114,18 @@ open class SimpleProjectListAdapter(private val recyclerView: androidx.recyclerv
         protected val projecNameValue: TextView
         protected val auditor: TextView
         protected val projectStatus: TextView
-//        protected val start: TextView
-//        protected val end: TextView
-        // protected val status: TextView
-//        protected val createdBy: TextView
-//        protected val updatedBy: TextView
-//        protected val createdAt: TextView
-//        protected val updatdAt: TextView
-
 
         init {
             projecNameValue = itemView.findViewById(R.id.projects_title_value)
             auditor = itemView.findViewById(R.id.auditor)
             projectStatus = itemView.findViewById(R.id.project_status)
-//            start = itemView.findViewById(R.id.start_value)
-//            end = itemView.findViewById(R.id.end_value)
-            //status = itemView.findViewById(R.id.status_value)
-//            createdBy = itemView.findViewById(R.id.createdBy_value)
-//            updatedBy = itemView.findViewById(R.id.updatedBy_value)
-//            createdAt = itemView.findViewById(R.id.createdAt_value)
-//            updatdAt = itemView.findViewById(R.id.updatdAt_value)
         }
 
         fun bind() {
             val project = projects.value!![adapterPosition]!!
-
             projecNameValue.text = project.name
             auditor.text = project.auditors
             projectStatus.text = project.projectStatus
-//            start.text = project.start
-//            end.text = project.end
-            //status.text = project.status.toString()
-//            createdAt.text = project.createdAt
-//            createdBy.text = project.createdBy
-//            updatdAt.text = project.updatdAt
-//            updatedBy.text = project.updatedBy
         }
     }
 }

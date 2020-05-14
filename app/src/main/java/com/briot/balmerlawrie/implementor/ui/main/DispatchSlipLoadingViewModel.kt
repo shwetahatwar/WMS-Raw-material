@@ -104,10 +104,6 @@ class DispatchSlipLoadingViewModel : ViewModel() {
 //        var differentItems: Array<DispatchSlipItem?> = arrayOf(null)
         //server items
          var updatedItems: Array<DispatchSlipItem?> = items.clone()
-
-//        Log.d(TAG, "----b4 add --> "+ updatedItems.size)
-//        Log.d(TAG, "----b4 add --> "+ updatedItems[1])
-
         totalScannedItems = 0
         for (item in updatedItems) {
             if (item != null) {
@@ -229,17 +225,6 @@ class DispatchSlipLoadingViewModel : ViewModel() {
         if (result.size > 0) {
             updateItemInDatabase(result.first()!!, serialNumber)
         }
-//        else{
-//            Log.d(TAG, "in else to add data")
-//            var itemToUpdate = DispatchSlipItem()
-//            itemToUpdate.batchNumber = batchNumber
-//            itemToUpdate.materialCode = materialCode
-//            itemToUpdate.materialGenericName = "name "+ batchNumber.toString()
-//            itemToUpdate.materialDescription = "desc "+ batchNumber.toString()
-//            itemToUpdate.dispatchSlipId = 7
-//            itemToUpdate.id = 2
-//            updateItemInDatabase(itemToUpdate, serialNumber)
-//        }
         return true
     }
 

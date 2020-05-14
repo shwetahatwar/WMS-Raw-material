@@ -16,6 +16,7 @@ class AuditProjectsViewModel : ViewModel() {
     val projects: LiveData<Array<Project?>> = MutableLiveData()
     val invalidProjects: Array<Project?> = arrayOf(null)
     var userId: Int = 0
+    var projectID: Int = 0
 
     fun loadAuditProjects(status: String) {
         (networkError as MutableLiveData<Boolean>).value = false
@@ -25,7 +26,7 @@ class AuditProjectsViewModel : ViewModel() {
     }
 
     private fun handleProjectsResponse(projects: Array<Project?>) {
-        Log.d(TAG, "successful project list" + projects.toString())
+        // Log.d(TAG, "successful project list" + projects.toString())
         (this.projects as MutableLiveData<Array<Project?>>).value = projects
     }
 

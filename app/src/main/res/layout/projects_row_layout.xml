@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Name" />
+            android:text="Audit Id" />
 
         <TextView
             android:id="@+id/projects_title_value"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textAlignment="textEnd"
-            android:text="TextView" />
+            android:text="1" />
     </LinearLayout>
 
     <LinearLayout
