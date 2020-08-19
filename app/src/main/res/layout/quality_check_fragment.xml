@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.QualityCheckFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="true"
+            android:orientation="vertical">
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/qc_pending"
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                app:cardBackgroundColor="@color/auditAssetButtonBackground"
+                app:cardCornerRadius="4dp"
+                android:clickable="true"
+                android:layout_marginBottom="2dp"
+                android:background="@color/moveAssetButtonBackground"
+                android:drawableLeft="@mipmap/jobcard_details"
+                android:drawableRight="@drawable/ic_navigate_next_black_24dp"
+                android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="QC Pending"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:textColor="@color/moveAssetButtonTitle"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/material_qc_status"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:layout_width="350dp"
+                android:layout_height="60dp"
+                app:cardBackgroundColor="@color/auditAssetButtonBackground"
+                app:cardCornerRadius="4dp"
+                android:clickable="true"
+                android:layout_marginBottom="3dp"
+                android:background="@color/auditAssetButtonBackground"
+                android:drawableLeft="@mipmap/ic_material_details"
+                android:drawableRight="@drawable/ic_navigate_next_black_24dp"
+                android:drawablePadding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Material QC Status"
+                android:textAlignment="textStart"
+                android:textAllCaps="false"
+                android:textColor="@color/assetDetailsButtonTitle"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/appCompatTextView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:fontFamily="@font/lato_bold"
+                android:text="Powered By"
+                android:textAlignment="center"
+                android:textColor="#F70A0A0A"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/logoimg_1"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="5dp"
+                app:srcCompat="@drawable/logo" />
+
+            <TextView
+                android:id="@+id/versiontext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dp"
+                android:text="app version 1.0.1"
+                android:textAlignment="center"
+                android:textColor="@color/assetDetailsButtonTitle" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

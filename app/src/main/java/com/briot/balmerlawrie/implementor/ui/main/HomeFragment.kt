@@ -1,9 +1,11 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
+import android.content.ContentValues
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
@@ -19,6 +21,9 @@ import com.briot.balmerlawrie.implementor.BuildConfig
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
+import com.briot.balmerlawrie.implementor.repository.remote.PickingDashboardData
+import com.briot.balmerlawrie.implementor.repository.remote.PutawayDashboardData
+import io.github.pierry.progress.Progress
 
 
 class HomeFragment : androidx.fragment.app.Fragment() {
@@ -27,142 +32,77 @@ class HomeFragment : androidx.fragment.app.Fragment() {
         fun newInstance() = HomeFragment()
     }
 
+    private var oldPutawayDashboardItems: PutawayDashboardData? = null
+    private var oldPickingDashboardItems: PickingDashboardData? = null
     private lateinit var viewModel: HomeViewModel
+    private var progress: Progress? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.home_fragment, container, false)
+        val rootView =  inflater.inflate(R.layout.home_fragment, container, false)
+        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModel.loadPutawayDashboardItems()
+        viewModel.loadPickingsDashboardItems()
+        return rootView
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        (this.activity as AppCompatActivity).setTitle("Dashboard")
 
-        (this.activity as AppCompatActivity).setTitle("Home")
+        if (this.arguments != null) {
+            viewModel.totalData = this.arguments!!.getInt("totalData")
+            viewModel.pendingForPutaway = this.arguments!!.getInt("pendingForPutaway")
 
-        val roleName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_NAME, "")
-        val roleId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_ID, "0").toInt()
+            viewModel.inProgress = this.arguments!!.getInt("inProgress")
+            viewModel.pending = this.arguments!!.getInt("pending")
+            viewModel.completed = this.arguments!!.getInt("completed")
+            viewModel.total = this.arguments!!.getInt("total")
 
-        viewStatus(true)
-        var disableTextColor = Color.parseColor("#FFa3a3a3")
-        if (roleName.toLowerCase().equals("admin")) {
-            materialInward.isEnabled = false
-            materialInward.setTextColor(disableTextColor)
-        } else if (roleName.toLowerCase().equals("picker")) {
-            materialDetails.isEnabled = true
-
-            materialInward.isEnabled = false
-            materialInward.setTextColor(disableTextColor)
-
-            materialPicking.isEnabled = true
-
-            materialLoading.isEnabled = false
-            materialLoading.setTextColor(disableTextColor)
-
-            auditProject.isEnabled = false
-            auditProject.setTextColor(disableTextColor)
-
-        } else if (roleName.toLowerCase().equals("loader")) {
-            materialDetails.isEnabled = true
-
-            materialInward.isEnabled = false
-            materialInward.setTextColor(disableTextColor)
-
-            materialPicking.isEnabled = false
-            materialPicking.setTextColor(disableTextColor)
-
-            materialLoading.isEnabled = true
-
-            auditProject.isEnabled = false
-            auditProject.setTextColor(disableTextColor)
-
-        } else if (roleName.toLowerCase().equals("auditor")) {
-            materialDetails.isEnabled = true
-
-            materialInward.isEnabled = false
-            materialInward.setTextColor(disableTextColor)
-
-            materialPicking.isEnabled = false
-            materialPicking.setTextColor(disableTextColor)
-
-            materialLoading.isEnabled = false
-            materialLoading.setTextColor(disableTextColor)
-
-            auditProject.isEnabled = true
-        } else {
-            materialDetails.isEnabled = true
-
-            materialInward.isEnabled = false
-            materialInward.setTextColor(disableTextColor)
-
-            materialPicking.isEnabled = false
-            materialPicking.setTextColor(disableTextColor)
-
-            materialLoading.isEnabled = false
-            materialLoading.setTextColor(disableTextColor)
-
-            auditProject.isEnabled = false
-            auditProject.setTextColor(disableTextColor)
         }
-
-        /*this.viewModel.roleAccessRelations.observe(this, Observer<Array<RoleAccessRelation>> {
+        // recyclerView.adapter = SimpleDashboardItemAdapter(recyclerView, viewModel.putawayDashboardData, viewModel)
+        viewModel.putawayDashboardData.observe(viewLifecycleOwner, Observer<PutawayDashboardData?> {
             if (it != null) {
-                val roleName = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_NAME, "")
-                val roleId = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_ID, "0").toInt()
-                if (roleName.toLowerCase().equals("admin")) {
-                    viewStatus(true)
-                } else {
-                    for (item in it) {
-                        if (item.roleId?.id == roleId) {
-                            if (item.accessId?.uri?.toLowerCase().equals("/JobProcessSequenceRelation/create".toLowerCase())) {
-                                materialDetails.visibility = View.VISIBLE
-                            } else if (item.accessId?.uri?.toLowerCase().equals("jobProcessSequenceRelation/update".toLowerCase())) {
-                                materialInward.visibility =  View.VISIBLE
-                            } else if (item.accessId?.uri?.toLowerCase().equals("joblocationrelation".toLowerCase())) {
-                                materialPicking.visibility = View.VISIBLE
-                                receiveAtStore.visibility = View.VISIBLE
-                            } else if (item.accessId?.uri?.toLowerCase().equals("MaintenanceTransaction".toLowerCase())) {
-                                machineMaintenance.visibility = View.VISIBLE
-                            }
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
 
-                        }
-                    }
+                pendingText.text = viewModel.putawayDashboardData.value?.responseData?.pendingForPutaway.toString()
+                totalText.text = viewModel.putawayDashboardData.value?.responseData?.totalData.toString()
+
+                if ( viewModel.putawayDashboardData.value == null) {
+                    UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
+                } else if (it != oldPutawayDashboardItems) {
+                    Log.d(ContentValues.TAG, "oldPutwayDashboard data")
+                    //putawayItems.adapter?.notifyDataSetChanged()
                 }
-
             }
+            oldPutawayDashboardItems = viewModel.putawayDashboardData.value
+        })
 
-        })*/
+        viewModel.pickingDashboardData.observe(viewLifecycleOwner, Observer<PickingDashboardData?> {
+            if (it != null) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
 
-//        this.viewModel.loadRoleAccess()
-        versiontext.text = "app version " + BuildConfig.VERSION_NAME;
+                totalPickingValue.text = viewModel.total.toString()
+                pickingValue.text = viewModel.completed.toString()
+                pickingPendingValue.text = viewModel.pending.toString()
+                pickingInProgressValue.text = viewModel.inProgress.toString()
 
-        // hide all options initially,  enable it as per role only
-        viewStatus(true)
+                if ( viewModel.pickingDashboardData.value == null) {
+                    UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
+                } else if (it != oldPickingDashboardItems) {
+                    Log.d(ContentValues.TAG, "oldPutwayDashboard data")
+                    //putawayItems.adapter?.notifyDataSetChanged()
+                }
+            }
+            oldPickingDashboardItems = viewModel.pickingDashboardData.value
+        })
 
-            materialDetails.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialDetailsScanFragment) }
-        materialInward.setOnClickListener {
-            UiHelper.showWarningToast(this.activity as AppCompatActivity, "This feature is disabled for now as per request")
-//            @dinesh gajjar; kept out of scope for now on client request
-//            Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_materialInwardFragment)
-        }
-        materialPicking.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_dispatchPickingListsFragment) }
-        materialLoading.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_dispatchSlipsFragment) }
-        auditProject.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_auditProjectsFragment) }
-    }
+        materialLoading.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_qualityCheckFragment) }
+        materialPutaway.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_putawayFragment) }
+       issue_to_production.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_issueToProductionFragment) }
+        materialPicking.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_picklistMasterFragment) }
 
-    fun viewStatus( show: Boolean) {
-        if (show) {
-            materialDetails.visibility = View.VISIBLE
-            materialInward.visibility = View.VISIBLE
-            materialPicking.visibility = View.VISIBLE
-            materialLoading.visibility = View.VISIBLE
-            auditProject.visibility = View.VISIBLE
-        } else {
-            materialDetails.visibility = View.GONE
-            materialInward.visibility = View.GONE
-            materialPicking.visibility = View.GONE
-            materialLoading.visibility = View.VISIBLE
-            auditProject.visibility = View.GONE
-        }
     }
 }

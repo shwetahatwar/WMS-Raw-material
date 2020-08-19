@@ -8,6 +8,7 @@ import android.util.Log
 import com.briot.balmerlawrie.implementor.repository.remote.RemoteRepository
 import com.briot.balmerlawrie.implementor.repository.remote.SignInResponse
 import com.briot.balmerlawrie.implementor.repository.remote.User
+import com.google.gson.JsonParser
 import okhttp3.ResponseBody
 import retrofit2.HttpException
 import java.net.SocketException
@@ -34,13 +35,15 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun handleLoginError(error: Throwable) {
-        Log.d(TAG, error.localizedMessage)
-
+        Log.d(TAG, "error------> "+ error.localizedMessage)
         if (error is HttpException) {
             if (error.code() >= 401) {
                 var msg = error.response()?.errorBody()?.string()
-                if (msg != null && msg.isNotEmpty()) {
-                    errorMessage = msg
+                var message = JsonParser().parse(msg)
+                        .asJsonObject["message"]
+                        .asString
+                if (message != null && message.isNotEmpty()) {
+                    errorMessage = message + " Please enter valid Credentials."
                 } else {
                     errorMessage = error.message()
                 }

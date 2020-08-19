@@ -1,27 +1,25 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
-import androidx.fragment.app.Fragment
-import androidx.appcompat.app.AppCompatActivity
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.CompoundButton
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import com.briot.balmerlawrie.implementor.MainActivity
 import com.briot.balmerlawrie.implementor.R
+import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.local.PrefRepository
-import com.briot.balmerlawrie.implementor.repository.remote.User
+import com.briot.balmerlawrie.implementor.repository.remote.SignInResponse
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.login_fragment.*
-import android.view.inputmethod.InputMethodManager
-import androidx.lifecycle.ViewModelProvider
-import com.briot.balmerlawrie.implementor.UiHelper
-import com.briot.balmerlawrie.implementor.repository.remote.SignInResponse
 
 
 class LoginFragment : androidx.fragment.app.Fragment() {
@@ -41,9 +39,17 @@ class LoginFragment : androidx.fragment.app.Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        // TODO: Use the ViewModel
+
+        (this.activity as AppCompatActivity).setTitle("Warehouse Managment System")
 
         username.requestFocus()
+        showpasswordCheckBox.setOnCheckedChangeListener(){ compoundButton: CompoundButton, b: Boolean ->
+            if (showpasswordCheckBox.isChecked){
+                password.setTransformationMethod(HideReturnsTransformationMethod())
+            }else(
+                    password.setTransformationMethod(PasswordTransformationMethod())
+                    )
+        }
 
         viewModel.signInResponse.observe(this, Observer<SignInResponse> {
             UiHelper.hideProgress(this.progress)
@@ -87,12 +93,13 @@ class LoginFragment : androidx.fragment.app.Fragment() {
             val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
 
-
             // @dineshgajjar - remove following coments later on
             this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+
+
             viewModel.loginUser(username.text.toString(), password.text.toString())
-            username.setText("");
-            password.setText("");
+            username.text?.clear();
+            password.text?.clear();
 
         }
     }

@@ -111,7 +111,7 @@ class AuditProjectList : Fragment() {
             }
         })
 
-        audit_items_submit_button.setOnClickListener {
+            audit_items_submit_button.setOnClickListener {
             var auditProjectItems = emptyArray<auditProjectItem>()
 
             for (items in viewModel.auditProjectListItems!!.value!!) {

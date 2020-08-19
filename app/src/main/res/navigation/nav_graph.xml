@@ -47,6 +47,18 @@
         <action
             android:id="@+id/action_homeFragment_to_dispatchSlipsFragment"
             app:destination="@id/dispatchSlipsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_qualityCheckFragment"
+            app:destination="@id/qualityCheckFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_putawayFragment"
+            app:destination="@id/putawayFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_issueToProductionFragment"
+            app:destination="@id/issueToProductionFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_picklistMasterFragment"
+            app:destination="@id/picklistMasterFragment" />
     </fragment>
 
 
@@ -108,4 +120,49 @@
         android:name="com.briot.balmerlawrie.implementor.ui.main.AuditProjectList"
         android:label="audit_project_list_fragment"
         tools:layout="@layout/audit_project_list_fragment" />
+    <fragment
+        android:id="@+id/qualityCheckFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.QualityCheckFragment"
+        android:label="quality_check_fragment"
+        tools:layout="@layout/quality_check_fragment" >
+        <action
+            android:id="@+id/action_qualityCheckFragment_to_QCPendingFragment"
+            app:destination="@id/QCPendingFragment" />
+        <action
+            android:id="@+id/action_qualityCheckFragment_to_materialQCStatusFragment"
+            app:destination="@id/materialQCStatusFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/QCPendingFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.QCPendingFragment"
+        android:label="q_c_pending_fragment"
+        tools:layout="@layout/q_c_pending_fragment" />
+    <fragment
+        android:id="@+id/materialQCStatusFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.MaterialQCStatusFragment"
+        android:label="MaterialQCStatusFragment" />
+    <fragment
+        android:id="@+id/putawayFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.PutawayFragment"
+        android:label="putaway_fragment"
+        tools:layout="@layout/putaway_fragment" />
+    <fragment
+        android:id="@+id/issueToProductionFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.IssueToProductionFragment"
+        android:label="issue_to_production_fragment"
+        tools:layout="@layout/issue_to_production_fragment" />
+    <fragment
+        android:id="@+id/picklistMasterFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.PicklistMasterFragment"
+        android:label="picklist_master_fragment"
+        tools:layout="@layout/picklist_master_fragment" >
+        <action
+            android:id="@+id/action_picklistMasterFragment_to_pickingFragment"
+            app:destination="@id/pickingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pickingFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.PickingFragment"
+        android:label="picking_fragment"
+        tools:layout="@layout/picking_fragment" />
 </navigation>

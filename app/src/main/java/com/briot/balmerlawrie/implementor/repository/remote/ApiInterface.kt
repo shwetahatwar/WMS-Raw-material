@@ -187,9 +187,21 @@ class auditProjectList {
     var batchCode : String? = null
     var productCode: String? = null
 }
-//class auditProjectList(var serialNumber: String?,
-//                       var batchCode : String?,
-//                       var productCode: String?)
+
+class responseData  {
+    var totalData: Number? = null
+    var pendingForPutaway: Number? = null
+}
+class PutawayDashboardData{
+    var responseData: responseData = responseData()
+}
+
+class PickingDashboardData{
+    var inProgress: Number? = null
+    var pending: Number? = null
+    var completed: Number? = null
+    var total: Number? = null
+}
 
 class ProjectItem {
     var projectId: Number? = null
@@ -197,17 +209,42 @@ class ProjectItem {
     var batchNumber: String? = null
     var serialNumber: String? = null
     var itemStatus: String? = null
-//    "id": 82,
-//    "projectId": 8,
-//    "materialCode": "6005581",
-//    "batchNumber": "s20/817262",
-//    "serialNumber": "6005581#s20/817262#000002",
-//    "status": true,
-//    "itemStatus": "Scrap",
-//    "createdBy": "nikhil",
-//    "updatedBy": "nikhil"
+}
+class QCPending{
+    var id: Number? = null
+    var QCStatus: Number? = null
+    var prevQCStatus: Number? = null
+    var barcodeSerial: Number? = null
+    var partnumber: partnumber = partnumber()
 }
 
+class partnumber{
+    var description: String? = null
+    var partNumber: Number? = null
+}
+
+class QCTotalCount{
+    var QCStatus: QCStatus = QCStatus()
+}
+
+class QCStatus{
+    var ok: Number? = null
+    var pending: Number? = null
+    var rejected: Number? = null
+    var total: Number? = null
+}
+
+class QCScanItem{
+    var id: Int? = null
+    var qcId: Int? = null
+    var barcodeSerial: String? = null
+    var QCStatus: Int? = null
+    var prevQCStatus: Int? = null
+}
+
+class qcScanResponse {
+    var success: String? = null
+}
 
 interface ApiInterface {
     @POST("users/sign_in")
@@ -215,6 +252,19 @@ interface ApiInterface {
 
     @GET("users")
     fun getUsers(): Observable<Array<userResponse?>>
+
+    @GET("materialinwards/get/dashboardCountForPendingPutaway")
+    fun getPutawayCount(): Observable<PutawayDashboardData?>
+
+    @GET("materialinwards/get/getCountByQcStatusHHT")
+    fun getQcTotalCount(): Observable<QCTotalCount?>
+
+
+    @GET("materialinwards?QCStatus=0&offset=0")
+    fun getQcPendingCount(@Query("limit") limit: String): Observable<Array<QCPending?>>
+
+    @GET("picklists/dashboard/count")
+    fun getPickingCount(): Observable<PickingDashboardData?>
 
     @GET("materialtransactions")
     fun getMaterialDetails(@Query("serialNumber")  serialNumber: String): Observable<Array<MaterialInward>>
@@ -251,4 +301,7 @@ interface ApiInterface {
 
     @POST("/projects/projectItems")
     fun postProjectItems(@Body auditRequestBody: Array<auditProjectItem>): Observable<auditProjectItem?>
+
+    @POST("/materialinwards/post/qcstatuschangehht")
+    fun postQcPendingScanItems(@Body qcScanRequestBody: Array<QCScanItem>): Observable<qcScanResponse?>
 }

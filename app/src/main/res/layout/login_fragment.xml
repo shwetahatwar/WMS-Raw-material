@@ -16,38 +16,38 @@
             android:layout_marginTop="10pt"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/appCompatTextView3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="@font/lato_bold"
-                android:text="Material Dispatch"
-                android:textAlignment="center"
-                android:textColor="@color/assetDetailsButtonTitle"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+<!--            <androidx.appcompat.widget.AppCompatTextView-->
+<!--                android:id="@+id/appCompatTextView3"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="2dp"-->
+<!--                android:fontFamily="@font/lato_bold"-->
+<!--                android:text="Raw Material Warehouse"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textColor="@color/assetDetailsButtonTitle"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold" />-->
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/appCompatTextView5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="@font/lato_bold"
-                android:text="Solution"
-                android:textAlignment="center"
-                android:textColor="@color/assetDetailsButtonTitle"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+<!--            <androidx.appcompat.widget.AppCompatTextView-->
+<!--                android:id="@+id/appCompatTextView5"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="2dp"-->
+<!--                android:fontFamily="@font/lato_bold"-->
+<!--                android:text="Managment"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textColor="@color/assetDetailsButtonTitle"-->
+<!--                android:textSize="18sp"-->
+<!--                android:textStyle="bold" />-->
 
             <ImageView
-                android:id="@+id/balmer"
+                android:id="@+id/wms"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:visibility="visible"
-                app:srcCompat="@drawable/balmer" />
+                app:srcCompat="@drawable/material" />
 
             <androidx.appcompat.widget.AppCompatEditText
                 android:id="@+id/username"
@@ -97,6 +97,40 @@
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/showpasswordCheckBox"
+                    android:layout_width="250dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:textColor="#FFF" />
+
+
+                <TextView
+                    android:id="@+id/showpassword_text_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAlignment="textStart"
+                    android:text="show password" />
+
+                <TextView
+                    android:id="@+id/forgotpassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="30dp"
+                    android:text="forgot password?"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView6"

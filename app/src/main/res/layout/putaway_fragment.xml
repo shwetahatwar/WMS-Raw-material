@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.main.DispatchSlipLoadingFragment">
+    tools:context=".ui.main.PutawayFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/loading_materialBarcode"
+                android:id="@+id/putaway_materialBarcode"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
                 android:layout_marginRight="10dp"
@@ -38,7 +38,7 @@
                 android:textColorHint="@android:color/darker_gray" />
 
             <Button
-                android:id="@+id/loading_scanButton"
+                android:id="@+id/putaway_scanButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
@@ -51,96 +51,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@color/listCellBackgroundColor">
+            android:background="@color/listCellBackgroundColor"
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/textView15"
+                android:id="@+id/location_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
-                android:text="Customer:" />
+                android:text="Location:" />
 
             <TextView
-                android:id="@+id/loading_dispatchListCustomer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:id="@+id/location_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="NA"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/moveAssetButtonBackground"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="5dp"
-                android:text="Slip Number:" />
-
-            <TextView
-                android:id="@+id/loading_dispatchSlipId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="1" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:text="Status:"
-                android:textAlignment="textEnd"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/loading_dispatchListStatusId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="New"
-                android:textAlignment="textEnd" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/moveAssetButtonBackground"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="5dp"
-                android:text="Vehicle Number:" />
-
-            <TextView
-                android:id="@+id/loading_truckNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Truck Number"
                 android:textAlignment="viewStart"
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/textView14"
+                android:id="@+id/put_count_label"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:paddingRight="5dp"
-                android:text="Scanned Items:"
+                android:text="Count:"
                 android:textAlignment="textEnd" />
 
             <TextView
-                android:id="@+id/loading_scanned_count"
+                android:id="@+id/put_count_value"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@android:color/holo_blue_bright"
@@ -151,7 +90,7 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/loading_dispatchSlipItems"
+            android:id="@+id/putaway_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="10dp">
@@ -159,7 +98,7 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <Button
-            android:id="@+id/loading_submitItemsButton"
+            android:id="@+id/putaway_submitItemsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/submit" />
@@ -167,7 +106,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/loading_items_submit_button"
+        android:id="@+id/putaway_items_submit_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"

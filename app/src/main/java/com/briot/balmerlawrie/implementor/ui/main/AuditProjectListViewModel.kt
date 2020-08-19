@@ -88,74 +88,74 @@ class AuditProjectListViewModel : ViewModel() {
         }
     }
 
-    suspend fun addMaterial(productNumber: String, batchNumber: String, serialNumber: String, projectId: Int) : Boolean {
+  suspend fun addMaterial(productNumber: String, batchNumber: String, serialNumber: String, projectId: Int) : Boolean {
 //        val result = responseDispatchLoadingItems.filter {
 //            it?.materialCode.equals(materialCode)
 //        }
 //        if (result.size > 0) {
 //            updateItemInDatabase(result.first()!!, serialNumber)
 //        }
-        Log.d(TAG,"addMaterial -->"+batchNumber)
-        val auditProjectObj = auditProjectList()
-        auditProjectObj.batchCode = batchNumber
-        auditProjectObj.productCode = productNumber
-        auditProjectObj.serialNumber = serialNumber
-        auditProjectObj.projectId = projectId
+    Log.d(TAG,"addMaterial -->"+batchNumber)
+    val auditProjectObj = auditProjectList()
+    auditProjectObj.batchCode = batchNumber
+    auditProjectObj.productCode = productNumber
+    auditProjectObj.serialNumber = serialNumber
+    auditProjectObj.projectId = projectId
 
-        updateItemInDatabase(auditProjectObj)
-        return true
-    }
-    private suspend fun updateItemInDatabase(item: auditProjectList) {
-        // Log.d(TAG, "item in update "+ item.batchNumber)
-        var dbItem = DBAuditItem(
-                id = 0,
-                batchCode = item.batchCode,
-                productCode = item.productCode,
-                serialNumber = item.serialNumber,
-                projectId = item.projectId)
-        var dbDao = appDatabase.auditListItemDuo()
+    updateItemInDatabase(auditProjectObj)
+    return true
+}
+private suspend fun updateItemInDatabase(item: auditProjectList) {
+    // Log.d(TAG, "item in update "+ item.batchNumber)
+    var dbItem = DBAuditItem(
+            id = 0,
+            batchCode = item.batchCode,
+            productCode = item.productCode,
+            serialNumber = item.serialNumber,
+            projectId = item.projectId)
+    var dbDao = appDatabase.auditListItemDuo()
 //        Log.d(TAG,"dbitem --> "+dbItem)
-        try {
-            dbDao.insert(item = dbItem)
-        }
-        catch (e: Exception){
-            Log.d(TAG, "Getting exception while inserting data to db "+ e)
-        }
-        try {
-            GlobalScope.launch {
-                withContext(Dispatchers.Main) {
-                    updatedListAsPerDatabase(item.projectId)
-                }
-            }
-        }  catch (e: Exception){
-            Log.d(TAG, "--inside globallaunch exception "+ e)
-        }
+    try {
+        dbDao.insert(item = dbItem)
     }
-    fun updatedListAsPerDatabase(projectId: Int) {
-        var dbDao = appDatabase.auditListItemDuo()
-        var dbItems = dbDao.getAllItems(projectId) //diff batch nunber items (dbItems)
-//        Log.d(TAG, "dbItems size-->"+dbItems.size)
-        var updatedItems: Array<auditProjectList?> = emptyArray()
-
-        for (item in dbItems){
-            updatedItems += item
-        }
-//        Log.d(TAG, "updatedItems size-->"+updatedItems.size)
-        (this.auditProjectListItems as MutableLiveData<Array<auditProjectList?>>).value = updatedItems
+    catch (e: Exception){
+        Log.d(TAG, "Getting exception while inserting data to db "+ e)
     }
-
-    fun deleteSelectedAuditFromDB(serialNumber: String) {
-
-        var dbDao = appDatabase.auditListItemDuo()
-
+    try {
         GlobalScope.launch {
-
-            dbDao.deleteSelectedAuditFromDB(serialNumber)
-
             withContext(Dispatchers.Main) {
-                //updatedListAsPerDatabase()
+                updatedListAsPerDatabase(item.projectId)
             }
         }
+    }  catch (e: Exception){
+        Log.d(TAG, "--inside globallaunch exception "+ e)
     }
+}
+fun updatedListAsPerDatabase(projectId: Int) {
+    var dbDao = appDatabase.auditListItemDuo()
+    var dbItems = dbDao.getAllItems(projectId) //diff batch nunber items (dbItems)
+//        Log.d(TAG, "dbItems size-->"+dbItems.size)
+    var updatedItems: Array<auditProjectList?> = emptyArray()
+
+    for (item in dbItems){
+        updatedItems += item
+    }
+//        Log.d(TAG, "updatedItems size-->"+updatedItems.size)
+    (this.auditProjectListItems as MutableLiveData<Array<auditProjectList?>>).value = updatedItems
+}
+
+fun deleteSelectedAuditFromDB(serialNumber: String) {
+
+    var dbDao = appDatabase.auditListItemDuo()
+
+    GlobalScope.launch {
+
+        dbDao.deleteSelectedAuditFromDB(serialNumber)
+
+        withContext(Dispatchers.Main) {
+            //updatedListAsPerDatabase()
+        }
+    }
+}
 }
 
