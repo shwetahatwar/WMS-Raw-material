@@ -26,7 +26,7 @@ import com.briot.balmerlawrie.implementor.repository.remote.auditProjectItem
 import com.briot.balmerlawrie.implementor.repository.remote.auditProjectList
 import kotlinx.android.synthetic.main.audit_project_list_fragment.*
 import kotlinx.android.synthetic.main.audit_project_row.*
-import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
+// import kotlinx.android.synthetic.main.dispatch_slip_loading_fragment.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.w3c.dom.Text

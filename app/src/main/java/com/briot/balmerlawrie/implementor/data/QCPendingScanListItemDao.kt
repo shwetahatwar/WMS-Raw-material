@@ -9,7 +9,7 @@ import com.briot.balmerlawrie.implementor.repository.remote.QCScanItem
 @Dao
 interface QCPendingScanListItemDao {
 
-    @Query("SELECT * from qc_pending_scan_list")
+    @Query("SELECT * from qc_pending_scan_list" )
     fun getAllItems(): List<QCScanItem>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

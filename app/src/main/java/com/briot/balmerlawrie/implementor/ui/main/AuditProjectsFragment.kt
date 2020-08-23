@@ -24,7 +24,7 @@ import com.briot.balmerlawrie.implementor.repository.remote.DispatchSlip
 import com.briot.balmerlawrie.implementor.repository.remote.Project
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.audit_project_list_fragment.*
-import kotlinx.android.synthetic.main.dispatch_slips_fragment.*
+// import kotlinx.android.synthetic.main.dispatch_slips_fragment.*
 import kotlinx.android.synthetic.main.home_fragment.*
 import kotlinx.android.synthetic.main.projects_row_layout.*
 

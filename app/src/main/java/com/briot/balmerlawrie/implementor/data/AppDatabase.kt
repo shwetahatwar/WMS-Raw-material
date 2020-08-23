@@ -7,7 +7,8 @@ import androidx.room.RoomDatabase
 
 @Database(entities = arrayOf(DispatchSlipLoadingListItem::class,
             DispatchSlipPickingListItem::class, DBAuditItem:: class,
-            DBProjectItem::class, QCScanItemList:: class), version = 1, exportSchema = false)
+            DBProjectItem::class, QCScanItemList:: class,
+            MaterialQCStatusDB:: class), version = 1, exportSchema = false)
 public abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dispatchSlipLoadingItemDuo() : DispatchSlipLoadingListItemDao
@@ -15,6 +16,7 @@ public abstract class AppDatabase : RoomDatabase() {
     abstract fun auditListItemDuo() : DBAuditItemDao
     abstract fun dbProjectItemDao() : DBProjectItemDao
     abstract fun qcPendingScanListItemDao() : QCPendingScanListItemDao
+    abstract fun materialQCStatusDao() : MaterialQCStatusDao
 
     companion object {
 

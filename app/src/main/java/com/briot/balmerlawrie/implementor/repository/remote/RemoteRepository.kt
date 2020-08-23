@@ -1,9 +1,12 @@
 package com.briot.balmerlawrie.implementor.repository.remote
 
+import android.annotation.SuppressLint
 import com.briot.balmerlawrie.implementor.RetrofitHelper
+import com.google.gson.GsonBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlin.reflect.KFunction1
+import okhttp3.ResponseBody
+
 
 class RemoteRepository {
     companion object {
@@ -23,14 +26,6 @@ class RemoteRepository {
     fun getUsers(handleResponse: (Array<userResponse?>) -> Unit, handleError: (Throwable) -> Unit) {
         RetrofitHelper.retrofit.create(ApiInterface::class.java)
                 .getUsers()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(handleResponse, handleError)
-    }
-
-    fun getMaterialDetails(barcodeSerial: String, handleResponse: (Array<MaterialInward>) -> Unit, handleError: (Throwable) -> Unit) {
-        RetrofitHelper.retrofit.create(ApiInterface::class.java)
-                .getMaterialDetails(barcodeSerial)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(handleResponse, handleError)
@@ -132,9 +127,17 @@ class RemoteRepository {
                 .subscribe(handleResponse, handleError)
     }
 
-    fun postQcPendingScanItems(qcScanRequestBody: Array<QCScanItem>, handleResponse: (qcScanResponse?) -> Unit, handleError: (Throwable) -> Unit) {
+    fun postQcPendingScanItems(qcScanRequestBody: Array<QCScanItem>, handleResponse: (ResponseBody) -> Unit, handleError: (Throwable) -> Unit) {
         RetrofitHelper.retrofit.create(ApiInterface::class.java)
                 .postQcPendingScanItems(qcScanRequestBody)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(handleResponse, handleError)
+    }
+
+    fun getMaterialStatus(barcodeSerial: String, handleResponse: (Array<MaterialInward?>) -> Unit, handleError: (Throwable) -> Unit) {
+        RetrofitHelper.retrofit.create(ApiInterface::class.java)
+                .getMaterialStatus(barcodeSerial)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(handleResponse, handleError)

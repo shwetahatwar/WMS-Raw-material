@@ -30,7 +30,7 @@
                 android:background="@drawable/edittext_bg"
                 android:ems="10"
                 android:hint="Material barcode"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionNext"
                 android:inputType="textNoSuggestions"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
@@ -41,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                android:imeOptions="actionNext"
                 android:background="@color/colorAccent"
                 android:text="@string/Scan" />
 
@@ -50,12 +51,14 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/qcStatus_recyclerlist"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:paddingTop="10dp"/>
+            android:layout_height="match_parent"
+            android:paddingTop="10dp" />
 
         <Button
             android:id="@+id/qcStatus_submitItemsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
             android:text="@string/submit" />
 
     </LinearLayout>
@@ -65,6 +68,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
+        android:imeOptions="actionDone"
         android:text="Change QC Status" />
 </LinearLayout>
 

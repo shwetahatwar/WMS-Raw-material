@@ -13,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
+import java.util.*
 
 class QCPendingViewModel : ViewModel() {
 
@@ -26,6 +28,7 @@ class QCPendingViewModel : ViewModel() {
     val networkError: LiveData<Boolean> = MutableLiveData()
     val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
     val QCPendingItem: LiveData<Array<QCPending?>> = MutableLiveData()
+    val totalScannedItem: LiveData<Number> = MutableLiveData()
     var scanedItems: List<QCScanItem> = emptyList()
     private var appDatabase = AppDatabase.getDatabase(MainApplication.applicationContext())
 
@@ -62,14 +65,19 @@ class QCPendingViewModel : ViewModel() {
                 this::handleQCScanResponse, this::handleQCScanError)
     }
 
-    private fun handleQCScanResponse(success: qcScanResponse?) {
-        println("success -->"+ success)
+    private fun handleQCScanResponse(QCScanResponse: ResponseBody) {
+        println("success -->"+ QCScanResponse)
         deleteQCPendingScanItemsFromDB()
-        println("after delete call-->"+ success)
+        println("after delete call-->"+ QCScanResponse)
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                (itemSubmissionSuccessful as MutableLiveData<Boolean>).value = true
+            }
+        }
     }
 
     private fun handleQCScanError(error: Throwable) {
-        Log.d(TAG, error.localizedMessage)
+        Log.d(TAG, "error --->"+error.localizedMessage)
     }
 
     suspend fun addQcScanItem(barcodeSerial: String, id: Int?, prevQCStatus: Int?){
@@ -104,6 +112,8 @@ class QCPendingViewModel : ViewModel() {
         var dbDao = appDatabase.qcPendingScanListItemDao()
         var dbItems = dbDao.getAllItems()
         scanedItems = dbItems
+        var thisobj = this
+        (thisobj.totalScannedItem as MutableLiveData<Number>).value = dbItems.size
         qcScannedCount = dbItems.size
         println("qcScannedCount-->"+qcScannedCount)
         return dbItems
@@ -114,9 +124,10 @@ class QCPendingViewModel : ViewModel() {
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
                 dbDao.deleteAll()
-                //updatedListAsPerDatabase()
+                getItemsFromDB()
+                loadQCPendingItems("100")
+                getQcTotalCount()
             }
-            getItemsFromDB()
         }
     }
 

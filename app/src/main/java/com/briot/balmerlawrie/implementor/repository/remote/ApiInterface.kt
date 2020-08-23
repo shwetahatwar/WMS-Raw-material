@@ -1,6 +1,7 @@
 package com.briot.balmerlawrie.implementor.repository.remote
 
 import io.reactivex.Observable
+import okhttp3.ResponseBody
 import retrofit2.http.*
 
 
@@ -54,36 +55,27 @@ class Material {
 //    var updatedBy: User? = null
 }
 
+class qcStatusDisplay {
+    var id: Int? = null
+    var qcId: Int? = null
+    var barcodeSerial: String? = null
+    var description: String? = null
+    var partnumber: String? = null
+    var location: String? = null
+    var QCStatus: String? = null
+}
+
 class  MaterialInward {
-    var serialNumber: String? = null
-    var inwardedOn: String? = null
-    var inwardedBy: String? = null
-    var scrappedOn: String? = null
-    var scrappedBy: String? = null
-    var recoveredOn: String? = null
-    var recoveredBy: String? = null
-    var pickedOn: String? = null
-    var pickedBy: String? = null
-    var materialGenericName: String? = null
-    var materialDescription: String? = null
-    var loadedOn: String? = null
-    var loadedBy: String? = null
-    var dispatchSlip: DispatchSlip? = null
-    var ttat: Ttat? = null
-    var depot: Depo? = null
-//    var materialId: Number? = null
-//    var materialCode: Number = 0
-//    var batchNumber: String? = null
-//    var serialNumber: String? = null
-//    var isScrapped: Boolean = false
-//    var isInward: Boolean = false
-//    var dispatchSlipId: Number? = null
-//    var status: Boolean = false
-//    var dispatchSlip: DispatchSlip? = null
-//    var material: Material? = null
-//    var createdBy: User? = null
-//    var updatedBy: User? = null
+    var id: Int? = null
+    var barcodeSerial: String? = null
+    var partnumber: partnumber = partnumber()
+    var shelf: shelf = shelf()
+    var QCStatus: Int? = null
     }
+
+class shelf{
+    var name: String? = null
+}
 
 class Ttat {
     var truckNumber: String = ""
@@ -220,7 +212,7 @@ class QCPending{
 
 class partnumber{
     var description: String? = null
-    var partNumber: Number? = null
+    var partNumber: String? = null
 }
 
 class QCTotalCount{
@@ -242,9 +234,12 @@ class QCScanItem{
     var prevQCStatus: Int? = null
 }
 
-class qcScanResponse {
-    var success: String? = null
-}
+//class MaterialQCStatus{
+//    var id: Int? = null
+//    var barcodeSerial: String? = null
+//    var QCStatus: Int? = null
+//    var prevQCStatus: Int? = null
+//}
 
 interface ApiInterface {
     @POST("users/sign_in")
@@ -265,9 +260,6 @@ interface ApiInterface {
 
     @GET("picklists/dashboard/count")
     fun getPickingCount(): Observable<PickingDashboardData?>
-
-    @GET("materialtransactions")
-    fun getMaterialDetails(@Query("serialNumber")  serialNumber: String): Observable<Array<MaterialInward>>
 
     @GET("dispatchslip")
     fun getDispatchSlip(@Path("id") dispatchSlipId: String): Observable<Array<DispatchSlip>>
@@ -303,5 +295,9 @@ interface ApiInterface {
     fun postProjectItems(@Body auditRequestBody: Array<auditProjectItem>): Observable<auditProjectItem?>
 
     @POST("/materialinwards/post/qcstatuschangehht")
-    fun postQcPendingScanItems(@Body qcScanRequestBody: Array<QCScanItem>): Observable<qcScanResponse?>
+    fun postQcPendingScanItems(@Body qcScanRequestBody: Array<QCScanItem>): Observable<ResponseBody>
+
+    @GET("materialinwards")
+    fun getMaterialStatus(@Query("barcodeSerial")  barcodeSerial: String): Observable<Array<MaterialInward?>>
+
 }

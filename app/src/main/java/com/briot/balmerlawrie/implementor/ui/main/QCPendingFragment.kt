@@ -18,6 +18,7 @@ import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.remote.QCPending
+import com.briot.balmerlawrie.implementor.repository.remote.QCScanItem
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.q_c_pending_fragment.*
 import kotlinx.coroutines.GlobalScope
@@ -63,7 +64,22 @@ class QCPendingFragment : Fragment() {
         }
 
         recyclerView.adapter = SimpleQcPendingItemAdapter(recyclerView, viewModel.QCPendingItem, viewModel)
-        count_value.text = viewModel.qcScannedCount.toString() + "/"+viewModel.qcTotalCount!!.toString()
+        count_value.text = viewModel.totalScannedItem.value.toString() + "/"+viewModel.qcTotalCount!!.toString()
+
+        viewModel.totalScannedItem.observe(viewLifecycleOwner, Observer<Number> {
+            if (it != null) {
+                count_value.text = viewModel.totalScannedItem.value.toString() + "/"+viewModel.qcTotalCount!!.toString() ?: 0.toString()
+            }
+        })
+
+        viewModel.itemSubmissionSuccessful.observe(viewLifecycleOwner, Observer<Boolean> {
+            if (it == true) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+                var thisObject = this
+                UiHelper.showSuccessToast(this.activity as AppCompatActivity,"Updated successfully")
+            }
+        })
 
         viewModel.QCPendingItem.observe(viewLifecycleOwner, Observer<Array<QCPending?>> {
             if (it != null) {
@@ -73,9 +89,9 @@ class QCPendingFragment : Fragment() {
                 if (viewModel.QCPendingItem.value.orEmpty().isNotEmpty() && viewModel.QCPendingItem.value?.first() == null) {
                     UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
                 } else if (it != oldQcPendingItems) {
-                    qcpending_recyclerlist.adapter?.notifyDataSetChanged()
                     // count_value.text = "0/"+viewModel.qcTotalCount!!.toString() ?: 0.toString()
-                    count_value.text = viewModel.qcScannedCount.toString() + "/"+viewModel.qcTotalCount!!.toString() ?: 0.toString()
+                    count_value.text = viewModel.totalScannedItem.value.toString() + "/"+viewModel.qcTotalCount!!.toString() ?: 0.toString()
+                    qcpending_recyclerlist.adapter?.notifyDataSetChanged()
                 }
             }
             oldQcPendingItems = viewModel.QCPendingItem.value
@@ -99,14 +115,14 @@ class QCPendingFragment : Fragment() {
                 val found = viewModel.QCPendingItem.value?.filter{ it!!.barcodeSerial.toString() == inputMaterialBarcode}
                 if (found!!.size > 0){
                     println("found")
+
                     GlobalScope.launch {
                         viewModel.addQcScanItem(inputMaterialBarcode, found[0]!!.id!!.toInt(),
                                 found[0]!!.QCStatus!!.toInt())
-                        viewModel.getItemsFromDB()
+                        // viewModel.getItemsFromDB()
                     }
                     qcpending_recyclerlist.adapter?.notifyDataSetChanged()
                 }
-                count_value.text = viewModel.qcScannedCount.toString() + "/"+viewModel.qcTotalCount!!.toString() ?: 0.toString()
                 viewModel.barcodeSerial = inputMaterialBarcode
                 qcpending_recyclerlist.adapter?.notifyDataSetChanged()
                 qcpending_materialBarcode.text?.clear()
@@ -115,7 +131,8 @@ class QCPendingFragment : Fragment() {
 
         qcpending_items_submit_button.setOnClickListener {
             var thisObject = this
-            AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
+            if (viewModel.totalScannedItem.value != 0){
+                AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
                 setTitle(" Confirm")
                 setMessage("Accept or Reject scanned materials.")
                 setButton(AlertDialog.BUTTON_POSITIVE, "Accept", {
@@ -127,6 +144,10 @@ class QCPendingFragment : Fragment() {
                     viewModel.submitScanItem(2)
                 })
                 show()
+                }
+            }
+            else{
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "No Item scanned")
             }
         }
 
@@ -184,8 +205,6 @@ open class SimpleQcPendingItemAdapter(private val recyclerView: androidx.recycle
         protected val partnumber: TextView
         protected val description: TextView
         protected val barcodeSerial: TextView
-
-        // protected val count_value: TextView
         protected val linearLayout: LinearLayout
 
         init {
@@ -212,4 +231,3 @@ open class SimpleQcPendingItemAdapter(private val recyclerView: androidx.recycle
         }
     }
 }
-
