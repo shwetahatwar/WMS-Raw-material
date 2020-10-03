@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/audit_layout"
+    android:id="@+id/material_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
@@ -71,13 +71,13 @@
         <TextView
             android:id="@+id/issue_to_production_descriptionLabel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text= "Description" />
+            android:text= "Batch Number" />
 
         <TextView
             android:id="@+id/issue_to_production_descriptionValue"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1"
@@ -97,13 +97,13 @@
         <TextView
             android:id="@+id/issue_to_production_quantityLabel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text= "Quantity" />
 
         <TextView
             android:id="@+id/issue_to_production_quantityValue"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1"

@@ -1,28 +1,39 @@
 package com.briot.balmerlawrie.implementor.ui.main
+
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.text.TextUtils.isEmpty
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.briot.balmerlawrie.implementor.MainApplication
 import com.briot.balmerlawrie.implementor.R
 import com.briot.balmerlawrie.implementor.UiHelper
 import com.briot.balmerlawrie.implementor.repository.local.PrefConstants
 import com.briot.balmerlawrie.implementor.repository.remote.QCPending
-import com.briot.balmerlawrie.implementor.repository.remote.QCScanItem
 import io.github.pierry.progress.Progress
+import kotlinx.android.synthetic.main.dispatch_picking_list_fragment.*
+import kotlinx.android.synthetic.main.material_inward_fragment.view.*
 import kotlinx.android.synthetic.main.q_c_pending_fragment.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
+
 
 class QCPendingFragment : Fragment() {
 
@@ -38,17 +49,24 @@ class QCPendingFragment : Fragment() {
     private var loading = false
     lateinit var qcPendingMaterialTextValue: EditText
     private var listOfQCPending = mutableListOf<QCPending>()
+    lateinit var layoutManager: LinearLayoutManager
+    lateinit var adapter: SimpleQcPendingItemAdapter
+    var isScrolling: Boolean = false
+    var callCount = 1
+    var qcpendingList: Array<QCPending?> = emptyArray()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.q_c_pending_fragment, container, false)
         viewModel = ViewModelProvider(this).get(QCPendingViewModel::class.java)
         this.recyclerView = rootView.findViewById(R.id.qcpending_recyclerlist)
-        recyclerView.layoutManager = LinearLayoutManager(this.activity)
+        layoutManager = LinearLayoutManager(this.activity)
+        recyclerView.layoutManager = layoutManager
         qcPendingMaterialTextValue = rootView.findViewById(R.id.qcpending_materialBarcode)
-        viewModel.loadQCPendingItems("100")
+        adapter = SimpleQcPendingItemAdapter(recyclerView, viewModel.QCPendingItem, viewModel)
         viewModel.getQcTotalCount()
         viewModel.getItemsFromDB()
+        viewModel.loadQCPendingItems("100","0")
         return rootView
     }
 
@@ -63,12 +81,41 @@ class QCPendingFragment : Fragment() {
             viewModel.partnumber = this.arguments!!.getInt("partnumber")
         }
 
+        this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
         recyclerView.adapter = SimpleQcPendingItemAdapter(recyclerView, viewModel.QCPendingItem, viewModel)
         count_value.text = viewModel.totalScannedItem.value.toString() + "/"+viewModel.qcTotalCount!!.toString()
 
         viewModel.totalScannedItem.observe(viewLifecycleOwner, Observer<Number> {
             if (it != null) {
                 count_value.text = viewModel.totalScannedItem.value.toString() + "/"+viewModel.qcTotalCount!!.toString() ?: 0.toString()
+
+                // scanned item at top
+                for (i in viewModel.scanedItems){
+                    // change position of the scaned item to top
+                    val scannedItemFound = viewModel.qcpendingList?.filter{
+                        it!!.barcodeSerial.toString() == i.barcodeSerial.toString()}
+                    if (scannedItemFound.size > 0){
+                        // val position = viewModel.qcpendingList.indexOf(scannedItemFound[0])
+                        // Collections.swap(viewModel.qcpendingList, position,0)
+                        viewModel.qcpendingList.remove(scannedItemFound[0])
+                        viewModel.qcpendingList.add(0, scannedItemFound[0])
+                        qcpending_recyclerlist.adapter?.notifyDataSetChanged()
+                    }
+                }
+                qcpending_recyclerlist.adapter?.notifyDataSetChanged()
+            }
+        })
+
+        viewModel.networkError.observe(viewLifecycleOwner, Observer<Boolean> {
+            if (it == true) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+
+                if (viewModel.errorMessage != null) {
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, viewModel.errorMessage)
+                } else {
+                    UiHelper.showNoInternetSnackbarMessage(this.activity as AppCompatActivity)
+                }
             }
         })
 
@@ -85,7 +132,6 @@ class QCPendingFragment : Fragment() {
             if (it != null) {
                 UiHelper.hideProgress(this.progress)
                 this.progress = null
-
                 if (viewModel.QCPendingItem.value.orEmpty().isNotEmpty() && viewModel.QCPendingItem.value?.first() == null) {
                     UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
                 } else if (it != oldQcPendingItems) {
@@ -103,6 +149,9 @@ class QCPendingFragment : Fragment() {
                 UiHelper.showErrorToast(this.activity as AppCompatActivity,
                         "Please enter MATERIAL Barcode value")
                 qcpending_materialBarcode.requestFocus()
+            }else if (inputMaterialBarcode.length < 10 || inputMaterialBarcode.length > 10) {
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Enter valid Barcode");
+                qcpending_materialBarcode.requestFocus()
             }
 
             val scannedItems = viewModel.scanedItems?.filter{ it!!.barcodeSerial.toString() == inputMaterialBarcode}
@@ -115,7 +164,6 @@ class QCPendingFragment : Fragment() {
                 val found = viewModel.QCPendingItem.value?.filter{ it!!.barcodeSerial.toString() == inputMaterialBarcode}
                 if (found!!.size > 0){
                     println("found")
-
                     GlobalScope.launch {
                         viewModel.addQcScanItem(inputMaterialBarcode, found[0]!!.id!!.toInt(),
                                 found[0]!!.QCStatus!!.toInt())
@@ -127,58 +175,177 @@ class QCPendingFragment : Fragment() {
                 qcpending_recyclerlist.adapter?.notifyDataSetChanged()
                 qcpending_materialBarcode.text?.clear()
             }
+            qcpending_materialBarcode.requestFocus()
+//            val inputMaterialBarcode = qcPendingMaterialTextValue.getText().toString()
+//            if (inputMaterialBarcode == "") {
+//                UiHelper.showErrorToast(this.activity as AppCompatActivity,
+//                        "Please enter MATERIAL Barcode value")
+//                qcpending_materialBarcode.requestFocus()
+//            }
+//
+//            val scannedItems = viewModel.scanedItems?.filter{ it!!.barcodeSerial.toString() == inputMaterialBarcode}
+//            if (scannedItems?.orEmpty()?.isNotEmpty()!!) {
+//                if (scannedItems!!.size > 0) {
+//                    UiHelper.showErrorToast(this.activity as AppCompatActivity,
+//                            "Already scanned")
+//                    qcpending_materialBarcode.text?.clear()
+//                    qcpending_materialBarcode.requestFocus()
+//                } else {
+//                    val found = viewModel.QCPendingItem.value?.filter { it!!.barcodeSerial.toString() == inputMaterialBarcode }
+//                    if (found?.orEmpty()?.isNotEmpty()!!) {
+//                        if (found!!.size > 0) {
+//                            GlobalScope.launch {
+//                                viewModel.addQcScanItem(inputMaterialBarcode, found[0]!!.id!!.toInt(),
+//                                        found[0]!!.QCStatus!!.toInt())
+//                                // viewModel.getItemsFromDB()
+//                            }
+//                            qcpending_recyclerlist.adapter?.notifyDataSetChanged()
+//                        }
+//                    }
+//                    viewModel.barcodeSerial = inputMaterialBarcode
+//                    qcpending_recyclerlist.adapter?.notifyDataSetChanged()
+//                    qcpending_materialBarcode.text?.clear()
+//                }
+//            }else{
+//                //UiHelper.showErrorToast(this.activity as AppCompatActivity, "Wrong barcode scan")
+//            }
         }
 
         qcpending_items_submit_button.setOnClickListener {
             var thisObject = this
-            if (viewModel.totalScannedItem.value != 0){
-                AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
-                setTitle(" Confirm")
-                setMessage("Accept or Reject scanned materials.")
-                setButton(AlertDialog.BUTTON_POSITIVE, "Accept", {
-                    dialog, _ -> dialog.dismiss()
-                    viewModel.submitScanItem(1)
-                })
-                setButton(AlertDialog.BUTTON_NEUTRAL, "Reject", {
-                    dialog, _ -> dialog.dismiss()
-                    viewModel.submitScanItem(2)
-                })
-                show()
+            if (MainApplication.hasNetwork(MainApplication.applicationContext())) {
+                if (viewModel.totalScannedItem.value != 0) {
+                   // thisObject.progress = UiHelper.showProgressIndicator(thisObject.activity as AppCompatActivity, "Please wait")
+                    AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
+                        setTitle(" Confirm")
+                        setMessage("Accept or Reject scanned materials.")
+                        setButton(AlertDialog.BUTTON_POSITIVE, "Accept") { dialog, _ ->
+                            dialog.dismiss()
+                            viewModel.submitScanItem(1)
+                        }
+
+                        setButton(AlertDialog.BUTTON_NEUTRAL, "Reject") { dialog, _ ->
+                            dialog.dismiss()
+                            // thisObject.progress = UiHelper.showProgressIndicator(thisObject.activity as AppCompatActivity, "Please wait")
+                            val li = LayoutInflater.from(context)
+                            val promptsView: View = li.inflate(R.layout.alert_pop_up_layout, null)
+                            val alertDialogBuilder = AlertDialog.Builder(
+                                    context)
+                            alertDialogBuilder.setTitle("Remark")
+                            // alertDialogBuilder.setMessage("Remark for Rejecting scanned materials.")
+                            alertDialogBuilder.setView(promptsView);
+                            val userInput = promptsView.findViewById<View>(R.id.dialogRemarkEt) as EditText
+                            alertDialogBuilder
+                                    .setCancelable(false)
+                                    .setPositiveButton("OK") { dialog, id -> // get user input and set it to result
+                                        viewModel.QCRemarks = userInput.text.toString()
+                                        viewModel.submitScanItem(2, viewModel.QCRemarks)
+//                                    Toast.makeText(context, "Entered: " + userInput.text.toString(), Toast.LENGTH_LONG).show()
+                                    }
+                                    .setNegativeButton("Cancel"
+                                    ) { dialog, id -> dialog.cancel() }
+
+                            val alertDialog = alertDialogBuilder.create()
+                            alertDialog.show()
+                        }
+                        show()
+                    }
+                } else {
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "No Item scanned")
                 }
-            }
-            else{
-                UiHelper.showErrorToast(this.activity as AppCompatActivity, "No Item scanned")
+            }else{
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Please submit the list when in Network!")
             }
         }
+//---------------------------------------------------------------------------------
+        //on click of keyboard enter data added in a list API call
+        qcpending_materialBarcode.setOnEditorActionListener { _, i, keyEvent ->
+            var handled = false
+            if ((qcpending_materialBarcode.text != null && qcpending_materialBarcode.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE
+                    || (keyEvent != null && (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB)
+                            && keyEvent.action == KeyEvent.ACTION_DOWN)) {
+                val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
+                var value = qcpending_materialBarcode.text!!.toString().trim()
 
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                var progress1: Progress? = null
-                val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager?
+                val inputMaterialBarcode = qcPendingMaterialTextValue.getText().toString()
+                if (inputMaterialBarcode == "") {
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity,
+                            "Please enter MATERIAL Barcode value")
+                    qcpending_materialBarcode.requestFocus()
+                }else if (inputMaterialBarcode.length < 10 || inputMaterialBarcode.length > 10) {
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "Enter valid Barcode");
+                    qcpending_materialBarcode.requestFocus()
+                }
 
-                if (!loading && linearLayoutManager!!.itemCount <= linearLayoutManager.findLastVisibleItemPosition() + 2) {
-                    loading = true
-                    val loopCount =  viewModel.qcTotalCount!!.toInt() / 100 .toInt()
+                val scannedItems = viewModel.scanedItems?.filter{ it!!.barcodeSerial.toString() == inputMaterialBarcode}
+                if (scannedItems!!.size > 0) {
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity,
+                            "Already scanned")
+                    qcpending_materialBarcode.text?.clear()
+                    qcpending_materialBarcode.requestFocus()
+                } else {
+                    val found = viewModel.QCPendingItem.value?.filter{ it!!.barcodeSerial.toString() == inputMaterialBarcode}
+                    if (found!!.size > 0){
+                        println("found")
 
-                    for (i in 2..loopCount+1 as Int){
-                        val c = i * 100
-                        viewModel.loadQCPendingItems(c.toString())
+                        GlobalScope.launch {
+                            viewModel.addQcScanItem(inputMaterialBarcode, found[0]!!.id!!.toInt(),
+                                    found[0]!!.QCStatus!!.toInt())
+                            // viewModel.getItemsFromDB()
+                        }
                         qcpending_recyclerlist.adapter?.notifyDataSetChanged()
                     }
+                    viewModel.barcodeSerial = inputMaterialBarcode
+                    qcpending_recyclerlist.adapter?.notifyDataSetChanged()
+                    qcpending_materialBarcode.text?.clear()
+                    qcpending_materialBarcode.requestFocus()
                 }
+
+                qcpending_materialBarcode.requestFocus()
+                handled = true
             }
+            qcpending_materialBarcode.requestFocus()
+            handled
+        }
+
+
+//-------------------------------------------------------
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING){
+                    isScrolling = true
+                }
+            }
 
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    val visibleItemCount = layoutManager.childCount
+                    val pastVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition()
+                    val total = adapter.itemCount
+                    // println("total-->" + total)
+                    val loopCount =  viewModel.qcTotalCount!!.toInt() / 100.toInt()
+                    //println("callCount-->"+ callCount)
+                    //println("loopCount-->"+ loopCount)
+                    // println("visibleItemCount + pastVisibleItem-->" + (visibleItemCount + pastVisibleItem))
+                    if (isScrolling && (visibleItemCount + pastVisibleItem) >= total && callCount <= loopCount) {
+                        var offset = callCount * 100
+                        println("offset-->"+offset)
+                        //UiHelper.showProgressIndicator(activity!!, "Loading QC Pending list")
+                        viewModel.loadQCPendingItems("100", offset.toString())
+
+                        qcpending_recyclerlist.adapter?.notifyDataSetChanged()
+                        isScrolling = false
+                        callCount +=1
+                    }
+                }
             }
         })
     }
-}
-
-private operator fun Number?.div(i: Int) {
-
 }
 
 open class SimpleQcPendingItemAdapter(private val recyclerView: androidx.recyclerview.widget.RecyclerView,
@@ -193,12 +360,18 @@ open class SimpleQcPendingItemAdapter(private val recyclerView: androidx.recycle
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind()
-        val QCPendingItem = viewModel.QCPendingItem.value!![position]!!
+        val QCPendingItem = viewModel.qcpendingList
+
+
+//        val scannedItemFound = viewModel.scanedItems?.filter{
+//            it!!.barcodeSerial.toString() == item!!.barcodeSerial.toString()}
+
     }
 
 
     override fun getItemCount(): Int {
-         return viewModel.QCPendingItem.value?.size ?: 0
+        //println("qc count---->"+ viewModel.qcpendingList)
+         return viewModel.qcpendingList.size
     }
 
     open inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -215,18 +388,18 @@ open class SimpleQcPendingItemAdapter(private val recyclerView: androidx.recycle
         }
 
         fun bind() {
-            val item = viewModel.QCPendingItem.value!![adapterPosition]!!
+            val item = viewModel.qcpendingList[adapterPosition]!!
+            //println("qc adapter pos--->"+adapterPosition)
             partnumber.text = item.partnumber.partNumber.toString()
             description.text = item.partnumber.description.toString()
             barcodeSerial.text = item.barcodeSerial.toString()
-            if (viewModel.barcodeSerial.toString() == item!!.barcodeSerial.toString()){
+
+            // println("item.barcodeSerial-->"+item.barcodeSerial)
+            val scannedItem = viewModel.scanedItems?.filter { it.barcodeSerial!!.trim() ==  item!!.barcodeSerial.toString().trim()}
+            if (scannedItem.size > 0){
                     linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
             } else{
                     linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
-            }
-            val scannedItemFound = viewModel.scanedItems?.filter{ it!!.barcodeSerial.toString() == item!!.barcodeSerial.toString()}
-            if (scannedItemFound.size > 0){
-                linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
             }
         }
     }

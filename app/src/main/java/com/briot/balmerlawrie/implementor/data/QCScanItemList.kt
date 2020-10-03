@@ -12,5 +12,6 @@ public data class QCScanItemList(
         @ColumnInfo(name = "barcodeSerial") val barcodeSerial: String?,
         @ColumnInfo(name = "qcId") val qcId: Int?,
         @ColumnInfo(name = "QCStatus") val QCStatus: Int?,
-        @ColumnInfo(name = "prevQCStatus") val prevQCStatus: Int?
+        @ColumnInfo(name = "prevQCStatus") val prevQCStatus: Int?,
+        @ColumnInfo(name = "timestamp") val timeStamp: Long
 )

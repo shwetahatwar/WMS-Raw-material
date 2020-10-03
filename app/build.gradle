@@ -23,17 +23,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "HOSTNAME", "\"https://briot-wms-app.herokuapp.com/\""
-            //buildConfigField "String", "HOSTNAME", "\"http://10.26.6.20:3000/\""
-            //buildConfigField "String", "HOSTNAME", "\"http://192.168.0.107:8000/\""
-
+            //buildConfigField "String", "HOSTNAME", "\"http://192.168.0.107:3000/\""
         }
 
         debug {
-//            buildConfigField "String", "HOSTNAME", "\"http://10.0.2.2:3000\""
-            buildConfigField "String", "HOSTNAME", "\"https://briot-wms-app.herokuapp.com/\""
-            //buildConfigField "String", "HOSTNAME", "\"http://10.26.6.20:3000/\""
-            //buildConfigField "String", "HOSTNAME", "\"http://192.168.0.107:8000/\""
-
+             buildConfigField "String", "HOSTNAME", "\"https://briot-wms-app.herokuapp.com/\""
+            //buildConfigField "String", "HOSTNAME", "\"http://192.168.0.107:3000/\""
         }
         lintOptions {
 //            checkReleaseBuilds false
@@ -81,6 +76,8 @@ dependencies {
 
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.1.0'
 
     def room_version = "$rootProject.roomVersion"
 

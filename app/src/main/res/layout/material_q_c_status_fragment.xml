@@ -30,7 +30,7 @@
                 android:background="@drawable/edittext_bg"
                 android:ems="10"
                 android:hint="Material barcode"
-                android:imeOptions="actionNext"
+                android:imeOptions="actionDone"
                 android:inputType="textNoSuggestions"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
@@ -41,8 +41,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:imeOptions="actionNext"
-                android:background="@color/colorAccent"
+                android:imeOptions="actionDone"
+                android:background="@drawable/cell_text_bg"
                 android:text="@string/Scan" />
 
         </LinearLayout>

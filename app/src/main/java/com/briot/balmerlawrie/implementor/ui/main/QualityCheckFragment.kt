@@ -29,7 +29,6 @@ class QualityCheckFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(QualityCheckViewModel::class.java)
-
         (this.activity as AppCompatActivity).setTitle("Quality Check")
 
         qc_pending.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_qualityCheckFragment_to_QCPendingFragment) }

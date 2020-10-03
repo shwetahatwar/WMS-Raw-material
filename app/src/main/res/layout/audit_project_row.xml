@@ -86,7 +86,4 @@
             android:textAlignment="textEnd"
             android:textStyle="bold" />
     </LinearLayout>
-
-
-
 </LinearLayout>

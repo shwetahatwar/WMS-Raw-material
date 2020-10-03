@@ -4,9 +4,11 @@ import android.content.Context
 import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.CompoundButton
 import androidx.appcompat.app.AppCompatActivity
@@ -40,13 +42,15 @@ class LoginFragment : androidx.fragment.app.Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
-        (this.activity as AppCompatActivity).setTitle("Warehouse Managment System")
+        (this.activity as AppCompatActivity).setTitle("Raw Material WMS")
 
         username.requestFocus()
-        showpasswordCheckBox.setOnCheckedChangeListener(){ compoundButton: CompoundButton, b: Boolean ->
-            if (showpasswordCheckBox.isChecked){
+        val hostname = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().IPADDRESS, "")
+
+        showpasswordCheckBox.setOnCheckedChangeListener() { compoundButton: CompoundButton, b: Boolean ->
+            if (showpasswordCheckBox.isChecked) {
                 password.setTransformationMethod(HideReturnsTransformationMethod())
-            }else(
+            } else (
                     password.setTransformationMethod(PasswordTransformationMethod())
                     )
         }
@@ -69,9 +73,17 @@ class LoginFragment : androidx.fragment.app.Fragment() {
                 Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)
             } else {
                 UiHelper.showErrorToast(this.activity as AppCompatActivity, "An error has occurred, please try again.");
+                username.requestFocus()
             }
 
         })
+
+        // set on-click listener
+        ip_image.setOnClickListener {
+            // your code to perform when the user clicks on the ImageView
+            Navigation.findNavController(login).navigate(R.id.settingFragment)
+        }
+
 
         viewModel.networkError.observe(this, Observer<Boolean> {
 
@@ -85,6 +97,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
                 }
 
                 UiHelper.showSnackbarMessage(this.activity as AppCompatActivity, message, 3000);
+                username.requestFocus()
             }
         })
 
@@ -92,16 +105,42 @@ class LoginFragment : androidx.fragment.app.Fragment() {
         login.setOnClickListener {
             val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
-
-            // @dineshgajjar - remove following coments later on
             this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
 
-
-            viewModel.loginUser(username.text.toString(), password.text.toString())
+            if (hostname == "" || hostname.isEmpty() || hostname == null){
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Please set hostname in setting");
+                return@setOnClickListener
+            }
+            viewModel.loginUser(username.text.toString(), password.text.toString(), hostname)
             username.text?.clear();
             password.text?.clear();
-
+            username.requestFocus()
         }
+
+        //-------------------------------------------------------------------
+        password.setOnEditorActionListener { _, i, keyEvent ->
+            var handled = false
+            if ((password.text != null && password.text!!.isNotEmpty()) && i == EditorInfo.IME_ACTION_DONE
+                    || (keyEvent != null && (keyEvent.keyCode == KeyEvent.KEYCODE_ENTER || keyEvent.keyCode == KeyEvent.KEYCODE_TAB)
+                            && keyEvent.action == KeyEvent.ACTION_DOWN)) {
+                val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
+                this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
+                if (hostname == "" || hostname.isEmpty() || hostname == null){
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "Please set hostname in setting");
+                    // return@setOnEditorActionListener
+                }else{
+                    viewModel.loginUser(username.text.toString(), password.text.toString(), hostname)
+                    username.text?.clear();
+                    password.text?.clear();
+                    username.requestFocus()
+                    handled = true
+                }
+            }
+            handled
+        }
+        //-------------------------------------------------------------------
+
     }
 
 }

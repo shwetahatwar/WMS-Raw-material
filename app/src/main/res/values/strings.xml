@@ -1,14 +1,16 @@
 <resources>
-    <string name="app_name">Raw Material Warehouse Managment</string>
+    <string name="app_name">Raw Material WMS</string>
     <string name="submit">Submit</string>
     <string name="Scan">Scan</string>
+    <string name="Ok">Ok</string>
+    <string name="Cancel">Cancel</string>
     <string name="todo">TODO</string>
     <string name="view_material_details">Material Details</string>
     <string name="material_barcode">Material Barcode</string>
     <string name="scanTextView">TextView</string>
     <string name="locationTextView">Asset(s) at Location</string>
     <string name="button">Scan</string>
-    <string name="scan_location">Scan Location</string>s
+    <string name="scan_location">Scan Location</string>
     <string name="submit_audit">Submit Audit</string>
     <string name="scane_location">Scan Location</string>
     <string name="scane_asset_barcode">Scan asset barcode</string>
@@ -42,4 +44,5 @@
     <string name="oops_something_went_wrong">Oops something went wrong.</string>
     <string name="try_again_later">Try again later.</string>
     <string name="job_card_details">Issue to Production</string>
+    <string name="return_from_production">Return from Production</string>
 </resources>

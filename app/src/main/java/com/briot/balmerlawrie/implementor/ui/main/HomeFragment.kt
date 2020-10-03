@@ -41,6 +41,7 @@ class HomeFragment : androidx.fragment.app.Fragment() {
                               savedInstanceState: Bundle?): View? {
         val rootView =  inflater.inflate(R.layout.home_fragment, container, false)
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        setHasOptionsMenu(true);
         viewModel.loadPutawayDashboardItems()
         viewModel.loadPickingsDashboardItems()
         return rootView
@@ -67,7 +68,7 @@ class HomeFragment : androidx.fragment.app.Fragment() {
                 this.progress = null
 
                 pendingText.text = viewModel.putawayDashboardData.value?.responseData?.pendingForPutaway.toString()
-                totalText.text = viewModel.putawayDashboardData.value?.responseData?.totalData.toString()
+                //totalText.text = viewModel.putawayDashboardData.value?.responseData?.totalData.toString()
 
                 if ( viewModel.putawayDashboardData.value == null) {
                     UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
@@ -100,9 +101,10 @@ class HomeFragment : androidx.fragment.app.Fragment() {
         })
 
         materialLoading.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_qualityCheckFragment) }
-        materialPutaway.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_putawayFragment) }
-       issue_to_production.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_issueToProductionFragment) }
+        materialPutaway.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_putawayLocationScanFragment) }
+       issue_to_production.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_projectFragment) }
         materialPicking.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_picklistMasterFragment) }
-
+        return_from_production.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_returnFromProjectListFragment) }
+       // issue_to_production.setOnClickListener { Navigation.findNavController(it).navigate(R.id.action_homeFragment_to_settingFragment) }
     }
 }

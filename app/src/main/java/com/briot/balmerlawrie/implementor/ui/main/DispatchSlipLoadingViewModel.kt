@@ -407,16 +407,17 @@ class DispatchSlipLoadingViewModel : ViewModel() {
     }
 
 
-
-    fun loginUser(username: String, password: String) {
-        (networkError as MutableLiveData<Boolean>).value = false
-        RemoteRepository.singleInstance.loginUser(username, password, this::handleLoginResponse, this::handleLoginError)
-    }
-
-    private fun handleLoginResponse(signInResponse: SignInResponse) {
-        (this.signInResponse as MutableLiveData<SignInResponse>).value = signInResponse
-    }
-
+//
+//    fun loginUser(username: String, password: String, hostname: String) {
+//        (networkError as MutableLiveData<Boolean>).value = false
+//        RemoteRepository.singleInstance.loginUser(username, password, hostname,
+//                this::handleLoginResponse, this::handleLoginError)
+//    }
+//
+//    private fun handleLoginResponse(signInResponse: SignInResponse) {
+//        (this.signInResponse as MutableLiveData<SignInResponse>).value = signInResponse
+//    }
+//
     private fun handleLoginError(error: Throwable) {
         Log.d(TAG, error.localizedMessage)
 

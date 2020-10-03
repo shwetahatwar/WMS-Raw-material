@@ -18,9 +18,10 @@ class LoginDialogViewModel : ViewModel() {
     val networkError: LiveData<Boolean> = MutableLiveData<Boolean>()
 
 
-    fun loginUser(username: String, password: String) {
+    fun loginUser(username: String, password: String, hostname: String) {
         (networkError as MutableLiveData<Boolean>).value = false
-        RemoteRepository.singleInstance.loginUser(username, password, this::handleLoginResponse, this::handleLoginError)
+        RemoteRepository.singleInstance.loginUser(username, password, hostname, this::handleLoginResponse,
+                this::handleLoginError)
     }
 
     private fun handleLoginResponse(signInResponse: SignInResponse) {

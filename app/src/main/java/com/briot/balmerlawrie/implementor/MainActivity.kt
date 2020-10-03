@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation.findNavController
@@ -66,6 +65,16 @@ class MainApplication : Application() {
         // example: SharedPreferences etc...
         val context: Context = MainApplication.applicationContext()
     }
+
+    fun onRestart() {
+        super.onCreate()
+        // initialize for any
+
+        // Use ApplicationContext.
+        // example: SharedPreferences etc...
+        val context: Context = MainApplication.applicationContext()
+    }
+
 }
 
 class ResponseHeaderAuthTokenInterceptor : Interceptor {
@@ -149,7 +158,8 @@ class RequestHeaderAuthTokenInterceptor : Interceptor {
 class RetrofitHelper {
 
     companion object {
-        val BASE_URL = BuildConfig.HOSTNAME;
+        // val BASE_URL = BuildConfig.HOSTNAME;
+        var BASE_URL = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().IPADDRESS, "")
 
         private fun getOkHttpClient(): OkHttpClient {
 
@@ -180,16 +190,26 @@ class RetrofitHelper {
                 okHttpClient.interceptors().add(logging);
             }
 
-
             return okHttpClient.build()
         }
-
-        val retrofit = Retrofit.Builder()
+        var retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(getOkHttpClient())
                 .build()
+
+        fun changeApiBaseUrl(newApiBaseUrl: String) {
+            val api_url = newApiBaseUrl
+            println("changeApiBaseUrl-->"+api_url)
+            retrofit = Retrofit.Builder()
+                    .baseUrl(api_url)
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getOkHttpClient())
+                    .build()
+        }
+
     }
 }
 
@@ -228,6 +248,10 @@ class MainActivity : AppCompatActivity() {
                 showUserProfile()
                 true
             }
+//            R.id.nav_setting -> {
+//                showSetting()
+//                true
+//            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -242,6 +266,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+//    private fun showSetting() {
+//        var view:View = findViewById(R.id.nav_host_fragment)
+//        if (view != null) {
+//            try {
+//                findNavController(view).navigate(R.id.action_homeFragment_to_settingFragment)
+//            } catch (e: Exception) {
+//
+//            }
+//        }
+//    }
 
     private fun logout() {
         var savedToken: String = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().USER_TOKEN, "")
@@ -259,6 +294,7 @@ class MainActivity : AppCompatActivity() {
         PrefRepository.singleInstance.setKeyValue(PrefConstants().EMPLOYEE_PHONE, "")
         PrefRepository.singleInstance.setKeyValue(PrefConstants().ROLE_ID, "")
         PrefRepository.singleInstance.setKeyValue(PrefConstants().ROLE_NAME, "")
+        // PrefRepository.singleInstance.setKeyValue(PrefConstants().IPADDRESS, "")
 
         this.applicationContext.let { PrefRepository.singleInstance.serializePrefs(it) }
 
@@ -267,7 +303,6 @@ class MainActivity : AppCompatActivity() {
         if (userToken.isEmpty()) {
             navController.popBackStack(R.id.mainFragment, false)
         }
-
     }
 }
 
@@ -367,6 +402,4 @@ class UiHelper {
         }
 
     }
-
-
 }

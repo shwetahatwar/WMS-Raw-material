@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/putaway_fragment_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -42,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:background="@color/colorAccent"
+                android:background="@drawable/cell_text_bg"
                 android:text="@string/Scan" />
 
         </LinearLayout>
@@ -57,14 +58,14 @@
             <TextView
                 android:id="@+id/location_label"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:paddingRight="5dp"
                 android:text="Location:" />
 
             <TextView
                 android:id="@+id/location_value"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="NA"
                 android:textAlignment="viewStart"
                 android:textSize="14sp" />
@@ -82,10 +83,10 @@
                 android:id="@+id/put_count_value"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@android:color/holo_blue_bright"
+                android:background="#afeeee"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
-                android:text="0/0"
+                android:text="0"
                 android:textAlignment="textEnd" />
         </LinearLayout>
 
@@ -97,18 +98,12 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <Button
-            android:id="@+id/putaway_submitItemsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/submit" />
-
     </LinearLayout>
 
-    <Button
-        android:id="@+id/putaway_items_submit_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:text="Submit Items" />
+<!--    <Button-->
+<!--        android:id="@+id/putaway_items_submit_button"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@color/colorAccent"-->
+<!--        android:text="Submit Items" />-->
 </LinearLayout>

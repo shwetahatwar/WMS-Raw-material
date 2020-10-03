@@ -51,14 +51,20 @@
             android:id="@+id/action_homeFragment_to_qualityCheckFragment"
             app:destination="@id/qualityCheckFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_putawayFragment"
-            app:destination="@id/putawayFragment" />
-        <action
-            android:id="@+id/action_homeFragment_to_issueToProductionFragment"
-            app:destination="@id/issueToProductionFragment" />
-        <action
             android:id="@+id/action_homeFragment_to_picklistMasterFragment"
             app:destination="@id/picklistMasterFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_putawayLocationScanFragment"
+            app:destination="@id/putawayLocationScanFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_projectFragment"
+            app:destination="@id/projectFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_returnFromProjectListFragment"
+            app:destination="@id/returnFromProjectListFragment" />
     </fragment>
 
 
@@ -165,4 +171,68 @@
         android:name="com.briot.balmerlawrie.implementor.ui.main.PickingFragment"
         android:label="picking_fragment"
         tools:layout="@layout/picking_fragment" />
+    <fragment
+        android:id="@+id/putawayLocationScanFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.PutawayLocationScanFragment"
+        android:label="putaway_location_scan_fragment"
+        tools:layout="@layout/putaway_location_scan_fragment" >
+        <action
+            android:id="@+id/action_putawayLocationScanFragment_to_putawayFragment"
+            app:destination="@id/putawayFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/issueToProductionMasterFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.IssueToProductionMasterFragment"
+        android:label="issue_to_production_master_fragment"
+        tools:layout="@layout/issue_to_production_master_fragment" >
+        <action
+            android:id="@+id/action_issueToProductionMasterFragment_to_issueToProductionEmployeeFragment"
+            app:destination="@id/issueToProductionEmployeeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/issueToProductionEmployeeFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.IssueToProductionEmployeeFragment"
+        android:label="issue_to_production_employee_fragment"
+        tools:layout="@layout/issue_to_production_employee_fragment" >
+        <action
+            android:id="@+id/action_issueToProductionEmployeeFragment_to_issueToProductionFragment"
+            app:destination="@id/issueToProductionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/projectFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.ProjectFragment"
+        android:label="project_fragment"
+        tools:layout="@layout/project_fragment" >
+        <action
+            android:id="@+id/action_projectFragment_to_issueToProductionMasterFragment"
+            app:destination="@id/issueToProductionMasterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.SettingFragment"
+        android:label="setting_fragment"
+        tools:layout="@layout/setting_fragment" />
+    <fragment
+        android:id="@+id/returnFromProductionFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.ReturnFromProductionFragment"
+        android:label="return_from_production_fragment"
+        tools:layout="@layout/return_from_production_fragment" />
+    <fragment
+        android:id="@+id/returnFromProjectListFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.ReturnFromProjectListFragment"
+        android:label="return_from_project_list_fragment"
+        tools:layout="@layout/return_from_project_list_fragment" >
+        <action
+            android:id="@+id/action_returnFromProjectListFragment_to_returntoProductionEmployeeFragment"
+            app:destination="@id/returntoProductionEmployeeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/returntoProductionEmployeeFragment"
+        android:name="com.briot.balmerlawrie.implementor.ui.main.ReturntoProductionEmployeeFragment"
+        android:label="returnto_production_employee_fragment"
+        tools:layout="@layout/returnto_production_employee_fragment" >
+        <action
+            android:id="@+id/action_returntoProductionEmployeeFragment_to_returnFromProductionFragment"
+            app:destination="@id/returnFromProductionFragment" />
+    </fragment>
 </navigation>

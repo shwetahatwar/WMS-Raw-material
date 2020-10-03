@@ -26,7 +26,7 @@
                 android:id="@+id/qcpending_materialBarcode"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/edittext_bg"
                 android:ems="10"
@@ -42,7 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:background="@color/colorAccent"
+                android:background="@drawable/cell_text_bg"
                 android:text="@string/Scan" />
 
         </LinearLayout>
@@ -50,7 +50,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="5dp">
 
             <TextView
                 android:id="@+id/count_label"
@@ -65,7 +65,7 @@
                 android:id="@+id/count_value"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@android:color/holo_blue_bright"
+                android:background="#afeeee"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
                 android:text="0"
@@ -76,18 +76,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/qcpending_recyclerlist"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:paddingTop="10dp"/>
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="4dp"
-            android:background="@android:color/transparent"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_height="match_parent"
+            android:paddingTop="3dp"/>
 
         <Button
             android:id="@+id/qcpending_submitItemsButton"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/audit_layout"
+    android:id="@+id/putaway_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
@@ -71,13 +71,13 @@
         <TextView
             android:id="@+id/putaway_descriptionLabel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text= "Description" />
 
         <TextView
             android:id="@+id/putaway_descriptionValue"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1"
@@ -95,15 +95,15 @@
         android:paddingRight="5dp">
 
         <TextView
-            android:id="@+id/putaway_quantityLabel"
+            android:id="@+id/moved_to_location_label"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text= "Quantity" />
 
         <TextView
-            android:id="@+id/putaway_quantityValue"
-            android:layout_width="wrap_content"
+            android:id="@+id/moved_to_location_value"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1"
@@ -112,7 +112,4 @@
             android:textAlignment="textEnd"
             android:textStyle="bold" />
     </LinearLayout>
-
-
-
 </LinearLayout>

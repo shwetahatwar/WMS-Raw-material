@@ -92,10 +92,11 @@ class LoginDialog: DialogFragment() {
 //        (mDialogView as? LoginDialog)?.alertDialog = mAlertDialog
 //
         //login button click of custom layout
+
         dialogLoginBtn.setOnClickListener {
             val name = dialogNameEt.text.toString()
             val password = dialogPasswEt.text.toString()
-            viewModel.loginUser(name, password)
+            viewModel.loginUser(name, password, "https://192.168.1.1:300")
             Log.d(TAG, "name -->"+ name)
             Log.d(TAG, "password -->"+ password)
         }

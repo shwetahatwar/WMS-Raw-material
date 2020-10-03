@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/qcpending_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="3dp"
     android:background="@color/listCellBackgroundColor"
     android:orientation="vertical"
-    android:paddingTop="5dp"
+    android:paddingTop="3dp"
     android:clickable="true"
     android:paddingBottom="10dp">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,8 +33,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1"
-            android:textAlignment="textEnd"
-            android:textStyle="bold" />
+            android:textStyle="normal"
+            android:textColor=" #696969"
+            android:textAlignment="textEnd"/>
 
     </LinearLayout>
 
@@ -57,8 +59,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1"
-            android:textAlignment="textEnd"
-            android:textStyle="bold" />
+            android:textStyle="normal"
+            android:textColor=" #696969"
+            android:textAlignment="textEnd"/>
     </LinearLayout>
 
     <LinearLayout
@@ -71,22 +74,20 @@
         <TextView
             android:id="@+id/descriptionLabel"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text= "Description" />
 
         <TextView
             android:id="@+id/descriptionValue"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="1"
             android:maxLength="50"
             android:maxLines="1"
-            android:textAlignment="textEnd"
-            android:textStyle="bold" />
+            android:textStyle="normal"
+            android:textColor=" #696969"
+            android:textAlignment="textEnd"/>
     </LinearLayout>
-
-
-
 </LinearLayout>

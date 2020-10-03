@@ -1,5 +1,6 @@
 package com.briot.balmerlawrie.implementor.ui.main
 
+import android.content.ContentValues
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
@@ -24,9 +25,10 @@ class LoginViewModel : ViewModel() {
     val networkError: LiveData<Boolean> = MutableLiveData<Boolean>()
 //    val invalidUser: PopulatedUser = PopulatedUser()
 
-    fun loginUser(username: String, password: String) {
+    fun loginUser(username: String, password: String, hostname: String) {
         (networkError as MutableLiveData<Boolean>).value = false
-        RemoteRepository.singleInstance.loginUser(username, password, this::handleLoginResponse, this::handleLoginError)
+        RemoteRepository.singleInstance.loginUser(username, password, hostname,
+                this::handleLoginResponse, this::handleLoginError)
     }
 
     private fun handleLoginResponse(signInResponse: SignInResponse) {
@@ -35,17 +37,21 @@ class LoginViewModel : ViewModel() {
     }
 
     private fun handleLoginError(error: Throwable) {
-        Log.d(TAG, "error------> "+ error.localizedMessage)
+        Log.d(ContentValues.TAG, "error------> "+ error.localizedMessage)
         if (error is HttpException) {
             if (error.code() >= 401) {
-                var msg = error.response()?.errorBody()?.string()
-                var message = JsonParser().parse(msg)
-                        .asJsonObject["message"]
-                        .asString
-                if (message != null && message.isNotEmpty()) {
-                    errorMessage = message + " Please enter valid Credentials."
-                } else {
-                    errorMessage = error.message()
+                try {
+                    var msg = error.response()?.errorBody()?.string()
+                    var message = JsonParser().parse(msg)
+                            .asJsonObject["message"]
+                            .asString
+                    if (message != null && message.isNotEmpty()) {
+                        errorMessage = message + " Please enter valid Credentials."
+                    } else {
+                        errorMessage = error.message()
+                    }
+                }catch (e: Exception){
+                    errorMessage = "Something went wrong try again."
                 }
             }
             (networkError as MutableLiveData<Boolean>).value = true
@@ -56,3 +62,4 @@ class LoginViewModel : ViewModel() {
         }
     }
 }
+

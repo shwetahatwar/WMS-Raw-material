@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:background="@color/colorAccent"
+                android:background="@drawable/cell_text_bg"
                 android:text="@string/Scan" />
 
         </LinearLayout>
@@ -54,14 +54,14 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/location_label"
+                android:id="@+id/employee_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
-                android:text="Employee:" />
+                android:text="Employee Id:" />
 
             <TextView
-                android:id="@+id/location_value"
+                android:id="@+id/employee_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="NA"
@@ -78,13 +78,55 @@
                 android:textAlignment="textEnd" />
 
             <TextView
-                android:id="@+id/put_count_value"
+                android:id="@+id/issue_to_prod_count"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@android:color/holo_blue_bright"
+                android:background="#afeeee"
                 android:paddingLeft="3dp"
                 android:paddingRight="3dp"
                 android:text="0/0"
+                android:textAlignment="textEnd" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/listCellBackgroundColor"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/picklist_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:text="Picklist Id:" />
+
+            <TextView
+                android:id="@+id/picklist_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NA"
+                android:textAlignment="viewStart"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/project_name_label1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:paddingRight="5dp"
+                android:text="Project Name:"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/project_name_value1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#afeeee"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="NA"
                 android:textAlignment="textEnd" />
         </LinearLayout>
 

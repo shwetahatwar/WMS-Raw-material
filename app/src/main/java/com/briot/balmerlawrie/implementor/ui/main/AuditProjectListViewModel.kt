@@ -54,8 +54,6 @@ class AuditProjectListViewModel : ViewModel() {
                 (itemSubmissionSuccessful as MutableLiveData<Boolean>).value = true
             }
         }
-
-
     }
 
     fun loadAuditProjects(status: String) {

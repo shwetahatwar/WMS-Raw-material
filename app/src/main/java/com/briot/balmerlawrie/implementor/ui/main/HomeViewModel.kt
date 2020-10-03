@@ -36,7 +36,6 @@ class HomeViewModel : ViewModel() {
     fun loadPutawayDashboardItems() {
         (networkError as MutableLiveData<Boolean>).value = false
         (this.putawayDashboardData as MutableLiveData<PutawayDashboardData>).value = null
-
         RemoteRepository.singleInstance.getPutawayCount(this::handlePutawayDashboardItemsResponse, this::handlePutawayDashboardItemsError)
     }
 

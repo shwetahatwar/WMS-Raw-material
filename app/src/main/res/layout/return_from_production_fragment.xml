@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.main.ReturnFromProductionFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/returnfromproduction_materialBarcode"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:background="@drawable/edittext_bg"
+                android:ems="10"
+                android:hint="Material barcode"
+                android:imeOptions="actionDone"
+                android:inputType="textNoSuggestions"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:textColorHint="@android:color/darker_gray" />
+
+            <Button
+                android:id="@+id/return_from_production_scanButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="@drawable/cell_text_bg"
+                android:text="@string/Scan" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/listCellBackgroundColor"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/employee_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:text="Employee Id:" />
+
+            <TextView
+                android:id="@+id/employee_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NA"
+                android:textAlignment="viewStart"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/put_count_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:paddingRight="5dp"
+                android:text="Count:"
+                android:textAlignment="textEnd" />
+
+            <TextView
+                android:id="@+id/issue_return_to_prod_count"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#afeeee"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="0/0"
+                android:textAlignment="textEnd" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/returntoproduction_recyclerlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:paddingTop="10dp"/>
+
+        <Button
+            android:id="@+id/returntoproduction_submitItemsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/submit" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/returntoproduction_items_submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:text="Submit Items" />
+</LinearLayout>
+

@@ -25,10 +25,11 @@ class MaterialQCStatusViewModel : ViewModel() {
     val invalidmaterialItem: Array<MaterialInward?> = arrayOf(null)
     val networkError: LiveData<Boolean> = MutableLiveData()
     var materialInwards: LiveData<Array<MaterialInward?>> = MutableLiveData()
-    var qcStatusDisplay: LiveData<Array<qcStatusDisplay?>> = MutableLiveData()
+    var qcStatusDisplay: LiveData<Array<MaterialInward?>> = MutableLiveData()
     var scanedItems: List<QCScanItem> = emptyList()
     val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
     var barcodeSerial: String? = ""
+    var errorMessage: String = ""
     private var appDatabase = AppDatabase.getDatabase(MainApplication.applicationContext())
 
     fun loadMaterialStatusItems(barcodeSerial: String) {
@@ -39,18 +40,21 @@ class MaterialQCStatusViewModel : ViewModel() {
     }
 
     private fun handleMaterialItemResponse(res: Array<MaterialInward?>) {
-        GlobalScope.launch {
-            withContext(Dispatchers.Main) {
-                addQcScanItem(res[0])
-            }
-        }
+
+        (this.qcStatusDisplay as MutableLiveData<Array<MaterialInward?>>).value = res
+        barcodeSerial?.let { loadMaterialStatusItems(it) }
+//        GlobalScope.launch {
+//            withContext(Dispatchers.Main) {
+//                addQcScanItem(res[0])
+//            }
+//        }
     }
 
     private fun handleMaterialItemError(error: Throwable) {
         if (UiHelper.isNetworkError(error)) {
             (networkError as MutableLiveData<Boolean>).value = true
         } else {
-            (this.materialInwards as MutableLiveData<Array<MaterialInward?>>).value = invalidmaterialItem
+            (this.qcStatusDisplay as MutableLiveData<Array<MaterialInward?>>).value = invalidmaterialItem
         }
     }
 
@@ -61,8 +65,8 @@ class MaterialQCStatusViewModel : ViewModel() {
 
     private fun handleQCScanResponse(QCScanResponse: ResponseBody) {
         println("success -->"+ QCScanResponse)
-        deleteQCPendingScanItemsFromDB()
-        println("after delete call-->"+ QCScanResponse)
+        // deleteQCPendingScanItemsFromDB()
+        // println("after delete call-->"+ QCScanResponse)
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
                 (itemSubmissionSuccessful as MutableLiveData<Boolean>).value = true
@@ -147,15 +151,15 @@ class MaterialQCStatusViewModel : ViewModel() {
         }
     }
 
-    fun submitScanItem(qcStatus: Int, remark: String ="Change status") {
+    fun submitScanItem(qcStatus: Int, remark: String="Change status") {
         var toBeUpdatedItems: Array<QCScanItem> = emptyArray()
         var scanItemObj = QCScanItem()
 
         for (item in this.qcStatusDisplay.value!!){
-            println(item?.qcId)
-            scanItemObj.id = item?.qcId
+            // println(item?.qcId)
+            scanItemObj.id = item?.id
             scanItemObj.barcodeSerial = item?.barcodeSerial
-            scanItemObj.prevQCStatus = convertReadbleToIntQCStatus(item?.QCStatus)
+            scanItemObj.prevQCStatus = item?.QCStatus
             scanItemObj.QCStatus = qcStatus
             toBeUpdatedItems += scanItemObj
         }

@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import java.util.*
+import kotlin.collections.ArrayList
 
 class QCPendingViewModel : ViewModel() {
 
@@ -24,12 +25,17 @@ class QCPendingViewModel : ViewModel() {
     var qcTotalCount: Number? = 0
     var qcScannedCount: Number? = 0
     var pending: Number? = null
+    var QCRemarks: String? = null
+    var qcpendingList = ArrayList<QCPending>()
+    var errorMessage: String = ""
 
     val networkError: LiveData<Boolean> = MutableLiveData()
     val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
     val QCPendingItem: LiveData<Array<QCPending?>> = MutableLiveData()
     val totalScannedItem: LiveData<Number> = MutableLiveData()
     var scanedItems: List<QCScanItem> = emptyList()
+    var liveList: LiveData<QCScanItem> = MutableLiveData()
+
     private var appDatabase = AppDatabase.getDatabase(MainApplication.applicationContext())
 
     fun getQcTotalCount() {
@@ -39,19 +45,41 @@ class QCPendingViewModel : ViewModel() {
 
     private fun handleQCTotalCount(QcTotalCount: QCTotalCount?) {
         qcTotalCount = QcTotalCount!!.QCStatus.pending
-    }
+}
 
     private fun handleQCTotalCountError(error: Throwable) {
         Log.d(TAG, error.localizedMessage)
     }
 
-    fun loadQCPendingItems(limit: String) {
-        RemoteRepository.singleInstance.getQcPendingCount(limit, this::handleQCPendingItemsResponseNext,
+    fun loadQCPendingItems(limit: String,offset: String) {
+        (networkError as MutableLiveData<Boolean>).value = false
+        println("----load count ->"+limit)
+        RemoteRepository.singleInstance.getQcPendingCount(limit, offset, this::handleQCPendingItemsResponseNext,
                 this::handleQCPendingItemsErrorNext)
     }
 
     private fun handleQCPendingItemsResponseNext(QCPendingItem: Array<QCPending?>) {
+        // println("QCPendingItem response-->"+QCPendingItem)
+        // println("qcpendingList.size-->"+qcpendingList.size)
+
         var thisobj = this
+        for (i in QCPendingItem){
+            if (i != null) {
+                qcpendingList.add(i)
+            }
+        }
+
+        // scanned item at top
+        for (i in scanedItems){
+            val scannedItemFound = qcpendingList?.filter{
+                it!!.barcodeSerial.toString() == i.barcodeSerial.toString()}
+            if (scannedItemFound.size > 0){
+                qcpendingList.remove(scannedItemFound[0])
+                qcpendingList.add(0, scannedItemFound[0])
+            }
+        }
+
+       // println("after update putawayList.size-->"+qcpendingList.size)
         (thisobj.QCPendingItem as MutableLiveData<Array<QCPending?>>).value = QCPendingItem
     }
 
@@ -59,19 +87,20 @@ class QCPendingViewModel : ViewModel() {
         Log.d(TAG, error.localizedMessage)
     }
 
-
     fun updateQcScanItem(qcScanRequestBody: Array<QCScanItem>) {
         RemoteRepository.singleInstance.postQcPendingScanItems(qcScanRequestBody,
                 this::handleQCScanResponse, this::handleQCScanError)
     }
 
     private fun handleQCScanResponse(QCScanResponse: ResponseBody) {
-        println("success -->"+ QCScanResponse)
+        qcpendingList = ArrayList<QCPending>()
+        // println("success -->"+ QCScanResponse)
         deleteQCPendingScanItemsFromDB()
-        println("after delete call-->"+ QCScanResponse)
+        // println("after delete call-->"+ QCScanResponse)
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
                 (itemSubmissionSuccessful as MutableLiveData<Boolean>).value = true
+                getQcTotalCount()
             }
         }
     }
@@ -96,8 +125,10 @@ class QCPendingViewModel : ViewModel() {
                 barcodeSerial = item.barcodeSerial,
                 qcId = item.qcId,
                 prevQCStatus = item.prevQCStatus,
-                QCStatus = item.prevQCStatus
+                QCStatus = item.prevQCStatus,
+                timeStamp = Date().time
         )
+        println("insert query -->"+dbItem)
         var dbDao = appDatabase.qcPendingScanListItemDao()
         dbDao.insert(item = dbItem)
 
@@ -111,11 +142,17 @@ class QCPendingViewModel : ViewModel() {
     fun getItemsFromDB(): List<QCScanItem> {
         var dbDao = appDatabase.qcPendingScanListItemDao()
         var dbItems = dbDao.getAllItems()
+
+//        for (i in dbItems){
+//            println("--------------------------------")
+//            println("barcodeSerial-->"+i.barcodeSerial)
+//            println("qcid-->"+i.qcId)
+//        }
         scanedItems = dbItems
         var thisobj = this
         (thisobj.totalScannedItem as MutableLiveData<Number>).value = dbItems.size
         qcScannedCount = dbItems.size
-        println("qcScannedCount-->"+qcScannedCount)
+        // println("qcScannedCount-->"+qcScannedCount)
         return dbItems
     }
 
@@ -125,27 +162,32 @@ class QCPendingViewModel : ViewModel() {
             withContext(Dispatchers.Main) {
                 dbDao.deleteAll()
                 getItemsFromDB()
-                loadQCPendingItems("100")
+                qcpendingList = ArrayList<QCPending>()
+                loadQCPendingItems("100","0")
                 getQcTotalCount()
             }
         }
     }
 
-    fun submitScanItem(qcStatus: Int) {
+    fun submitScanItem(qcStatus: Int, QCRemarks: String?=null) {
         // get data from room database
         // post call with qcStatus
         var scanItem = getItemsFromDB()
-        var scanItemObj = QCScanItem()
         var toBeUpdatedItems: Array<QCScanItem> = emptyArray()
 
         for (item in scanItem){
+            var scanItemObj = QCScanItem()
             scanItemObj.id = item.qcId
             scanItemObj.barcodeSerial = item.barcodeSerial
             scanItemObj.prevQCStatus = item.prevQCStatus
             scanItemObj.QCStatus = qcStatus
+            if (QCRemarks !=null){
+                scanItemObj.QCRemarks = QCRemarks
+            }
             toBeUpdatedItems += scanItemObj
         }
         updateQcScanItem(toBeUpdatedItems)
+        // toBeUpdatedItems.sortByDescending { it?.timestamp}
         // toBeUpdatedItems
     }
 }
