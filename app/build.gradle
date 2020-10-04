@@ -9,7 +9,7 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.briot.balmerlawrie.implementor"
+        applicationId "com.briot.wms.implementor"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 2
