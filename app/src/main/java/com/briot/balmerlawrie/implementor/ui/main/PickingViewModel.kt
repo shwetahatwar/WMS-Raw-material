@@ -114,6 +114,15 @@ class PickingViewModel : ViewModel() {
         var dbDao = appDatabase.pickingScanListDao()
         dbDao.insert(item = dbItem)
 
+//        if (isViolated!!){
+//            val violatedItemToDisplay = PickingMasterDisplay()
+//            violatedItemToDisplay.partNumber = pickListNumber
+//            violatedItemToDisplay.batchNumber =  barcodeSerial
+//            violatedItemToDisplay.partDescription = itemListToAdd.partDescription
+//            violatedItemToDisplay.quantityPicked = quantity.toString()
+//            violatedItemToDisplay.location = itemListToAdd.location
+//            picklistMasterDisplayList.add(0, violatedItemToDisplay)
+//        }
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
                 getScanWithPickNumber(pickListNumber)

@@ -99,6 +99,7 @@ class ReturntoProductionEmployeeFragment : Fragment() {
                 // Navigation.findNavController(it).navigate(R.id.action_putawayLocationScanFragment_to_putawayFragment)
             }
             return_from_employee_scanBarcode.text?.clear()
+            return_from_employee_scanBarcode.requestFocus()
         }
         //-----------------------------------------------------------
         return_from_employee_scanBarcode.setOnEditorActionListener { _, i, keyEvent ->
@@ -120,6 +121,7 @@ class ReturntoProductionEmployeeFragment : Fragment() {
                     viewModel.loadEmployeeScanItems(inputLocationBarcode)
                 }
                 return_from_employee_scanBarcode.text?.clear()
+                return_from_employee_scanBarcode.requestFocus()
 
 
                 handled = true

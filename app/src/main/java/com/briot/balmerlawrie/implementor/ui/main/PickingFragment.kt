@@ -176,7 +176,10 @@ class PickingFragment : Fragment() {
                 if (alreadyScaned.size > 0){
                     UiHelper.showErrorToast(this.activity as AppCompatActivity,
                             "Item already scanned")
-                } else {
+                } else if (viewModel.totalScannedItem.value!!.toInt() >= viewModel.picklistMasterDisplay!!.value?.size!!.toInt()){
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "Picklist completed")
+                }
+                else {
                     // load data from server if response in not empty then do further steps
                     this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
                     viewModel.loadPutawayMaterialScan(inputMaterialBarcode)
@@ -208,6 +211,8 @@ class PickingFragment : Fragment() {
                     if (alreadyScaned.size > 0){
                         UiHelper.showErrorToast(this.activity as AppCompatActivity,
                                 "Item already scanned")
+                    } else if (viewModel.totalScannedItem.value!!.toInt() >= viewModel.picklistMasterDisplay!!.value?.size!!.toInt()){
+                        UiHelper.showErrorToast(this.activity as AppCompatActivity, "Picklist completed")
                     } else {
                         // load data from server if response in not empty then do further steps
                         this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
@@ -442,8 +447,10 @@ class PickingFragment : Fragment() {
             protected val description: TextView
             protected val quantity: TextView
             protected val location: TextView
-            protected val barcodePicked: TextView
             protected val barcodePickedValue: TextView
+            protected val barcodePickedLabel: TextView
+            protected val violatedBarcodeLabel: TextView
+            protected val violatedBarcodeValue: TextView
             protected val linearLayout: LinearLayout
 
             init {
@@ -452,8 +459,10 @@ class PickingFragment : Fragment() {
                 description = itemView.findViewById(R.id.picking_descriptionValue)
                 quantity = itemView.findViewById(R.id.picking_quantityValue)
                 location = itemView.findViewById(R.id.picking_locationValue)
-                barcodePicked = itemView.findViewById(R.id.picking_pickedbarcodeValue)
-                barcodePickedValue = itemView.findViewById(R.id.picking_pickedbarcodeLabel)
+                barcodePickedValue = itemView.findViewById(R.id.picking_pickedbarcodeValue)
+                barcodePickedLabel = itemView.findViewById(R.id.picking_pickedbarcodeLabel)
+                violatedBarcodeLabel = itemView.findViewById(R.id.violated_barcodeLabel)
+                violatedBarcodeValue = itemView.findViewById(R.id.violated_barcodeValue)
                 linearLayout = itemView.findViewById(R.id.picking_layout)
             }
 
@@ -464,25 +473,21 @@ class PickingFragment : Fragment() {
                 description.text = item.partDescription
                 quantity.text = item.numberOfPacks.toString()
                 location.text = item.location
-               // barcodePicked.text = item.batchNumber
                 if (viewModel.status?.toLowerCase() == "completed"){
-                    barcodePicked.text = item.batchNumber
-                } else if (viewModel.status?.toLowerCase() == "in progress"){
-                    barcodePicked.visibility = View.INVISIBLE
-                    barcodePickedValue.visibility = View.INVISIBLE
-                    // picking_pickedbarcodeValue.setVisibility(View.INVISIBLE)
-                    // barcodePicked.setVisibility(View.GONE)
+                    barcodePickedLabel.visibility = View.VISIBLE
+                    barcodePickedValue.visibility =  View.VISIBLE
+                    barcodePickedValue.text = item.batchNumber
                 }
-
-
                 val scannedItemFound = viewModel.scanedItems?.filter{
-                    // println("it!!.serialNumber.toString() ->"+it!!.serialNumber.toString())
-                    // print(item!!.batchNumber.toString())
                     it!!.serialNumber.toString() == item!!.batchNumber.toString()}
 
                 if (scannedItemFound.size > 0){
-                    // println("green-->"+item!!.batchNumber.toString())
                     linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
+                    if (scannedItemFound[0].isViolated!!){
+                        violatedBarcodeLabel.visibility = View.VISIBLE
+                        violatedBarcodeValue.visibility = View.VISIBLE
+                        violatedBarcodeValue.text = scannedItemFound[0].violatedSerialNumber
+                    }
                 }else{
                     linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
                 }
