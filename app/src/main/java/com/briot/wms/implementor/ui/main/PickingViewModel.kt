@@ -124,27 +124,27 @@ class PickingViewModel : ViewModel() {
             }
         }
 
-        if (isViolated!!){
-            for (i in scanedItems){
-                for (j in picklistMasterDisplayList){
-                    if (((i.serialNumber != j.batchNumber )) && !diffpicklistMasterDisplayList.contains(j)) {
-                        diffpicklistMasterDisplayList.add(j)
-                    }
-                }
-            }
-            for (i in diffpicklistMasterDisplayList){
-                println("diff item --"+i.barcodeSerial + "--batchnumber-> "+i.batchNumber)
-            }
-            val scannedItemFound = diffpicklistMasterDisplayList?.filter{
-                it!!.partNumber.toString() == partNumber.toString() }
-
-            if (scannedItemFound.size > 0 ){
-                picklistMasterDisplayList.remove(scannedItemFound[0])
-                scannedItemFound[0].numberOfPacks = quantity
-                picklistMasterDisplayList.add(0, scannedItemFound[0])
-                // diffpicklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
-            }
-        }
+//        if (isViolated!!){
+//            for (i in scanedItems){
+//                for (j in picklistMasterDisplayList){
+//                    if (((i.serialNumber != j.batchNumber )) && !diffpicklistMasterDisplayList.contains(j)) {
+//                        diffpicklistMasterDisplayList.add(j)
+//                    }
+//                }
+//            }
+//            for (i in diffpicklistMasterDisplayList){
+//                println("diff item --"+i.barcodeSerial + "--batchnumber-> "+i.batchNumber)
+//            }
+//            val scannedItemFound = diffpicklistMasterDisplayList?.filter{
+//                it!!.partNumber.toString() == partNumber.toString() }
+//
+//            if (scannedItemFound.size > 0 ){
+//                picklistMasterDisplayList.remove(scannedItemFound[0])
+//                scannedItemFound[0].numberOfPacks = quantity
+//                picklistMasterDisplayList.add(0, scannedItemFound[0])
+//                // diffpicklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
+//            }
+//        }
     }
 
     fun getScanWithPickNumber(picklistName: String?) {

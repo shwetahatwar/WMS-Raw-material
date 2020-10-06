@@ -372,7 +372,7 @@ class PickingFragment : Fragment() {
                 // var thisObject = this
                 UiHelper.showSuccessToast(this.activity as AppCompatActivity,
                         "Updated successfully")
-                Navigation.findNavController(recyclerView).navigate(R.id.picklistMasterFragment)
+                //Navigation.findNavController(recyclerView.rootView).navigate(R.id.picklistMasterFragment)
 
             }
         })
@@ -386,19 +386,28 @@ class PickingFragment : Fragment() {
                     recyclerView.adapter?.notifyDataSetChanged()
 
                     for (i in viewModel.scanedItems){
+                        val scannedItemFound = viewModel.picklistMasterDisplayList?.filter{
+                            it!!.batchNumber.toString() == viewModel.barcodeSerial.toString() ||
+                                    it!!.batchNumber.toString() == viewModel.batchNoToUpdate.toString()}
+                        if (scannedItemFound.size > 0){
+                            viewModel.picklistMasterDisplayList.remove(scannedItemFound[0])
+                            scannedItemFound[0].numberOfPacks = i.quantity
+                            viewModel.picklistMasterDisplayList.add(0, scannedItemFound[0])
+                        }
 
+/*
                         if (i.isViolated!!){
-                            for (i in viewModel.scanedItems){
-                                for (j in viewModel.picklistMasterDisplayList){
-                                    if (((i.serialNumber != j.batchNumber )) && !viewModel.diffpicklistMasterDisplayList.contains(j)) {
-                                        viewModel.diffpicklistMasterDisplayList.add(j)
-                                    }
-                                }
-                            }
-                            for (i in viewModel.diffpicklistMasterDisplayList){
-                                println("diff item --"+i.barcodeSerial + "--batchnumber-> "+i.batchNumber)
-                            }
-                            val scannedItemFound = viewModel.diffpicklistMasterDisplayList?.filter{
+//                            for (i in viewModel.scanedItems){
+//                                for (j in viewModel.picklistMasterDisplayList){
+//                                    if (((i.serialNumber != j.batchNumber )) && !viewModel.picklistMasterDisplayList.contains(j)) {
+//                                        viewModel.diffpicklistMasterDisplayList.add(j)
+//                                    }
+//                                }
+//                            }
+//                            for (i in viewModel.diffpicklistMasterDisplayList){
+//                                println("diff item --"+i.barcodeSerial + "--batchnumber-> "+i.batchNumber)
+//                            }
+                            val scannedItemFound = viewModel.picklistMasterDisplayList?.filter{
                                 it!!.partNumber.toString() == viewModel.partNumber.toString() }
 
                             if (scannedItemFound.size > 0 ){
@@ -420,7 +429,7 @@ class PickingFragment : Fragment() {
                             }
                             // recyclerView.adapter?.notifyDataSetChanged()
                         }
-                        // recyclerView.adapter?.notifyDataSetChanged()
+                        // recyclerView.adapter?.notifyDataSetChanged() */
                      }
                     recyclerView.adapter?.notifyDataSetChanged()
                 }

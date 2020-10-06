@@ -26,6 +26,8 @@ class MaterialQCStatusViewModel : ViewModel() {
     val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
     var barcodeSerial: String? = ""
     var errorMessage: String = ""
+    var QCRemarks: String = ""
+    var Q: String? = ""
     private var appDatabase = AppDatabase.getDatabase(MainApplication.applicationContext())
 
     fun loadMaterialStatusItems(barcodeSerial: String) {

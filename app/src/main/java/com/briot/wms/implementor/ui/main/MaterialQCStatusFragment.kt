@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -172,14 +173,42 @@ class MaterialQCStatusFragment : Fragment() {
                                     setMessage("changes the QC status of the material.")
                                     setButton(AlertDialog.BUTTON_NEGATIVE, "Reject") { dialog, _ ->
                                         dialog.dismiss()
-                                        viewModel.submitScanItem(2)
+
+
+                                        // remark code
+                                        val li = LayoutInflater.from(context)
+                                        val promptsView: View = li.inflate(R.layout.alert_pop_up_layout, null)
+                                        val alertDialogBuilder = AlertDialog.Builder(
+                                                context)
+                                        alertDialogBuilder.setTitle("Remark")
+                                        // alertDialogBuilder.setMessage("Remark for Rejecting scanned materials.")
+                                        alertDialogBuilder.setView(promptsView);
+                                        val userInput = promptsView.findViewById<View>(R.id.dialogRemarkEt) as EditText
+                                        alertDialogBuilder
+                                                .setCancelable(false)
+                                                .setPositiveButton("OK") { dialog, id -> // get user input and set it to result
+                                                    viewModel.QCRemarks = userInput.text.toString()
+                                                    viewModel.submitScanItem(2, viewModel.QCRemarks)
+//                                                    viewModel.submitScanItem(2, remark = viewModel.QCRemarks)
+
+//                                    Toast.makeText(context, "Entered: " + userInput.text.toString(), Toast.LENGTH_LONG).show()
+                                                }
+                                                .setNegativeButton("Cancel"
+                                                ) { dialog, id -> dialog.cancel() }
+
+                                        val alertDialog = alertDialogBuilder.create()
+                                        alertDialog.show()
+
+
+
+//                                        viewModel.submitScanItem(2)
                                     }
                                     show()
                                 }
                             } else if (item.QCStatus == 2) { // QC Rejected
                                 AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
                                     setTitle(" Confirm")
-                                    setMessage("changes the QC status of the material.")
+                                    setMessage("Changes the QC status of the material.")
                                     setButton(AlertDialog.BUTTON_POSITIVE, "Approve") { dialog, _ ->
                                         dialog.dismiss()
                                         viewModel.submitScanItem(1)
@@ -189,14 +218,40 @@ class MaterialQCStatusFragment : Fragment() {
                             } else if (item.QCStatus == 0) { // "QC Pending"
                                 AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
                                     setTitle(" Confirm")
-                                    setMessage("changes the QC status of the material.")
-                                    setButton(AlertDialog.BUTTON_NEUTRAL, "Approve") { dialog, _ ->
+                                    setMessage("Changes the QC status of the material.")
+                                    setButton(AlertDialog.BUTTON_POSITIVE, "Approve") { dialog, _ ->
                                         dialog.dismiss()
                                         viewModel.submitScanItem(1)
                                     }
                                     setButton(AlertDialog.BUTTON_NEUTRAL, "Reject") { dialog, _ ->
                                         dialog.dismiss()
-                                        viewModel.submitScanItem(2)
+
+                                        // remark code
+                                        val li = LayoutInflater.from(context)
+                                        val promptsView: View = li.inflate(R.layout.alert_pop_up_layout, null)
+                                        val alertDialogBuilder = AlertDialog.Builder(
+                                                context)
+                                        alertDialogBuilder.setTitle("Remark")
+                                        // alertDialogBuilder.setMessage("Remark for Rejecting scanned materials.")
+                                        alertDialogBuilder.setView(promptsView);
+                                        val userInput = promptsView.findViewById<View>(R.id.dialogRemarkEt) as EditText
+                                        alertDialogBuilder
+                                                .setCancelable(false)
+                                                .setPositiveButton("OK") { dialog, id -> // get user input and set it to result
+                                                    viewModel.QCRemarks = userInput.text.toString()
+                                                    viewModel.submitScanItem(2, viewModel.QCRemarks)
+//                                                    viewModel.submitScanItem(2, remark = viewModel.QCRemarks)
+
+//                                    Toast.makeText(context, "Entered: " + userInput.text.toString(), Toast.LENGTH_LONG).show()
+                                                }
+                                                .setNegativeButton("Cancel"
+                                                ) { dialog, id -> dialog.cancel() }
+
+                                        val alertDialog = alertDialogBuilder.create()
+                                        alertDialog.show()
+                                        // remark code end
+
+//                                        viewModel.submitScanItem(2, remark = viewModel.QCRemarks)
                                     }
                                     show()
                                 }

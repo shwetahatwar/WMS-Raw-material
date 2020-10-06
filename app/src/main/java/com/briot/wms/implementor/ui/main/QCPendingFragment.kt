@@ -262,6 +262,7 @@ class QCPendingFragment : Fragment() {
                 val keyboard = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 keyboard.hideSoftInputFromWindow(activity?.currentFocus?.getWindowToken(), 0)
                 var value = qcpending_materialBarcode.text!!.toString().trim()
+                qcpending_materialBarcode.requestFocus()
 
                 val inputMaterialBarcode = qcPendingMaterialTextValue.getText().toString()
                 if (inputMaterialBarcode == "") {
