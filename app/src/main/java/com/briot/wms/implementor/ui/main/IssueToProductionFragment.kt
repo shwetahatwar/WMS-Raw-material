@@ -21,8 +21,10 @@ import com.briot.wms.implementor.data.IssueToProduction
 import com.briot.wms.implementor.repository.local.PrefConstants
 import com.briot.wms.implementor.repository.remote.IssueToProductionResponse
 import com.briot.wms.implementor.repository.remote.MaterialData
+import com.briot.wms.implementor.repository.remote.MaterialInward
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.issue_to_production_fragment.*
+import kotlinx.android.synthetic.main.material_q_c_status_fragment.*
 import kotlinx.android.synthetic.main.quantity_pop_up.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -41,6 +43,8 @@ class IssueToProductionFragment : Fragment() {
     public var progress: Progress? = null
     private var oldMaterialMaster: Array<MaterialData?>? = null
     var oldScanList: Array<IssueToProduction?>? = null
+    private var oldMaterialInward: Array<MaterialInward?> = emptyArray()
+
 
     private var oldIssueToProd: Array<IssueToProductionResponse?>? = null
     lateinit var layoutManager: LinearLayoutManager
@@ -179,6 +183,11 @@ class IssueToProductionFragment : Fragment() {
                 UiHelper.showErrorToast(this.activity as AppCompatActivity, "Enter valid Barcode");
             }
             else{
+
+                viewModel.inputMaterialBarcode = inputMaterialBarcode
+                viewModel.loadMaterialStatusItems(inputMaterialBarcode)
+
+                /*
                 val alreadyScaned = viewModel.scanedItems?.filter { it?.inputMaterialBarcode ==  inputMaterialBarcode}
                 if (alreadyScaned.isNullOrEmpty()){
                     viewModel.inputMaterialBarcode = inputMaterialBarcode
@@ -235,7 +244,7 @@ class IssueToProductionFragment : Fragment() {
                     }
                 }else{
                     UiHelper.showErrorToast(this.activity as AppCompatActivity, "Item already scaned")
-                }
+                } */
             }
             issuetoproduction_materialBarcode.text?.clear()
             issuetoproduction_materialBarcode.requestFocus()
@@ -258,9 +267,14 @@ class IssueToProductionFragment : Fragment() {
                     UiHelper.showErrorToast(this.activity as AppCompatActivity, "Enter valid Barcode");
                 }
                 else{
+                    // load barcode data to get material inward id
+                    viewModel.inputMaterialBarcode = inputMaterialBarcode
+                    viewModel.loadMaterialStatusItems(inputMaterialBarcode)
+
+                 /*
                     val alreadyScaned = viewModel.scanedItems?.filter { it?.inputMaterialBarcode ==  inputMaterialBarcode}
                     if (alreadyScaned.isNullOrEmpty()){
-                        viewModel.inputMaterialBarcode = inputMaterialBarcode
+
                         val result = viewModel.materialData.value?.filter {
                             (it?.serialNumber.equals(inputMaterialBarcode))
                         }
@@ -311,7 +325,7 @@ class IssueToProductionFragment : Fragment() {
                         }
                     }else{
                         UiHelper.showErrorToast(this.activity as AppCompatActivity, "Item already scaned")
-                    }
+                    } */
 
                 }
                 issuetoproduction_materialBarcode.text?.clear()
@@ -334,6 +348,82 @@ class IssueToProductionFragment : Fragment() {
                 }
             }
         })
+
+        viewModel.qcStatusDisplay.observe(viewLifecycleOwner, Observer<Array<MaterialInward?>> {
+            if (it != null && it != oldMaterialInward) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+                if (viewModel.qcStatusDisplay.value.orEmpty().isNotEmpty() && viewModel.qcStatusDisplay.value?.first() == null) {
+                    UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
+                } else if (it != oldMaterialInward) {
+
+                    val alreadyScaned = viewModel.scanedItems?.filter { it?.inputMaterialBarcode ==  viewModel.inputMaterialBarcode}
+                    if (alreadyScaned.isNullOrEmpty()){
+
+                        val result = viewModel.materialData.value?.filter {
+                            (it?.serialNumber.equals(viewModel.inputMaterialBarcode))
+                        }
+                        if (result?.size!! > 0){
+                            // add to room database
+                            var quantity = result.get(0)?.quantityPicked
+                            println("old- material inward id -->"+result.get(0)?.id)
+                            var materialInwardId = viewModel.qcStatusDisplay.value?.get(0)?.id
+                            println("updataed material inward id -->"+materialInwardId)
+                            if (quantity != null) {
+                                if (quantity!! > 1){
+                                    // Alert dialog with text box
+                                    val mDialogView = LayoutInflater.from(context).inflate(R.layout.quantity_pop_up, null)
+                                    val mBuilder = AlertDialog.Builder(context!!)
+                                            .setView(mDialogView)
+                                            .setTitle("Quantity")
+                                    val mAlertDialog = mBuilder.show()
+                                    mDialogView.quantitySubmitBtn.setOnClickListener{
+                                        var inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
+                                        viewModel.quantity = inputQuantity.toString()
+                                        println("--inputQuantity->"+inputQuantity)
+                                        if (inputQuantity > quantity!!){
+                                            var error = "Quantity should not be greater than "+quantity
+                                            mDialogView.issue_to_prod_picked_quantity.setError(error)
+
+                                        }else {
+                                            mAlertDialog.dismiss()
+                                            GlobalScope.launch {
+                                                withContext(Dispatchers.Main) {
+                                                    viewModel.addItemInDatabase(viewModel.inputMaterialBarcode, viewModel.projectId,
+                                                            viewModel.userId, viewModel.id, inputQuantity, materialInwardId,
+                                                            viewModel.name, viewModel.employeeId)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    mDialogView.quantityCancelBtn.setOnClickListener{
+                                        mAlertDialog.dismiss()
+                                    }
+                                }else{
+                                    GlobalScope.launch {
+                                        withContext(Dispatchers.Main) {
+                                            viewModel.addItemInDatabase(viewModel.inputMaterialBarcode, viewModel.projectId,
+                                                    viewModel.userId, viewModel.id, quantity, materialInwardId,
+                                                    viewModel.name, viewModel.employeeId)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        UiHelper.showErrorToast(this.activity as AppCompatActivity, "Item already scaned")
+                    }
+
+                    recyclerView.adapter?.notifyDataSetChanged()
+                }
+            }
+            if (it == null) {
+                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Wrong material scan")
+                oldMaterialInward = viewModel.qcStatusDisplay.value!!
+            }
+        })
+
+
         //-------------------------------------------------------------------
 
         issuetoproduction_items_submit_button.setOnClickListener{

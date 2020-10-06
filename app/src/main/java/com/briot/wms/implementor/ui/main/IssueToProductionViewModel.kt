@@ -32,6 +32,9 @@ class IssueToProductionViewModel : ViewModel() {
     // var issueToProdList: List<MaterialData?> = emptyList()
     var issueToProdList = ArrayList<MaterialData>()
 
+    val invalidmaterialItem: Array<MaterialInward?> = arrayOf(null)
+    var materialInwards: LiveData<Array<MaterialInward?>> = MutableLiveData()
+    var qcStatusDisplay: LiveData<Array<MaterialInward?>> = MutableLiveData()
 
     val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
     var materialCount: Number? = 0
@@ -79,6 +82,27 @@ class IssueToProductionViewModel : ViewModel() {
 
     private fun handleQCPendingItemsErrorNext(error: Throwable) {
         Log.d(ContentValues.TAG, error.localizedMessage)
+    }
+
+
+    fun loadMaterialStatusItems(barcodeSerial: String) {
+        (networkError as MutableLiveData<Boolean>).value = false
+        (this.materialInwards as MutableLiveData<Array<MaterialInward?>>).value = emptyArray()
+        RemoteRepository.singleInstance.getMaterialStatus(barcodeSerial, this::handleMaterialItemResponse,
+                this::handleMaterialItemError)
+    }
+
+    private fun handleMaterialItemResponse(res: Array<MaterialInward?>) {
+
+        (this.qcStatusDisplay as MutableLiveData<Array<MaterialInward?>>).value = res
+    }
+
+    private fun handleMaterialItemError(error: Throwable) {
+        if (UiHelper.isNetworkError(error)) {
+            (networkError as MutableLiveData<Boolean>).value = true
+        } else {
+            (this.qcStatusDisplay as MutableLiveData<Array<MaterialInward?>>).value = invalidmaterialItem
+        }
     }
 
 
@@ -216,6 +240,8 @@ class IssueToProductionViewModel : ViewModel() {
 
     private fun handleIssueToProdError(error: Throwable) {
         Log.d(TAG, "error msg--->"+error.localizedMessage)
+
+        errorMessage = error.message.toString()
         if (UiHelper.isNetworkError(error)) {
             println("------inside network error----")
             errorMessage = error.message.toString()

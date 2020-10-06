@@ -372,7 +372,7 @@ class PickingFragment : Fragment() {
                 // var thisObject = this
                 UiHelper.showSuccessToast(this.activity as AppCompatActivity,
                         "Updated successfully")
-                //Navigation.findNavController(recyclerView.rootView).navigate(R.id.picklistMasterFragment)
+                Navigation.findNavController(recyclerView).navigate(R.id.picklistMasterFragment)
 
             }
         })
