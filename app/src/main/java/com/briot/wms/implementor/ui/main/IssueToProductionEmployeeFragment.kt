@@ -47,7 +47,7 @@ class IssueToProductionEmployeeFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(IssueToProductionEmployeeViewModel::class.java)
         (this.activity as AppCompatActivity).setTitle("Issue to Production")
-        // employee_scanBarcode.requestFocus()
+         employee_scanBarcode.requestFocus()
 
         if (this.arguments != null) {
             // viewModel.employeeId = this.arguments!!.getString("employeeId")
@@ -57,6 +57,10 @@ class IssueToProductionEmployeeFragment : Fragment() {
             viewModel.projectName = this.arguments!!.getString("name")
 
         }
+
+        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+
        // this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
         viewModel.employeeScan.observe(viewLifecycleOwner, Observer<Array<Employee?>> {
             if (it != null) {

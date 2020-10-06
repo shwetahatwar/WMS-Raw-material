@@ -23,6 +23,7 @@ import com.briot.wms.implementor.repository.local.PrefConstants
 import com.briot.wms.implementor.repository.remote.PickingMasterDisplay
 import io.github.pierry.progress.Progress
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
 import com.briot.wms.implementor.MainApplication
 import com.briot.wms.implementor.data.PickingScanList
 import com.briot.wms.implementor.repository.remote.MaterialInward
@@ -82,8 +83,8 @@ class PickingFragment : Fragment() {
             picklist_id_value.text = this.arguments!!.getString("picklistName")
         }
         this.progress = UiHelper.showProgressIndicator(this.activity as AppCompatActivity, "Please wait")
-        // viewModel.deleteWithPickName(viewModel.picklistName)
         viewModel.loadPendingInProgCompltedList()
+        // viewModel.deleteWithPickName(viewModel.picklistName)
 
         // Load scanned item from room database
         viewModel.getScanWithPickNumber(viewModel.picklistName)
@@ -247,8 +248,8 @@ class PickingFragment : Fragment() {
                             if (result.isNotEmpty()) {
                                 if (result.size > 0) {
                                     var quantity = result?.get(0)?.numberOfPacks
-                                    var error = ""
-                                    println("quantity 255-->"+quantity)
+
+                                    // println("quantity 255-->"+quantity)
                                     if (quantity!! > 1){
                                         val mDialogView = LayoutInflater.from(context).inflate(R.layout.quantity_pop_up, null)
                                         val mBuilder = AlertDialog.Builder(context!!)
@@ -259,13 +260,13 @@ class PickingFragment : Fragment() {
 
                                         mDialogView.quantitySubmitBtn.setOnClickListener{
                                             // viewModel.quantity = mDialogView.issue_to_prod_picked_quantity.text.toString()
+                                            // var error = ""
                                             val inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
                                             if (inputQuantity > quantity!!){
-                                                error = "Quantity should not be greater than "+quantity
-                                            }
-                                            if (error != ""){
+                                                var error = "Quantity should not be greater than "+quantity
                                                 mDialogView.issue_to_prod_picked_quantity.setError(error)
-                                            }else{
+                                            }
+                                            else{
                                                 mAlertDialog.dismiss()
                                                 GlobalScope.launch {
                                                     viewModel.addItemInDatabase(result.first()!!,
@@ -291,14 +292,21 @@ class PickingFragment : Fragment() {
                             else {
                                 // check for violated material
                                 var partNmberToCheck = viewModel.violatedData.value?.get(0)?.partnumber?.partNumber
-                                val partNumberValidate = viewModel.picklistMasterDisplayList?.filter {
+                                var partNumberValidate = viewModel.picklistMasterDisplayList?.filter {
                                     it!!.partNumber.toString() == partNmberToCheck
+                                }
+                                if (viewModel.diffpicklistMasterDisplayList.size > 0){
+                                    partNumberValidate = viewModel.diffpicklistMasterDisplayList?.filter {
+                                        it!!.partNumber.toString() == partNmberToCheck
+                                    }
                                 }
 
                                 if (partNumberValidate?.size!! > 0) {
                                     var batchNoToUpdate = partNumberValidate?.get(0)?.batchNumber
+                                    viewModel.batchNoToUpdate = batchNoToUpdate
+                                    viewModel.partNumber = partNmberToCheck
+
                                     var quantity = partNumberValidate?.get(0)?.numberOfPacks
-                                    var error = ""
                                     println("quantity 296-->"+quantity)
                                     // post call to submit data
                                     AlertDialog.Builder(this.activity as AppCompatActivity, R.style.MyDialogTheme).create().apply {
@@ -317,11 +325,9 @@ class PickingFragment : Fragment() {
 
                                                     val inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
                                                     if (inputQuantity > quantity!!){
-                                                        error = "Quantity should not be greater than "+quantity
-                                                    }
-                                                    if (error != ""){
+                                                        var error = "Quantity should not be greater than "+quantity
                                                         mDialogView.issue_to_prod_picked_quantity.setError(error)
-                                                    }else{
+                                                    } else{
                                                         mAlertDialog.dismiss()
                                                         GlobalScope.launch {
                                                             viewModel.addItemInDatabase(partNumberValidate.first()!!,
@@ -359,27 +365,64 @@ class PickingFragment : Fragment() {
             oldViolatedData = viewModel.violatedData.value
         })
 
+        viewModel.itemSubmissionSuccessful.observe(viewLifecycleOwner, Observer<Boolean> {
+            if (it == true) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+                // var thisObject = this
+                UiHelper.showSuccessToast(this.activity as AppCompatActivity,
+                        "Updated successfully")
+                Navigation.findNavController(recyclerView).navigate(R.id.picklistMasterFragment)
+
+            }
+        })
+
         viewModel.totalScannedItem.observe(viewLifecycleOwner, Observer<Number> {
             if (it != null) {
                 if (viewModel.status?.toLowerCase()=="completed"){
                     picking_count_value.text = viewModel.picklistMasterDisplay!!.value?.size.toString() ?: 0.toString()
                 }else{
                     picking_count_value.text = viewModel.totalScannedItem.value.toString() + "/"+viewModel.picklistMasterDisplay!!.value?.size.toString() ?: 0.toString()
+                    recyclerView.adapter?.notifyDataSetChanged()
+
                     for (i in viewModel.scanedItems){
 
-                        // change position of the scanned item to top
-                        val scannedItemFound = viewModel.picklistMasterDisplayList?.filter{
-                            it!!.batchNumber.toString() == i.serialNumber.toString() ||
-                                    it!!.batchNumber.toString() == i.violatedSerialNumber.toString()}
-                        if (scannedItemFound.size > 0){
-                            viewModel.picklistMasterDisplayList.remove(scannedItemFound[0])
-                            scannedItemFound[0].numberOfPacks = i.quantity
-                            viewModel.picklistMasterDisplayList.add(0, scannedItemFound[0])
-                            // qcpending_recyclerlist.adapter?.notifyDataSetChanged()
-                            recyclerView.adapter?.notifyDataSetChanged()
-                        }
-                    }
+                        if (i.isViolated!!){
+                            for (i in viewModel.scanedItems){
+                                for (j in viewModel.picklistMasterDisplayList){
+                                    if (((i.serialNumber != j.batchNumber )) && !viewModel.diffpicklistMasterDisplayList.contains(j)) {
+                                        viewModel.diffpicklistMasterDisplayList.add(j)
+                                    }
+                                }
+                            }
+                            for (i in viewModel.diffpicklistMasterDisplayList){
+                                println("diff item --"+i.barcodeSerial + "--batchnumber-> "+i.batchNumber)
+                            }
+                            val scannedItemFound = viewModel.diffpicklistMasterDisplayList?.filter{
+                                it!!.partNumber.toString() == viewModel.partNumber.toString() }
 
+                            if (scannedItemFound.size > 0 ){
+                                viewModel.picklistMasterDisplayList.remove(scannedItemFound[0])
+                                scannedItemFound[0].numberOfPacks = i.quantity
+                                viewModel.picklistMasterDisplayList.add(0, scannedItemFound[0])
+                                // viewModel.diffpicklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
+                            }
+                        }else{
+
+                            //  change position of the scanned item to top
+                            val scannedItemFound = viewModel.picklistMasterDisplayList?.filter{
+                                it!!.batchNumber.toString() == viewModel.barcodeSerial.toString() ||
+                                        it!!.batchNumber.toString() == viewModel.batchNoToUpdate.toString()}
+                            if (scannedItemFound.size > 0){
+                                viewModel.picklistMasterDisplayList.remove(scannedItemFound[0])
+                                scannedItemFound[0].numberOfPacks = i.quantity
+                                viewModel.picklistMasterDisplayList.add(0, scannedItemFound[0])
+                            }
+                            // recyclerView.adapter?.notifyDataSetChanged()
+                        }
+                        // recyclerView.adapter?.notifyDataSetChanged()
+                     }
+                    recyclerView.adapter?.notifyDataSetChanged()
                 }
                 recyclerView.adapter?.notifyDataSetChanged()
             }
@@ -425,7 +468,7 @@ class PickingFragment : Fragment() {
 
 
         override fun getItemCount(): Int {
-            // println("picking count---->" + viewModel.picklistMasterDisplay.value?.size ?: 0)
+            println("picking count---->" + viewModel.picklistMasterDisplay.value?.size ?: 0)
             return viewModel.picklistMasterDisplayList?.size ?: 0
         }
 

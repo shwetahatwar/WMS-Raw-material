@@ -68,6 +68,7 @@
                 android:drawableLeft="@drawable/ic_person_black_24dp"
                 android:drawablePadding="3dp"
                 android:ems="10"
+                android:focusableInTouchMode="true"
                 android:hint="Username"
                 android:inputType="textNoSuggestions"
                 android:maxLength="16"
@@ -83,7 +84,6 @@
                 android:layout_marginRight="10dp"
                 android:background="@drawable/edittext_bg"
                 android:drawableLeft="@drawable/ic_lock_black_24dp"
-
                 android:drawablePadding="3dp"
                 android:ems="10"
                 android:hint="Password"

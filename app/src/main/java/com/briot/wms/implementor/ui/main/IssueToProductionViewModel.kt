@@ -67,9 +67,9 @@ class IssueToProductionViewModel : ViewModel() {
                 it!!.batchNumber.toString() == i.inputMaterialBarcode.toString()}
             if (scannedItemFound != null){
                 if (scannedItemFound?.size!! > 0){
-                    val position = issueToProdList.indexOf(scannedItemFound[0])
-                    val removeItem = issueToProdList.removeAt(position)
-                    issueToProdList.add(0, removeItem)
+                    issueToProdList.remove(scannedItemFound[0])
+                    scannedItemFound[0].quantityPicked = i.quantity
+                    issueToProdList.add(0, scannedItemFound[0])
                 }
             }
         }
@@ -98,7 +98,7 @@ class IssueToProductionViewModel : ViewModel() {
         )
 
 //        println("viewModel.quantity--"+quantity)
-//        println("dbItem in insert query-->"+dbItem)
+        println("dbItem in insert query-->"+dbItem)
         var dbDao = appDatabase.issueToProductionDao()
         dbDao.insert(item = dbItem)
 

@@ -45,6 +45,10 @@ class LoginFragment : androidx.fragment.app.Fragment() {
         (this.activity as AppCompatActivity).setTitle("Raw Material WMS")
 
         username.requestFocus()
+
+        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+
         val hostname = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().IPADDRESS, "")
 
         showpasswordCheckBox.setOnCheckedChangeListener() { compoundButton: CompoundButton, b: Boolean ->
@@ -73,6 +77,7 @@ class LoginFragment : androidx.fragment.app.Fragment() {
                 Navigation.findNavController(login).navigate(R.id.action_loginFragment_to_homeFragment)
             } else {
                 UiHelper.showErrorToast(this.activity as AppCompatActivity, "An error has occurred, please try again.");
+                UiHelper.hideProgress(this.progress)
                 username.requestFocus()
             }
 

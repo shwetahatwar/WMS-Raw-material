@@ -55,6 +55,10 @@ class ReturntoProductionEmployeeFragment : Fragment() {
             viewModel.projectId = this.arguments!!.getInt("projectId")
 
         }
+
+        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+
         viewModel.employeeScan.observe(viewLifecycleOwner, Observer<Array<Employee?>> {
             if (it != null) {
                 UiHelper.hideProgress(this.progress)

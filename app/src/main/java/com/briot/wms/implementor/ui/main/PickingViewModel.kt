@@ -35,8 +35,14 @@ class PickingViewModel : ViewModel() {
     val totalScannedItem: LiveData<Number> = MutableLiveData()
     var picklistMasterCount: Number? = 0
     var picklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
+    var diffpicklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
+    val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
+
     var barcodeSerial: String? = null
+    var partNumber: String? = null
+
     var batchNumber: String? = null
+    var batchNoToUpdate: String? = null
     var status: String? = null
     var id: Int? = null
     var postItemId: Int? = null
@@ -64,14 +70,16 @@ class PickingViewModel : ViewModel() {
         }
 
         // scanned item at top
-        for (i in scanedItems){
-            val scannedItemFound = picklistMasterDisplayList?.filter{
-                it!!.batchNumber.toString() == i.serialNumber.toString() ||
-                        it!!.batchNumber.toString() == i.violatedSerialNumber.toString()}
-            if (scannedItemFound.size > 0){
-                picklistMasterDisplayList.remove(scannedItemFound[0])
-                scannedItemFound[0].numberOfPacks = i.quantity
-                picklistMasterDisplayList.add(0, scannedItemFound[0])
+        if (scanedItems.size > 0){
+            for (i in scanedItems){
+                val scannedItemFound = picklistMasterDisplayList?.filter{
+                    it!!.batchNumber.toString() == i.serialNumber.toString() ||
+                            it!!.batchNumber.toString() == i.violatedSerialNumber.toString()}
+                if (scannedItemFound.size > 0){
+                    picklistMasterDisplayList.remove(scannedItemFound[0])
+                    scannedItemFound[0].numberOfPacks = i.quantity
+                    picklistMasterDisplayList.add(0, scannedItemFound[0])
+                }
             }
         }
         (this.picklistMasterDisplay as MutableLiveData<Array<PickingMasterDisplay?>>).value = picklistmaster
@@ -91,7 +99,7 @@ class PickingViewModel : ViewModel() {
 
     suspend fun addItemInDatabase(itemListToAdd: PickingMasterDisplay, pickListNumber: String?,
                                           pickListId: String?, isViolated: Boolean?,
-                                  quantity: Int?) {
+                                          quantity: Int?) {
         var userId: String = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_ID, "")
 
         var dbItem = PickingScanList(id = null,
@@ -110,18 +118,31 @@ class PickingViewModel : ViewModel() {
         var dbDao = appDatabase.pickingScanListDao()
         dbDao.insert(item = dbItem)
 
-//        if (isViolated!!){
-//            val violatedItemToDisplay = PickingMasterDisplay()
-//            violatedItemToDisplay.partNumber = pickListNumber
-//            violatedItemToDisplay.batchNumber =  barcodeSerial
-//            violatedItemToDisplay.partDescription = itemListToAdd.partDescription
-//            violatedItemToDisplay.quantityPicked = quantity.toString()
-//            violatedItemToDisplay.location = itemListToAdd.location
-//            picklistMasterDisplayList.add(0, violatedItemToDisplay)
-//        }
         GlobalScope.launch {
             withContext(Dispatchers.Main) {
                 getScanWithPickNumber(pickListNumber)
+            }
+        }
+
+        if (isViolated!!){
+            for (i in scanedItems){
+                for (j in picklistMasterDisplayList){
+                    if (((i.serialNumber != j.batchNumber )) && !diffpicklistMasterDisplayList.contains(j)) {
+                        diffpicklistMasterDisplayList.add(j)
+                    }
+                }
+            }
+            for (i in diffpicklistMasterDisplayList){
+                println("diff item --"+i.barcodeSerial + "--batchnumber-> "+i.batchNumber)
+            }
+            val scannedItemFound = diffpicklistMasterDisplayList?.filter{
+                it!!.partNumber.toString() == partNumber.toString() }
+
+            if (scannedItemFound.size > 0 ){
+                picklistMasterDisplayList.remove(scannedItemFound[0])
+                scannedItemFound[0].numberOfPacks = quantity
+                picklistMasterDisplayList.add(0, scannedItemFound[0])
+                // diffpicklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
             }
         }
     }
@@ -144,6 +165,8 @@ class PickingViewModel : ViewModel() {
     fun deleteWithPickName(picklistName: String?){
         var dbDao = appDatabase.pickingScanListDao()
         var dbItems = dbDao.deleteWithPickNumber(picklistName)
+        // picklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
+        //loadPendingInProgCompltedList()
         getScanWithPickNumber(picklistName)
     }
 
@@ -194,28 +217,29 @@ class PickingViewModel : ViewModel() {
         var materialItemToUpdate: Array<Materials> =  emptyArray()
 
         // if all items are scanned then request body is different
-        if (totalScannedItem.value.toString() == picklistMasterDisplay.value?.size.toString()){
-            itemToUpdate.completedPicklistId = id
-        }else{
-            for (i in scanedItems){
-                var itemToAdd =  Materials()
-                itemToAdd.batchNumber = i.serialNumber
-                itemToAdd.partNumber = i.partNumber
-                itemToAdd.quantity = i.quantity
-                itemToAdd.serialNumber = i.serialNumber
-                if (i.isViolated == true){
-                    itemToAdd.purchaseOrderNumber = i.purchaseOrderNumber
-                    itemToAdd.isViolated = i.isViolated
-                    itemToAdd.violatedSerialNumber = i.violatedSerialNumber
+//        if (totalScannedItem.value.toString() == picklistMasterDisplay.value?.size.toString()){
+//            itemToUpdate.completedPicklistId = id
+//        }else{
+        for (i in scanedItems){
+            var itemToAdd =  Materials()
+            itemToAdd.batchNumber = i.serialNumber
+            itemToAdd.partNumber = i.partNumber
+            itemToAdd.quantity = i.quantity
+            itemToAdd.serialNumber = i.serialNumber
+            if (i.isViolated == true){
+                itemToAdd.purchaseOrderNumber = i.purchaseOrderNumber
+                itemToAdd.isViolated = i.isViolated
+                itemToAdd.violatedSerialNumber = i.violatedSerialNumber
                 }
-                println("itemToAdd-->"+itemToAdd)
                 materialItemToUpdate += itemToAdd
                 materialItemToUpdate.sortByDescending { it?.timestamp}
             }
             itemToUpdate.materials = materialItemToUpdate
             itemToUpdate.picklistId = id
             itemToUpdate.userId = userId.toInt()
-        }
+        // }
+
+        println("itemToUpdate submit-->"+itemToUpdate)
 
         RemoteRepository.singleInstance.postPickingMasterData( id.toString(), itemToUpdate,
                                                         this::handlePickingMasterResponse,
@@ -226,16 +250,13 @@ class PickingViewModel : ViewModel() {
         var thisobj = this
 
         deleteWithPickName(picklistName)
-        // (thisobj.violatedData as MutableLiveData<Array<DispatchSlipItemResponse?>>).value = res
 
-//        var thisobj = this
-////        (thisobj.putawayMaterialScanData as MutableLiveData<Array<MaterialInward?>>).value = putawayMaterialScan
-        // putMaterialScantems()
-//        GlobalScope.launch {
-//            withContext(Dispatchers.Main) {
-//                addPutawayMaterial(res[0])
-//            }
-//        }
+        // After success navigate to previous screen
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                (itemSubmissionSuccessful as MutableLiveData<Boolean>).value = true
+            }
+        }
     }
 
     private fun handlePickingMasterError(error: Throwable) {

@@ -189,7 +189,6 @@ class IssueToProductionFragment : Fragment() {
                         // add to room database
                         var quantity = result.get(0)?.quantityPicked
                         var materialInwardId = result.get(0)?.id
-                        var error = ""
                         if (quantity != null) {
                             if (quantity > 1){
                                 // Alert dialog with text box
@@ -202,13 +201,13 @@ class IssueToProductionFragment : Fragment() {
 
                                     var inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
                                     viewModel.quantity = inputQuantity.toString()
+                                    println("--inputQuantity->"+inputQuantity)
 
                                     if (inputQuantity > quantity!!){
-                                        error = "Quantity should not be greater than "+quantity
-                                    }
-                                    if (error != ""){
+                                        var error = "Quantity should not be greater than "+quantity
                                         mDialogView.issue_to_prod_picked_quantity.setError(error)
-                                    } else {
+
+                                    }else {
                                         mAlertDialog.dismiss()
                                         GlobalScope.launch {
                                             withContext(Dispatchers.Main) {
@@ -269,7 +268,6 @@ class IssueToProductionFragment : Fragment() {
                             // add to room database
                             var quantity = result.get(0)?.quantityPicked
                             var materialInwardId = result.get(0)?.id
-                            var error = ""
                             if (quantity != null) {
                                 if (quantity!! > 1){
                                     // Alert dialog with text box
@@ -281,12 +279,11 @@ class IssueToProductionFragment : Fragment() {
                                         mDialogView.quantitySubmitBtn.setOnClickListener{
                                             var inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
                                             viewModel.quantity = inputQuantity.toString()
-
+                                            println("--inputQuantity->"+inputQuantity)
                                             if (inputQuantity > quantity!!){
-                                                error = "Quantity should not be greater than "+quantity
-                                            }
-                                            if (error != ""){
+                                                var error = "Quantity should not be greater than "+quantity
                                                 mDialogView.issue_to_prod_picked_quantity.setError(error)
+
                                             }else {
                                                 mAlertDialog.dismiss()
                                                 GlobalScope.launch {
