@@ -76,6 +76,9 @@ class PutawayFragment : Fragment() {
             viewModel.shelfId = this.arguments!!.getString("shelfId")
         }
 
+        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+
         recyclerView.adapter = SimplePutawayItemAdapter(recyclerView,
                 viewModel.putawayMaterialScanData,
                 viewModel)

@@ -17,6 +17,6 @@ public data class PickingScanList (
         @ColumnInfo(name = "serialNumber") val serialNumber: String?,
         @ColumnInfo(name = "violatedSerialNumber") val violatedSerialNumber: String?,
         @ColumnInfo(name = "postItemId") val postItemId: Int?,
-        @ColumnInfo(name = "timestamp") val timeStamp: Long
-
+        @ColumnInfo(name = "timestamp") val timeStamp: Long,
+        @ColumnInfo(name = "totalQuantity") val totalQuantity: Int?
 )

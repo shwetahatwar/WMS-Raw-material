@@ -26,4 +26,7 @@ interface PickingScanListDao {
 
     @Query("DELETE from picking_scan_item_list")
     suspend fun deleteAll()
+
+    @Query("UPDATE picking_scan_item_list SET quantity = :quantity WHERE picklistName = :picklistName AND serialNumber = :serialNumber")
+    fun updateQuantityScanWithPickNumber(serialNumber: String?, picklistName: String?, quantity: Int?)
 }

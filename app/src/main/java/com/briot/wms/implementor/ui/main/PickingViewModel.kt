@@ -37,9 +37,13 @@ class PickingViewModel : ViewModel() {
     var picklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
     var diffpicklistMasterDisplayList = ArrayList<PickingMasterDisplay>()
     val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
+    val itemSubmissionSuccessfulUpdate: LiveData<Boolean> = MutableLiveData()
 
     var barcodeSerial: String? = null
     var partNumber: String? = null
+
+    var orgQuantity: Int? = null
+    var remainingQuantity: Int? = null
 
     var batchNumber: String? = null
     var batchNoToUpdate: String? = null
@@ -96,10 +100,28 @@ class PickingViewModel : ViewModel() {
         }
     }
 
+    suspend fun updateQuantityScanWithPickNumber(serialNumber: String?,
+                                                 pickListNumber: String?, quantity: Int?){
+        var dbDao = appDatabase.pickingScanListDao()
+        dbDao.updateQuantityScanWithPickNumber(serialNumber, pickListNumber, quantity)
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                getScanWithPickNumber(pickListNumber)
+                (itemSubmissionSuccessfulUpdate as MutableLiveData<Boolean>).value = true
+            }
+        }
+//        // After success navigate to previous screen
+//        GlobalScope.launch {
+//            withContext(Dispatchers.Main) {
+//                (itemSubmissionSuccessfulUpdate as MutableLiveData<Boolean>).value = true
+//            }
+//        }
+
+    }
 
     suspend fun addItemInDatabase(itemListToAdd: PickingMasterDisplay, pickListNumber: String?,
                                           pickListId: String?, isViolated: Boolean?,
-                                          quantity: Int?) {
+                                          quantity: Int?, totalQuantity: Int?) {
         var userId: String = PrefRepository.singleInstance.getValueOrDefault(PrefConstants().ROLE_ID, "")
 
         var dbItem = PickingScanList(id = null,
@@ -112,7 +134,8 @@ class PickingViewModel : ViewModel() {
                                     quantity = quantity,
                                     serialNumber = itemListToAdd.batchNumber,
                                     violatedSerialNumber = barcodeSerial,
-                                    postItemId= itemListToAdd.id, timeStamp = Date().time)
+                                    postItemId= itemListToAdd.id, timeStamp = Date().time,
+                                    totalQuantity =totalQuantity )
 
         println("dbItem-->"+dbItem)
         var dbDao = appDatabase.pickingScanListDao()
@@ -154,6 +177,10 @@ class PickingViewModel : ViewModel() {
             scanedItems = dbItems
         }
         println("dbItems->"+dbItems?.size)
+        for (i in scanedItems){
+            println("db scanned quantity item -->"+i.quantity)
+            println("db total quantity item -->"+i.totalQuantity)
+        }
         var thisobj = this
         (thisobj.totalScannedItem as MutableLiveData<Number>).value = dbItems?.size
 

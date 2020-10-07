@@ -54,6 +54,9 @@ class PutawayLocationScanFragment : Fragment() {
             viewModel.name = this.arguments!!.getString("name")
         }
 
+        val imm = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+
         viewModel.putawayLocationScan.observe(viewLifecycleOwner, Observer<Array<PutawayLocationScan?>> {
             if (it != null) {
                 UiHelper.hideProgress(this.progress)
