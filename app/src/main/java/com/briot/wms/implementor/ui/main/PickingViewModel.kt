@@ -110,13 +110,6 @@ class PickingViewModel : ViewModel() {
                 (itemSubmissionSuccessfulUpdate as MutableLiveData<Boolean>).value = true
             }
         }
-//        // After success navigate to previous screen
-//        GlobalScope.launch {
-//            withContext(Dispatchers.Main) {
-//                (itemSubmissionSuccessfulUpdate as MutableLiveData<Boolean>).value = true
-//            }
-//        }
-
     }
 
     suspend fun addItemInDatabase(itemListToAdd: PickingMasterDisplay, pickListNumber: String?,

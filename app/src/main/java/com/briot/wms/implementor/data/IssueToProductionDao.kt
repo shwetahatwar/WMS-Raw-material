@@ -39,4 +39,7 @@ interface IssueToProductionDao {
 
     @Query("DELETE from issuetoprod_scan_item_list")
     suspend fun deleteAll()
+
+    @Query("UPDATE issuetoprod_scan_item_list SET quantity = :quantity WHERE picklistName = :picklistName AND employeeId = :employeeId AND inputMaterialBarcode = :serialNumber")
+    fun updateQuantityScanWithPickNumber(serialNumber: String?, picklistName: String?, quantity: Int?, employeeId: String?)
 }

@@ -29,12 +29,14 @@ class IssueToProductionViewModel : ViewModel() {
     var issueSlipStatus: String? = ""
     var errorMessage: String = ""
     var quantity: String? = null
+    var remainingQuantity: Int? = null
     // var issueToProdList: List<MaterialData?> = emptyList()
     var issueToProdList = ArrayList<MaterialData>()
 
     val invalidmaterialItem: Array<MaterialInward?> = arrayOf(null)
     var materialInwards: LiveData<Array<MaterialInward?>> = MutableLiveData()
     var qcStatusDisplay: LiveData<Array<MaterialInward?>> = MutableLiveData()
+    val itemSubmissionSuccessfulUpdate: LiveData<Boolean> = MutableLiveData()
 
     val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
     var materialCount: Number? = 0
@@ -105,11 +107,24 @@ class IssueToProductionViewModel : ViewModel() {
         }
     }
 
+    suspend fun updateQuantityScanWithPickNumber(serialNumber: String?, pickListName: String?,
+                                                 quantity: Int?){
+        var dbDao = appDatabase.issueToProductionDao()
+        dbDao.updateQuantityScanWithPickNumber(serialNumber, pickListName, quantity, employeeId)
+
+        GlobalScope.launch {
+            withContext(Dispatchers.Main) {
+                getScanedItems(employeeId, pickListName)
+                (itemSubmissionSuccessfulUpdate as MutableLiveData<Boolean>).value = true
+            }
+        }
+    }
+
 
     suspend fun addItemInDatabase(inputMaterialBarcode: String?, projectId: Int?,
                                   userId: Int?, picklistId: Int?,
                                   quantity: Int?, materialInwardId: Int?,
-                                  picklistName: String?, employeeId:String?) {
+                                  picklistName: String?, employeeId:String?, totalQuantity: Int?) {
         var dbItem = IssueToProduction(id = null,
                 inputMaterialBarcode = inputMaterialBarcode,
                 projectId = projectId,
@@ -118,7 +133,8 @@ class IssueToProductionViewModel : ViewModel() {
                 quantity = quantity,
                 picklistName = picklistName,
                 materialInwardId = materialInwardId,
-                employeeId = employeeId
+                employeeId = employeeId,
+                totalQuantity = totalQuantity
         )
 
 //        println("viewModel.quantity--"+quantity)

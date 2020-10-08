@@ -14,7 +14,6 @@ public data class IssueToProduction (
         @ColumnInfo(name = "picklistName") val picklistName: String?,
         @ColumnInfo(name = "quantity") val quantity: Int?,
         @ColumnInfo(name = "materialInwardId") val materialInwardId: Int?,
-        @ColumnInfo(name = "employeeId") val employeeId: String?
-
-
+        @ColumnInfo(name = "employeeId") val employeeId: String?,
+        @ColumnInfo(name = "totalQuantity") val totalQuantity: Int?
 )

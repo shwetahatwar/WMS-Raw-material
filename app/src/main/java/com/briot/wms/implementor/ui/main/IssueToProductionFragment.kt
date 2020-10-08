@@ -349,28 +349,124 @@ class IssueToProductionFragment : Fragment() {
             }
         })
 
+        viewModel.itemSubmissionSuccessfulUpdate.observe(viewLifecycleOwner, Observer<Boolean> {
+            if (it == true) {
+                UiHelper.hideProgress(this.progress)
+                this.progress = null
+                // var thisObject = this
+                recyclerView.adapter?.notifyDataSetChanged()
+            }
+        })
+
         viewModel.qcStatusDisplay.observe(viewLifecycleOwner, Observer<Array<MaterialInward?>> {
             if (it != null && it != oldMaterialInward) {
                 UiHelper.hideProgress(this.progress)
                 this.progress = null
-                if (viewModel.qcStatusDisplay.value.orEmpty().isNotEmpty() && viewModel.qcStatusDisplay.value?.first() == null) {
-                    UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
-                } else if (it != oldMaterialInward) {
 
-                    val alreadyScaned = viewModel.scanedItems?.filter { it?.inputMaterialBarcode ==  viewModel.inputMaterialBarcode}
-                    if (alreadyScaned.isNullOrEmpty()){
+                val currentDisplayingItem = viewModel.issueToProdList!!.filter {
+                    it?.serialNumber == viewModel.inputMaterialBarcode
+                }
+                if (currentDisplayingItem.size > 0) {
+                    var orgQuantity = currentDisplayingItem.get(0)?.quantityPicked
+                    var materialInwardId = viewModel.qcStatusDisplay.value?.get(0)?.id
 
-                        val result = viewModel.materialData.value?.filter {
-                            (it?.serialNumber.equals(viewModel.inputMaterialBarcode))
+                    val alredyScanCheck = viewModel.scanedItems?.filter { it?.inputMaterialBarcode == viewModel.inputMaterialBarcode }
+
+                    if (alredyScanCheck.isNotEmpty()) {
+                        // Update quantity of scanned item
+                        orgQuantity = alredyScanCheck.get(0)?.totalQuantity
+                        var scannedQuantity = alredyScanCheck.get(0).quantity
+
+                        val remainingQuantity = orgQuantity?.minus(scannedQuantity!!)
+                        viewModel.remainingQuantity = remainingQuantity
+
+                        if (scannedQuantity == orgQuantity?.toInt()) {
+                            UiHelper.showErrorToast(this.activity as AppCompatActivity, "Already scanned")
+                        } else if (scannedQuantity?.toInt()!! < orgQuantity!!) {
+                            val mDialogView = LayoutInflater.from(context).inflate(R.layout.quantity_pop_up, null)
+                            val mBuilder = AlertDialog.Builder(context!!)
+                                    .setView(mDialogView)
+                                    .setTitle("Quantity")
+                            mDialogView.issue_to_prod_picked_quantity.setHint("Expected Quantity " + remainingQuantity)
+
+                            val mAlertDialog = mBuilder.show()
+                            mDialogView.quantitySubmitBtn.setOnClickListener {
+                                val inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
+                                if (inputQuantity!! > remainingQuantity!!) {
+                                    // val remainingQuantity = orgQuantity - scannedQuantity!!
+                                    var error = "Expected quantity " + remainingQuantity
+                                    mDialogView.issue_to_prod_picked_quantity.setError(error)
+                                } else {
+                                    mAlertDialog.dismiss()
+                                    scannedQuantity = scannedQuantity!! + inputQuantity
+                                    // update quantity to data base where barcode match with input barcode
+                                    GlobalScope.launch {
+                                        viewModel.updateQuantityScanWithPickNumber(alredyScanCheck.get(0).inputMaterialBarcode,
+                                                viewModel.name, scannedQuantity)
+                                    }
+                                    recyclerView.adapter?.notifyDataSetChanged()
+                                }
+                            }
+                            mDialogView.quantityCancelBtn.setOnClickListener {
+                                mAlertDialog.dismiss()
+                            }
                         }
-                        if (result?.size!! > 0){
-                            // add to room database
-                            var quantity = result.get(0)?.quantityPicked
-                            println("old- material inward id -->"+result.get(0)?.id)
-                            var materialInwardId = viewModel.qcStatusDisplay.value?.get(0)?.id
-                            println("updataed material inward id -->"+materialInwardId)
-                            if (quantity != null) {
-                                if (quantity!! > 1){
+                    }
+                    // new item add to data base
+                    else {
+                        if (viewModel.qcStatusDisplay.value.isNullOrEmpty()) {
+                            UiHelper.showErrorToast(this.activity as AppCompatActivity, "Invalid Barcode")
+                            // UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
+                        }
+                        if (orgQuantity != null) {
+                            if (orgQuantity!! > 1) {
+                                // Alert dialog with text box
+                                val mDialogView = LayoutInflater.from(context).inflate(R.layout.quantity_pop_up, null)
+                                val mBuilder = AlertDialog.Builder(context!!)
+                                        .setView(mDialogView)
+                                        .setTitle("Quantity")
+                                val mAlertDialog = mBuilder.show()
+                                mDialogView.quantitySubmitBtn.setOnClickListener {
+                                    var inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
+                                    viewModel.quantity = inputQuantity.toString()
+                                    println("--inputQuantity->" + inputQuantity)
+                                    if (inputQuantity > orgQuantity!!) {
+                                        var error = "Quantity should not be greater than " + orgQuantity
+                                        mDialogView.issue_to_prod_picked_quantity.setError(error)
+
+                                    } else {
+                                        mAlertDialog.dismiss()
+                                        GlobalScope.launch {
+                                            withContext(Dispatchers.Main) {
+                                                viewModel.addItemInDatabase(viewModel.inputMaterialBarcode, viewModel.projectId,
+                                                        viewModel.userId, viewModel.id, inputQuantity, materialInwardId,
+                                                        viewModel.name, viewModel.employeeId, orgQuantity)
+                                            }
+                                        }
+                                    }
+                                }
+                                mDialogView.quantityCancelBtn.setOnClickListener {
+                                    mAlertDialog.dismiss()
+                                }
+                            } else {
+                                GlobalScope.launch {
+                                    withContext(Dispatchers.Main) {
+                                        viewModel.addItemInDatabase(viewModel.inputMaterialBarcode, viewModel.projectId,
+                                                viewModel.userId, viewModel.id, orgQuantity, materialInwardId,
+                                                viewModel.name, viewModel.employeeId, orgQuantity)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                    /*
+                            // println("old- material inward id -->"+result.get(0)?.id)
+
+                            // println("updataed material inward id -->"+materialInwardId)
+                            if (orgQuantity != null) {
+                                if (orgQuantity!! > 1){
                                     // Alert dialog with text box
                                     val mDialogView = LayoutInflater.from(context).inflate(R.layout.quantity_pop_up, null)
                                     val mBuilder = AlertDialog.Builder(context!!)
@@ -381,8 +477,8 @@ class IssueToProductionFragment : Fragment() {
                                         var inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
                                         viewModel.quantity = inputQuantity.toString()
                                         println("--inputQuantity->"+inputQuantity)
-                                        if (inputQuantity > quantity!!){
-                                            var error = "Quantity should not be greater than "+quantity
+                                        if (inputQuantity > orgQuantity!!){
+                                            var error = "Quantity should not be greater than "+orgQuantity
                                             mDialogView.issue_to_prod_picked_quantity.setError(error)
 
                                         }else {
@@ -403,7 +499,71 @@ class IssueToProductionFragment : Fragment() {
                                     GlobalScope.launch {
                                         withContext(Dispatchers.Main) {
                                             viewModel.addItemInDatabase(viewModel.inputMaterialBarcode, viewModel.projectId,
-                                                    viewModel.userId, viewModel.id, quantity, materialInwardId,
+                                                    viewModel.userId, viewModel.id, orgQuantity, materialInwardId,
+                                                    viewModel.name, viewModel.employeeId)
+                                        }
+                                    }
+                                }
+                            }
+
+                    }else{
+                        UiHelper.showErrorToast(this.activity as AppCompatActivity, "Item already scaned")
+                    }
+
+                }
+
+                if (viewModel.qcStatusDisplay.value.isNullOrEmpty()) {
+                    UiHelper.showErrorToast(this.activity as AppCompatActivity, "Invalid Barcode")
+                    // UiHelper.showSomethingWentWrongSnackbarMessage(this.activity as AppCompatActivity)
+                } else if (it != oldMaterialInward) {
+                    val alreadyScaned = viewModel.scanedItems?.filter { it?.inputMaterialBarcode ==  viewModel.inputMaterialBarcode}
+
+                    if (alreadyScaned.isNullOrEmpty()){
+
+                        val result = viewModel.materialData.value?.filter {
+                            (it?.serialNumber.equals(viewModel.inputMaterialBarcode))
+                        }
+                        if (result?.size!! > 0){
+                            // add to room database
+                            var orgQuantity = result.get(0)?.quantityPicked
+                            // println("old- material inward id -->"+result.get(0)?.id)
+                            var materialInwardId = viewModel.qcStatusDisplay.value?.get(0)?.id
+                            // println("updataed material inward id -->"+materialInwardId)
+                            if (orgQuantity != null) {
+                                if (orgQuantity!! > 1){
+                                    // Alert dialog with text box
+                                    val mDialogView = LayoutInflater.from(context).inflate(R.layout.quantity_pop_up, null)
+                                    val mBuilder = AlertDialog.Builder(context!!)
+                                            .setView(mDialogView)
+                                            .setTitle("Quantity")
+                                    val mAlertDialog = mBuilder.show()
+                                    mDialogView.quantitySubmitBtn.setOnClickListener{
+                                        var inputQuantity = mDialogView.issue_to_prod_picked_quantity.text.trim().toString().toInt()
+                                        viewModel.quantity = inputQuantity.toString()
+                                        println("--inputQuantity->"+inputQuantity)
+                                        if (inputQuantity > orgQuantity!!){
+                                            var error = "Quantity should not be greater than "+orgQuantity
+                                            mDialogView.issue_to_prod_picked_quantity.setError(error)
+
+                                        }else {
+                                            mAlertDialog.dismiss()
+                                            GlobalScope.launch {
+                                                withContext(Dispatchers.Main) {
+                                                    viewModel.addItemInDatabase(viewModel.inputMaterialBarcode, viewModel.projectId,
+                                                            viewModel.userId, viewModel.id, inputQuantity, materialInwardId,
+                                                            viewModel.name, viewModel.employeeId)
+                                                }
+                                            }
+                                        }
+                                    }
+                                    mDialogView.quantityCancelBtn.setOnClickListener{
+                                        mAlertDialog.dismiss()
+                                    }
+                                }else{
+                                    GlobalScope.launch {
+                                        withContext(Dispatchers.Main) {
+                                            viewModel.addItemInDatabase(viewModel.inputMaterialBarcode, viewModel.projectId,
+                                                    viewModel.userId, viewModel.id, orgQuantity, materialInwardId,
                                                     viewModel.name, viewModel.employeeId)
                                         }
                                     }
@@ -412,14 +572,10 @@ class IssueToProductionFragment : Fragment() {
                         }
                     }else{
                         UiHelper.showErrorToast(this.activity as AppCompatActivity, "Item already scaned")
-                    }
+                    }*/
 
                     recyclerView.adapter?.notifyDataSetChanged()
                 }
-            }
-            if (it == null) {
-                UiHelper.showErrorToast(this.activity as AppCompatActivity, "Wrong material scan")
-                oldMaterialInward = viewModel.qcStatusDisplay.value!!
             }
         })
 
@@ -523,6 +679,9 @@ open class MaterialAdapter(private val recyclerView: androidx.recyclerview.widge
         protected val batchNumber: TextView
         protected val quantity: TextView
         protected val linearLayout: LinearLayout
+        protected val issueToProdRemainingQuantityLabel: TextView
+        protected val issueToProdRemainingQuantityvalue: TextView
+
 
         init {
             partNumber = itemView.findViewById(R.id.issue_to_production_partNumberValue)
@@ -530,6 +689,8 @@ open class MaterialAdapter(private val recyclerView: androidx.recyclerview.widge
             batchNumber = itemView.findViewById(R.id.issue_to_production_descriptionValue)
             quantity = itemView.findViewById(R.id.issue_to_production_quantityValue)
             linearLayout = itemView.findViewById(R.id.material_layout)
+            issueToProdRemainingQuantityLabel = itemView.findViewById(R.id.issue_to_prod_remaining_quantityLabel)
+            issueToProdRemainingQuantityvalue = itemView.findViewById(R.id.issue_to_prod_remaining_quantityValue)
         }
 
         fun bind() {
@@ -543,8 +704,19 @@ open class MaterialAdapter(private val recyclerView: androidx.recyclerview.widge
                 // println("----------->"+viewModel.scanedItems.size)
                 it!!.inputMaterialBarcode.toString() == item!!.serialNumber.toString()}
 
-            if (scannedItemFound?.size!! > 0){
-                linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
+            if (scannedItemFound.size > 0){
+                if (scannedItemFound[0].quantity!! < scannedItemFound[0].totalQuantity!!){
+                    linearLayout.setBackgroundColor(PrefConstants().lightOrangeColor)
+                    issueToProdRemainingQuantityLabel.visibility = View.VISIBLE
+                    issueToProdRemainingQuantityvalue.visibility = View.VISIBLE
+                    quantity.text = scannedItemFound[0].quantity.toString()
+                    issueToProdRemainingQuantityvalue.text = (scannedItemFound[0].totalQuantity?.minus(scannedItemFound[0].quantity!!)).toString()
+                }else{
+                    linearLayout.setBackgroundColor(PrefConstants().lightGreenColor)
+                    quantity.text = scannedItemFound[0].quantity.toString()
+                    issueToProdRemainingQuantityvalue.visibility = View.GONE
+                    issueToProdRemainingQuantityLabel.visibility = View.GONE
+                }
             }else{
                 linearLayout.setBackgroundColor(PrefConstants().lightGrayColor)
             }

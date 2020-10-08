@@ -238,18 +238,18 @@ class PickingFragment : Fragment() {
                 if (currentDisplayingItem.size > 0){
                     var orgQuantity = currentDisplayingItem.get(0)?.numberOfPacks
                     viewModel.orgQuantity = orgQuantity
-                    println("orgQuantity 1-->"+orgQuantity)
+                    // println("orgQuantity 1-->"+orgQuantity)
                     val alredyScanCheck = viewModel.scanedItems?.filter {
                         it!!.serialNumber == viewModel.barcodeSerial
                     }
                     if (alredyScanCheck.isNotEmpty()){
                         var scannedQuantity = alredyScanCheck.get(0).quantity
                         orgQuantity = alredyScanCheck.get(0).totalQuantity
-                        println("scannedQuantity 2 ->"+scannedQuantity)
-                        println("orgQuantity 2-->"+orgQuantity)
+                        //println("scannedQuantity 2 ->"+scannedQuantity)
+                        // println("orgQuantity 2-->"+orgQuantity)
 
                         val remainingQuantity = orgQuantity?.minus(scannedQuantity!!)
-                        println("remainingQuantity 2-->"+remainingQuantity)
+                        // println("remainingQuantity 2-->"+remainingQuantity)
 
                         viewModel.remainingQuantity = remainingQuantity
 
