@@ -72,6 +72,9 @@ class MaterialInward(issueReturn: Boolean?=false) {
     var QCStatus: Int? = null
     var eachPackQuantity: Int? = null
     var batchNumber: String? = null
+    var createdAt: String? = null
+    var inwardDate: String? = null
+    var updatedAt: String? = null
     }
 
 class MaterialInwards{

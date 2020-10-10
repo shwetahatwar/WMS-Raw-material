@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.briot.wms.implementor.MainApplication
@@ -355,6 +356,10 @@ class IssueToProductionFragment : Fragment() {
                 this.progress = null
                 // var thisObject = this
                 recyclerView.adapter?.notifyDataSetChanged()
+
+                UiHelper.showSuccessToast(this.activity as AppCompatActivity,
+                        "Updated successfully")
+                Navigation.findNavController(recyclerView).navigate(R.id.projectFragment)
             }
         })
 

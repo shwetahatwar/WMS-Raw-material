@@ -24,6 +24,8 @@ import com.briot.wms.implementor.UiHelper
 import com.briot.wms.implementor.repository.remote.MaterialInward
 import io.github.pierry.progress.Progress
 import kotlinx.android.synthetic.main.material_q_c_status_fragment.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MaterialQCStatusFragment : Fragment() {
 
@@ -286,12 +288,21 @@ class MaterialQCStatusFragment : Fragment() {
             return qcStatusDisplay.value?.size ?: 0
         }
 
+        fun timeConverter(s: Long): String? {
+            val date1 = SimpleDateFormat("dd/MM/yyyy hh:mm:ss a").format(Date(s))
+            println("date-->"+date1)
+            return date1
+        }
+
         open inner class ViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
             protected val barcodeSerial: TextView
             protected val partNumber: TextView
             protected val QCStatus: TextView
             protected val name: TextView
             protected val description: TextView
+            protected val inwardOn: TextView
+            protected val transactionDateLabel: TextView
+            protected val transactionDateValue: TextView
 
             init {
                 partNumber = itemView.findViewById(R.id.part_number_value)
@@ -299,6 +310,9 @@ class MaterialQCStatusFragment : Fragment() {
                 QCStatus = itemView.findViewById(R.id.Qc_Status_value)
                 name = itemView.findViewById(R.id.current_location_value)
                 description = itemView.findViewById(R.id.description_value)
+                inwardOn = itemView.findViewById(R.id.date_and_time_value)
+                transactionDateLabel = itemView.findViewById(R.id.updated_date_label)
+                transactionDateValue = itemView.findViewById(R.id.updated_date_value)
             }
 
             fun bind() {
@@ -308,8 +322,16 @@ class MaterialQCStatusFragment : Fragment() {
                     var result: String = ""
                     if (materialItems.QCStatus == 1){
                         result = "QC Approved"
+                        transactionDateLabel.visibility = View.VISIBLE
+                        transactionDateValue.visibility = View.VISIBLE
+                        if (materialItems.updatedAt!!.isNotEmpty() && materialItems.createdAt!!.contains("T")){
+                            transactionDateValue.text = materialItems.createdAt?.split("T")?.get(0).toString()
+                        }
                     }else if (materialItems.QCStatus == 2){
                         result = "QC Rejected"
+                        transactionDateLabel.visibility = View.VISIBLE
+                        transactionDateValue.visibility = View.VISIBLE
+                        transactionDateValue.text = "NA"
                     }else if (materialItems.QCStatus == 0){
                         result = "QC Pending"
                     }
@@ -317,6 +339,13 @@ class MaterialQCStatusFragment : Fragment() {
                     partNumber.text = materialItems.partnumber.partNumber
                     description.text = materialItems.partnumber.description
                     name.text = materialItems.shelf.name
+
+                    if (materialItems.inwardDate != null && materialItems.inwardDate != "NA"){
+                        inwardOn.text = materialItems.inwardDate?.let { timeConverter(it.toLong()) }
+                    }else{
+                        materialItems.inwardDate = "NA"
+                    }
+
                     }
                  catch (e: Exception) {
                     println("Getting exception " + e)

@@ -196,28 +196,16 @@ class IssueToProductionViewModel : ViewModel() {
 
     fun deleteScannedItemWithBarcode(employeeId: String?, picklistName: String?, inputMaterialBarcode: String?){
         var dbDao = appDatabase.issueToProductionDao()
-        // var dbItems = dbDao.deleteScannedItem(picklistName,employeeId)
-
-//        println("-input employeeId->"+employeeId)
-//        println("-input picklistName->"+picklistName)
-//        println("-input inputMaterialBarcode->"+inputMaterialBarcode)
-//
-//        println("get call b4 delete")
         getScanedItems(employeeId, picklistName)
-//        println("get end --------------------------")
-//        println("inside delete----")
         GlobalScope.launch {
             dbDao.deleteScannedItemWithBarcode(employeeId, picklistName, inputMaterialBarcode)
 
-            // dbDao.updateValue(employeeId, picklistName)
             withContext(Dispatchers.Main) {
                 getScanedItems(employeeId, picklistName)
                 issueToProdList = ArrayList<MaterialData>()
                 loadMaterialItems(id)
             }
         }
-//        getScanedItems(picklistName, employeeId)
-//        loadMaterialItems(id)
     }
 
 
@@ -258,6 +246,7 @@ class IssueToProductionViewModel : ViewModel() {
         Log.d(TAG, "error msg--->"+error.localizedMessage)
 
         errorMessage = error.message.toString()
+        (networkError as MutableLiveData<Boolean>).value = true
         if (UiHelper.isNetworkError(error)) {
             println("------inside network error----")
             errorMessage = error.message.toString()

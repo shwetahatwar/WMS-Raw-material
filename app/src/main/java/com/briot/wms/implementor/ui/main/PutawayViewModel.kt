@@ -34,6 +34,8 @@ class PutawayViewModel : ViewModel() {
     val networkError: LiveData<Boolean> = MutableLiveData()
     val itemSubmissionSuccessful: LiveData<Boolean> = MutableLiveData()
     val pendingItem: LiveData<Boolean> = MutableLiveData()
+    val rejected: LiveData<Boolean> = MutableLiveData()
+
     val invalidMaterial: LiveData<Boolean> = MutableLiveData()
 
     val putawayMaterialScanData: LiveData<Array<MaterialInward?>> = MutableLiveData()
@@ -64,7 +66,13 @@ class PutawayViewModel : ViewModel() {
                         addPutawayMaterial(res[0])
                     }
                 }
-            }else{
+            }else if (res[0]?.QCStatus == 2){
+                GlobalScope.launch {
+                    withContext(Dispatchers.Main) {
+                        (rejected as MutableLiveData<Boolean>).value = true
+                    }
+                }
+            } else {
                 GlobalScope.launch {
                     withContext(Dispatchers.Main) {
                         (pendingItem as MutableLiveData<Boolean>).value = true

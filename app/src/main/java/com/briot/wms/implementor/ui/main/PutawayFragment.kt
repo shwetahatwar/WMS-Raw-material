@@ -128,6 +128,14 @@ class PutawayFragment : Fragment() {
             }
         })
 
+        viewModel.rejected.observe(viewLifecycleOwner, Observer<Boolean> {
+            if (it == true) {
+                var thisObject = this
+                UiHelper.showErrorToast(this.activity as AppCompatActivity,
+                        "Material putaway cannot be performed as QC status is Rejected")
+            }
+        })
+
         viewModel.invalidMaterial.observe(viewLifecycleOwner, Observer<Boolean> {
             if (it == true) {
                 var thisObject = this

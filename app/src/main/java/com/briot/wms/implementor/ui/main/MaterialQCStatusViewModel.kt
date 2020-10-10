@@ -40,7 +40,7 @@ class MaterialQCStatusViewModel : ViewModel() {
     private fun handleMaterialItemResponse(res: Array<MaterialInward?>) {
 
         (this.qcStatusDisplay as MutableLiveData<Array<MaterialInward?>>).value = res
-        barcodeSerial?.let { loadMaterialStatusItems(it) }
+        // barcodeSerial?.let { loadMaterialStatusItems(it) }
 //        GlobalScope.launch {
 //            withContext(Dispatchers.Main) {
 //                addQcScanItem(res[0])
